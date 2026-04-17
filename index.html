@@ -804,15 +804,47 @@ function buildFilters() {
     unique.sort((a, b) => a.localeCompare(b, 'es'));
     const sel = document.createElement('select');
     sel.className = 'filter-select';
+    sel.dataset.header = h;
     sel.innerHTML = `<option value="">${esc(displayHeader(h))}</option>` +
       unique.map(v => `<option value="${esc(v)}">${esc(v.length > 35 ? v.slice(0,32) + '…' : v)}</option>`).join('');
     sel.addEventListener('change', () => {
       sel.classList.toggle('active', !!sel.value);
       currentPage = 1;
+      refreshFilterOptions();
       applyFilters();
     });
     group.appendChild(sel);
     filterSelects[i] = sel;
+  });
+}
+
+function refreshFilterOptions() {
+  Object.entries(filterSelects).forEach(([ciStr, sel]) => {
+    const ci = parseInt(ciStr);
+    const currentValue = sel.value;
+
+    const applicable = allData.filter(row => {
+      for (const [oci, osel] of Object.entries(filterSelects)) {
+        if (parseInt(oci) === ci) continue;
+        if (osel.value && (row[parseInt(oci)] || '').trim() !== osel.value) return false;
+      }
+      return true;
+    });
+
+    const unique = [...new Set(applicable.map(r => (r[ci] || '').trim()).filter(Boolean))];
+    unique.sort((a, b) => a.localeCompare(b, 'es'));
+    const h = sel.dataset.header || allHeaders[ci] || '';
+
+    sel.innerHTML = `<option value="">${esc(displayHeader(h))}</option>` +
+      unique.map(v => `<option value="${esc(v)}">${esc(v.length > 35 ? v.slice(0,32) + '…' : v)}</option>`).join('');
+
+    if (currentValue && unique.includes(currentValue)) {
+      sel.value = currentValue;
+      sel.classList.add('active');
+    } else {
+      sel.value = '';
+      sel.classList.remove('active');
+    }
   });
 }
 
