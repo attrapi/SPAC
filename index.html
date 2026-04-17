@@ -988,6 +988,7 @@ function extractUrl(val) {
 function displayHeader(h) {
   if (!h) return '';
   if (/proy\.?\s*ferro\.?/i.test(h)) return 'Proyecto';
+  if (/^\s*tramo\s*$/i.test(h)) return 'Tramo';
   return h;
 }
 
