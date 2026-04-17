@@ -697,8 +697,26 @@ async function fetchData() {
     allHeaders = result.headers;
     allData = result.data;
 
+    const savedSelections = {};
+    Object.entries(filterSelects).forEach(([ci, sel]) => {
+      if (sel.value) savedSelections[sel.dataset.header || allHeaders[ci]] = sel.value;
+    });
+    const savedSearch = document.getElementById('searchInput').value;
+
     renderStats();
     buildFilters();
+
+    Object.entries(filterSelects).forEach(([ci, sel]) => {
+      const h = sel.dataset.header || allHeaders[ci];
+      const saved = savedSelections[h];
+      if (saved && [...sel.options].some(o => o.value === saved)) {
+        sel.value = saved;
+        sel.classList.add('active');
+      }
+    });
+    if (savedSearch) document.getElementById('searchInput').value = savedSearch;
+
+    refreshFilterOptions();
     applyFilters();
 
     document.getElementById('loadingOverlay')?.remove();
