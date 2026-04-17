@@ -208,7 +208,7 @@ body{
 .search-box input::placeholder{color:var(--text4)}
 .search-box svg{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--text4);width:16px;height:16px}
 
-.filter-group{display:flex;flex-wrap:wrap;gap:.5rem}
+.filter-group{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 .filter-select{
   background:var(--surface);border:1.5px solid var(--border);
   color:var(--text2);padding:.65rem .9rem;border-radius:var(--radius-sm);
@@ -220,6 +220,21 @@ body{
   padding-right:2.2rem;
 }
 .filter-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
+.filter-select.active{border-color:var(--gov-dark);background-color:var(--gov-pale);color:var(--gov-dark);font-weight:600}
+
+.more-filters-btn{
+  background:var(--surface);border:1.5px dashed var(--border2);color:var(--text3);
+  padding:.6rem .95rem;border-radius:var(--radius-sm);cursor:pointer;
+  font-size:.78rem;font-family:inherit;font-weight:600;transition:all .2s;
+  display:inline-flex;align-items:center;gap:.35rem;
+}
+.more-filters-btn:hover{color:var(--gov-dark);border-color:var(--gov-dark);background:var(--gov-pale)}
+.more-filters-btn .badge{
+  background:var(--gov-dark);color:#fff;border-radius:10px;
+  padding:.05rem .45rem;font-size:.68rem;font-weight:700;
+}
+.filter-hidden{display:none !important}
+.filter-group.expanded .filter-hidden{display:inline-block !important}
 
 .clear-btn{
   background:var(--surface);border:1.5px solid var(--border);color:var(--text3);
@@ -748,21 +763,65 @@ function renderStats() {
 function buildFilters() {
   const group = document.getElementById('filterGroup');
   group.innerHTML = '';
+  group.classList.remove('expanded');
   filterSelects = {};
 
+  const MAX_VISIBLE = 4;
+  const isNumericHeader = h => /^\s*(n|n°|no\.?|núm\.?|numero|número|#|id)\s*$/i.test(h || '');
+  const isNumericValue = v => /^-?\d+([.,]\d+)?$/.test(v.replace(/\s/g, ''));
+
+  const candidates = [];
   allHeaders.forEach((h, i) => {
-    const unique = [...new Set(allData.map(r => (r[i] || '').trim()).filter(Boolean))];
-    if (unique.length > 0 && unique.length <= 60) {
-      unique.sort((a, b) => a.localeCompare(b, 'es'));
-      const sel = document.createElement('select');
-      sel.className = 'filter-select';
-      sel.innerHTML = `<option value="">▾ ${esc(h)}</option>` +
-        unique.map(v => `<option value="${esc(v)}">${esc(v.length > 35 ? v.slice(0,32) + '…' : v)}</option>`).join('');
-      sel.addEventListener('change', () => { currentPage = 1; applyFilters(); });
-      group.appendChild(sel);
-      filterSelects[i] = sel;
-    }
+    if (isNumericHeader(h)) return;
+    const values = allData.map(r => (r[i] || '').trim()).filter(Boolean);
+    if (!values.length) return;
+    const numericRatio = values.filter(isNumericValue).length / values.length;
+    if (numericRatio > 0.7) return;
+    const unique = [...new Set(values)];
+    if (unique.length < 2 || unique.length > 60) return;
+    candidates.push({ i, h, unique, score: unique.length });
   });
+
+  candidates.sort((a, b) => {
+    const sweetA = Math.abs(a.unique.length - 8);
+    const sweetB = Math.abs(b.unique.length - 8);
+    return sweetA - sweetB;
+  });
+
+  candidates.forEach(({ i, h, unique }, idx) => {
+    unique.sort((a, b) => a.localeCompare(b, 'es'));
+    const sel = document.createElement('select');
+    sel.className = 'filter-select';
+    if (idx >= MAX_VISIBLE) sel.classList.add('filter-hidden');
+    sel.innerHTML = `<option value="">▾ ${esc(h)}</option>` +
+      unique.map(v => `<option value="${esc(v)}">${esc(v.length > 35 ? v.slice(0,32) + '…' : v)}</option>`).join('');
+    sel.addEventListener('change', () => {
+      sel.classList.toggle('active', !!sel.value);
+      currentPage = 1;
+      applyFilters();
+    });
+    group.appendChild(sel);
+    filterSelects[i] = sel;
+  });
+
+  const hiddenCount = Math.max(0, candidates.length - MAX_VISIBLE);
+  if (hiddenCount > 0) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'more-filters-btn';
+    const render = () => {
+      const expanded = group.classList.contains('expanded');
+      btn.innerHTML = expanded
+        ? `− Menos filtros`
+        : `+ Más filtros <span class="badge">${hiddenCount}</span>`;
+    };
+    btn.addEventListener('click', () => {
+      group.classList.toggle('expanded');
+      render();
+    });
+    render();
+    group.appendChild(btn);
+  }
 }
 
 function applyFilters() {
@@ -793,7 +852,7 @@ function applyFilters() {
 
 function clearFilters() {
   document.getElementById('searchInput').value = '';
-  Object.values(filterSelects).forEach(s => s.value = '');
+  Object.values(filterSelects).forEach(s => { s.value = ''; s.classList.remove('active'); });
   sortCol = -1; sortAsc = true; currentPage = 1;
   applyFilters();
 }
