@@ -766,33 +766,22 @@ function buildFilters() {
   group.classList.remove('expanded');
   filterSelects = {};
 
-  const MAX_VISIBLE = 4;
-  const isNumericHeader = h => /^\s*(n|n°|no\.?|núm\.?|numero|número|#|id)\s*$/i.test(h || '');
-  const isNumericValue = v => /^-?\d+([.,]\d+)?$/.test(v.replace(/\s/g, ''));
+  const isAllowed = h => /proy|tram|trám/i.test(h || '');
 
   const candidates = [];
   allHeaders.forEach((h, i) => {
-    if (isNumericHeader(h)) return;
+    if (!isAllowed(h)) return;
     const values = allData.map(r => (r[i] || '').trim()).filter(Boolean);
     if (!values.length) return;
-    const numericRatio = values.filter(isNumericValue).length / values.length;
-    if (numericRatio > 0.7) return;
     const unique = [...new Set(values)];
-    if (unique.length < 2 || unique.length > 60) return;
-    candidates.push({ i, h, unique, score: unique.length });
+    if (unique.length < 2) return;
+    candidates.push({ i, h, unique });
   });
 
-  candidates.sort((a, b) => {
-    const sweetA = Math.abs(a.unique.length - 8);
-    const sweetB = Math.abs(b.unique.length - 8);
-    return sweetA - sweetB;
-  });
-
-  candidates.forEach(({ i, h, unique }, idx) => {
+  candidates.forEach(({ i, h, unique }) => {
     unique.sort((a, b) => a.localeCompare(b, 'es'));
     const sel = document.createElement('select');
     sel.className = 'filter-select';
-    if (idx >= MAX_VISIBLE) sel.classList.add('filter-hidden');
     sel.innerHTML = `<option value="">▾ ${esc(h)}</option>` +
       unique.map(v => `<option value="${esc(v)}">${esc(v.length > 35 ? v.slice(0,32) + '…' : v)}</option>`).join('');
     sel.addEventListener('change', () => {
@@ -803,25 +792,6 @@ function buildFilters() {
     group.appendChild(sel);
     filterSelects[i] = sel;
   });
-
-  const hiddenCount = Math.max(0, candidates.length - MAX_VISIBLE);
-  if (hiddenCount > 0) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'more-filters-btn';
-    const render = () => {
-      const expanded = group.classList.contains('expanded');
-      btn.innerHTML = expanded
-        ? `− Menos filtros`
-        : `+ Más filtros <span class="badge">${hiddenCount}</span>`;
-    };
-    btn.addEventListener('click', () => {
-      group.classList.toggle('expanded');
-      render();
-    });
-    render();
-    group.appendChild(btn);
-  }
 }
 
 function applyFilters() {
