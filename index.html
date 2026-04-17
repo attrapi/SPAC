@@ -447,8 +447,6 @@ td .empty-cell{color:var(--text4);font-style:italic;font-size:.75rem}
       </div>
     </div>
     <div class="header-actions">
-      <span class="badge live" id="liveBadge">En vivo</span>
-      <span class="badge time" id="lastUpdate">Conectando...</span>
       <button class="btn btn-outline" id="refreshBtn" onclick="fetchData()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
         Actualizar
@@ -474,7 +472,7 @@ td .empty-cell{color:var(--text4);font-style:italic;font-size:.75rem}
     <input type="text" id="searchInput" placeholder="Buscar en todos los campos...">
   </div>
   <div class="filter-group" id="filterGroup"></div>
-  <button class="clear-btn" onclick="clearFilters()">✕ Limpiar filtros</button>
+  <button class="clear-btn" onclick="clearFilters()">Limpiar filtros</button>
 </div>
 
 <!-- TABLE -->
@@ -691,7 +689,6 @@ async function fetchData() {
     applyFilters();
 
     document.getElementById('loadingOverlay')?.remove();
-    document.getElementById('lastUpdate').textContent = '⏱ ' + new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
 
     if (newCount > 0 && prevRowCount > 0) {
       showToast(`＋${newCount} registro(s) nuevo(s) detectado(s)`, 'success');
