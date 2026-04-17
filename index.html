@@ -256,6 +256,18 @@ body{
   box-shadow:var(--shadow);
 }
 .table-scroll{overflow-x:auto}
+.top-scroll{
+  overflow-x:auto;overflow-y:hidden;
+  border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.top-scroll > div{height:1px}
+.top-scroll::-webkit-scrollbar,
+.table-scroll::-webkit-scrollbar{height:10px}
+.top-scroll::-webkit-scrollbar-thumb,
+.table-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
+.top-scroll::-webkit-scrollbar-thumb:hover,
+.table-scroll::-webkit-scrollbar-thumb:hover{background:var(--text4)}
 
 table{width:100%;border-collapse:collapse;font-size:.82rem}
 thead{position:sticky;top:0;z-index:5}
@@ -478,6 +490,7 @@ td .empty-cell{color:var(--text4);font-style:italic;font-size:.75rem}
 <!-- TABLE -->
 <div class="table-container">
   <div class="table-wrapper">
+    <div class="top-scroll" id="topScroll"><div id="topScrollInner"></div></div>
     <div class="table-scroll" id="tableScroll">
       <div class="loading-overlay" id="loadingOverlay">
         <div class="loader"></div>
@@ -791,7 +804,7 @@ function buildFilters() {
     unique.sort((a, b) => a.localeCompare(b, 'es'));
     const sel = document.createElement('select');
     sel.className = 'filter-select';
-    sel.innerHTML = `<option value="">▾ ${esc(h)}</option>` +
+    sel.innerHTML = `<option value="">▾ ${esc(displayHeader(h))}</option>` +
       unique.map(v => `<option value="${esc(v)}">${esc(v.length > 35 ? v.slice(0,32) + '…' : v)}</option>`).join('');
     sel.addEventListener('change', () => {
       sel.classList.toggle('active', !!sel.value);
@@ -857,7 +870,7 @@ function renderTable() {
   allHeaders.forEach((h, i) => {
     const sorted = sortCol === i;
     const arrow = sorted ? (sortAsc ? '▲' : '▼') : '⇅';
-    html += `<th class="${sorted ? 'sorted' : ''}" onclick="toggleSort(${i})">${esc(h)} <span class="sort-icon">${arrow}</span></th>`;
+    html += `<th class="${sorted ? 'sorted' : ''}" onclick="toggleSort(${i})">${esc(displayHeader(h))} <span class="sort-icon">${arrow}</span></th>`;
   });
   html += '</tr></thead><tbody>';
 
@@ -884,6 +897,7 @@ function renderTable() {
   });
   html += '</tbody></table>';
   scroll.innerHTML = html;
+  syncTopScroll();
 }
 
 function toggleSort(col) {
@@ -971,6 +985,23 @@ function extractUrl(val) {
   return m[0].replace(/[.,;:)\]]+$/, '');
 }
 
+function displayHeader(h) {
+  if (!h) return '';
+  if (/proy\.?\s*ferro\.?/i.test(h)) return 'Proyecto';
+  return h;
+}
+
+function syncTopScroll() {
+  const top = document.getElementById('topScroll');
+  const bottom = document.getElementById('tableScroll');
+  const inner = document.getElementById('topScrollInner');
+  if (!top || !bottom || !inner) return;
+  const table = bottom.querySelector('table');
+  const width = table ? table.scrollWidth : 0;
+  inner.style.width = width + 'px';
+  top.style.display = width > bottom.clientWidth ? 'block' : 'none';
+}
+
 function debounce(fn, ms) {
   let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
 }
@@ -981,6 +1012,22 @@ function debounce(fn, ms) {
 document.getElementById('searchInput').addEventListener('input', debounce(() => {
   currentPage = 1; applyFilters();
 }, 300));
+
+(() => {
+  const top = document.getElementById('topScroll');
+  const bottom = document.getElementById('tableScroll');
+  if (!top || !bottom) return;
+  let syncing = false;
+  top.addEventListener('scroll', () => {
+    if (syncing) { syncing = false; return; }
+    syncing = true; bottom.scrollLeft = top.scrollLeft;
+  });
+  bottom.addEventListener('scroll', () => {
+    if (syncing) { syncing = false; return; }
+    syncing = true; top.scrollLeft = bottom.scrollLeft;
+  });
+  window.addEventListener('resize', syncTopScroll);
+})();
 
 fetchData();
 setInterval(fetchData, REFRESH_MS);
