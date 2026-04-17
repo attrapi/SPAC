@@ -752,8 +752,6 @@ function renderStats() {
   const bar = document.getElementById('statsBar');
   const total = allData.length;
   const cols = allHeaders.length;
-  const filled = allData.reduce((a, r) => a + r.filter(c => c.trim()).length, 0);
-  const pct = total * cols ? Math.round(filled / (total * cols) * 100) : 0;
 
   bar.innerHTML = `
     <div class="stat-card">
@@ -765,11 +763,6 @@ function renderStats() {
       <div class="stat-icon">📊</div>
       <div class="stat-label">Columnas</div>
       <div class="stat-value">${cols}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">✅</div>
-      <div class="stat-label">Completitud</div>
-      <div class="stat-value">${pct}%</div>
     </div>
     <div class="stat-card">
       <div class="stat-icon">🔍</div>
