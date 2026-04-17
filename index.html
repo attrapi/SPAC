@@ -465,7 +465,7 @@ td .empty-cell{color:var(--text4);font-style:italic;font-size:.75rem}
       </button>
       <button class="btn btn-primary" onclick="exportCSV()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exportar CSV
+        Exportar Excel
       </button>
     </div>
   </div>
@@ -529,6 +529,7 @@ let sortCol = -1;
 let sortAsc = true;
 let prevRowCount = 0;
 let filterSelects = {};
+let tagColumns = new Set();
 let fetchAttempts = 0;
 let workingMethod = null; // remembers which fetch method works
 
@@ -793,11 +794,27 @@ function renderStats() {
 // ═══════════════════════════════════════════
 // FILTERS
 // ═══════════════════════════════════════════
+function computeTagColumns() {
+  tagColumns = new Set();
+  const isUrlHeader = h => /liga|url|http/i.test(h || '');
+  allHeaders.forEach((h, i) => {
+    if (isUrlHeader(h)) return;
+    const values = allData.map(r => (r[i] || '').trim()).filter(Boolean);
+    if (!values.length) return;
+    const unique = new Set(values);
+    const maxLen = Math.max(...values.map(v => v.length));
+    if (unique.size >= 2 && unique.size <= 60 && maxLen < 45) {
+      tagColumns.add(i);
+    }
+  });
+}
+
 function buildFilters() {
   const group = document.getElementById('filterGroup');
   group.innerHTML = '';
   group.classList.remove('expanded');
   filterSelects = {};
+  computeTagColumns();
 
   const isAllowed = h => /proy|tram|trám/i.test(h || '');
 
@@ -928,7 +945,7 @@ function renderTable() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           comprasmx
         </a></td>`;
-      } else if (filterSelects[ci] && val && val.length < 45) {
+      } else if (tagColumns.has(ci) && val && val.length < 45) {
         html += `<td><span class="cell-tag ${TAG_CLASSES[ci % 8]}">${esc(val)}</span></td>`;
       } else if (val) {
         html += `<td title="${esc(val)}">${esc(val)}</td>`;
@@ -994,14 +1011,31 @@ function changePerPage(v) { perPage = parseInt(v); currentPage = 1; renderTable(
 // ═══════════════════════════════════════════
 function exportCSV() {
   if (!filteredData.length) { showToast('No hay datos para exportar', 'error'); return; }
-  let csv = allHeaders.map(h => `"${h}"`).join(',') + '\n';
-  filteredData.forEach(r => { csv += r.map(c => `"${(c||'').replace(/"/g,'""')}"`).join(',') + '\n'; });
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+
+  const thStyle = 'background:#6b2035;color:#ffffff;font-weight:700;padding:8px 10px;border:1px solid #4a1525;text-align:left;font-family:Calibri,Arial,sans-serif;font-size:11pt;';
+  const tdStyle = 'padding:6px 10px;border:1px solid #d4cbbf;font-family:Calibri,Arial,sans-serif;font-size:11pt;vertical-align:top;';
+
+  let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>SPAC</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>
+<body><table style="border-collapse:collapse"><thead><tr>`;
+  html += allHeaders.map(h => `<th style="${thStyle}">${esc(displayHeader(h))}</th>`).join('');
+  html += '</tr></thead><tbody>';
+  filteredData.forEach(r => {
+    html += '<tr>' + allHeaders.map((_, ci) => {
+      const v = (r[ci] || '').trim();
+      const url = extractUrl(v);
+      if (url) return `<td style="${tdStyle}"><a href="${esc(url)}">comprasmx</a></td>`;
+      return `<td style="${tdStyle}">${esc(v)}</td>`;
+    }).join('') + '</tr>';
+  });
+  html += '</tbody></table></body></html>';
+
+  const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `SPAC_datos_${new Date().toISOString().slice(0,10)}.csv`;
+  a.download = `SPAC_datos_${new Date().toISOString().slice(0,10)}.xls`;
   a.click();
-  showToast('CSV descargado correctamente', 'success');
+  showToast('Excel descargado correctamente', 'success');
 }
 
 // ═══════════════════════════════════════════
