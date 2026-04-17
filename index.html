@@ -804,7 +804,7 @@ function buildFilters() {
     unique.sort((a, b) => a.localeCompare(b, 'es'));
     const sel = document.createElement('select');
     sel.className = 'filter-select';
-    sel.innerHTML = `<option value="">▾ ${esc(displayHeader(h))}</option>` +
+    sel.innerHTML = `<option value="">${esc(displayHeader(h))}</option>` +
       unique.map(v => `<option value="${esc(v)}">${esc(v.length > 35 ? v.slice(0,32) + '…' : v)}</option>`).join('');
     sel.addEventListener('change', () => {
       sel.classList.toggle('active', !!sel.value);
