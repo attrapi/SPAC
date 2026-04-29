@@ -1083,9 +1083,8 @@ body{
         <div class="cnstl-net-head">
           <h3>Estimaciones pendientes · Distribución por proyecto</h3>
           <div class="cnstl-net-legend">
-            <span><span class="ld" style="background:linear-gradient(135deg,#a85568,#6b2035)"></span>SPAC</span>
-            <span><span class="ld" style="background:#1a6b5a"></span>Proyecto</span>
-            <span><span class="ld pulse-mini"></span>Crítico</span>
+            <span><span class="ld" style="background:linear-gradient(135deg,#a85568,#6b2035)"></span>Proy. Ferr.</span>
+            <span><span class="ld pulse-mini"></span>Crítico (bitácora)</span>
           </div>
         </div>
         <div id="r2Network" class="cnstl-net-canvas"></div>
@@ -1681,7 +1680,8 @@ function renderNetwork() {
 
   // Hub
   html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#r2hub)" stroke="#fff" stroke-width="3" filter="url(#r2glow)"/>`;
-  html += `<text x="${cx}" y="${hubY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="14" font-weight="800">SPAC</text>`;
+  html += `<text x="${cx}" y="${hubY - 6}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="11" font-weight="800" letter-spacing=".05em">PROY.</text>`;
+  html += `<text x="${cx}" y="${hubY + 8}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="11" font-weight="800" letter-spacing=".05em">FERR.</text>`;
 
   // Proyectos (con total y count)
   projects.forEach((p, pi) => {
