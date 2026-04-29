@@ -471,6 +471,130 @@ body{
   font-size:.78rem;font-style:italic;
 }
 
+/* RESUMEN 2 — layout tipo slide horizontal */
+.slide{max-width:1500px;margin:1.5rem auto 2rem;padding:0 2.5rem}
+.slide-frame{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:2.4rem 2.8rem;
+  box-shadow:0 4px 28px rgba(26,22,18,.08);
+  display:flex;flex-direction:column;gap:2rem;
+}
+
+.slide-hero{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding-bottom:1.4rem;border-bottom:2px solid var(--gov-dark);gap:1rem;flex-wrap:wrap;
+}
+.slide-hero h2{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;color:var(--gov-dark);font-weight:700;letter-spacing:-.02em;line-height:1.1;
+}
+.slide-hero p{font-size:.85rem;color:var(--text3);margin-top:.35rem;font-weight:500}
+.slide-hero-meta{
+  font-size:.7rem;color:var(--text4);text-align:right;
+  text-transform:uppercase;letter-spacing:.1em;font-weight:700;
+}
+
+.slide-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;
+}
+.slide-stat{position:relative;padding-left:1.25rem}
+.slide-stat:not(:first-child)::before{
+  content:'';position:absolute;left:0;top:.3rem;bottom:.3rem;
+  width:1px;background:var(--border);
+}
+.slide-stat .num{
+  font-size:2.3rem;font-weight:800;font-variant-numeric:tabular-nums;
+  letter-spacing:-.03em;line-height:1;color:var(--text);
+}
+.slide-stat .lbl{
+  font-size:.7rem;color:var(--text3);font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;margin-top:.45rem;
+}
+.slide-stat.accent-1 .num{color:var(--gov-dark)}
+.slide-stat.accent-2 .num{color:var(--bad)}
+.slide-stat.accent-3 .num{color:var(--teal)}
+.slide-stat.accent-4 .num{color:var(--gold)}
+
+.slide-section{display:flex;flex-direction:column;gap:.85rem}
+.slide-section-head{
+  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);padding-bottom:.55rem;
+}
+.slide-section-head h3{
+  font-family:'Playfair Display',serif;
+  font-size:1.18rem;color:var(--gov-dark);font-weight:700;letter-spacing:-.01em;
+}
+.slide-section-head p{font-size:.78rem;color:var(--text3);font-weight:500}
+
+.slide-bar{
+  display:flex;height:38px;border-radius:6px;overflow:hidden;
+  border:1px solid var(--border);background:var(--surface2);
+}
+.slide-bar-seg{
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:.78rem;
+  text-shadow:0 1px 1px rgba(0,0,0,.35);
+  border-right:2px solid #fff;padding:0 .7rem;
+  white-space:nowrap;overflow:hidden;
+  transition:filter .15s;cursor:default;
+}
+.slide-bar-seg:last-child{border-right:none}
+.slide-bar-seg:hover{filter:brightness(1.12)}
+.slide-bar-legend{
+  display:flex;flex-wrap:wrap;gap:1.4rem;font-size:.78rem;color:var(--text2);
+}
+.slide-bar-legend > span{display:inline-flex;align-items:center;gap:.45rem;font-weight:500}
+.slide-bar-legend .sw{width:14px;height:14px;border-radius:3px}
+.slide-bar-legend strong{color:var(--text);font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums}
+
+.slide-projects{display:grid;grid-template-columns:1fr;gap:.8rem}
+.slide-proj-row{
+  display:grid;grid-template-columns:90px 1fr 180px;gap:1rem;align-items:center;
+}
+.slide-proj-tag{
+  font-weight:800;font-size:.8rem;letter-spacing:.06em;
+  padding:.5rem .8rem;border-radius:5px;color:#fff;text-align:center;
+}
+.slide-proj-bar{
+  height:34px;background:var(--surface2);
+  border-radius:5px;overflow:hidden;border:1px solid var(--border);display:flex;
+}
+.slide-proj-bar > div{
+  display:flex;align-items:center;padding:0 .65rem;
+  color:#fff;font-weight:700;font-size:.72rem;
+  text-shadow:0 1px 1px rgba(0,0,0,.35);
+  white-space:nowrap;overflow:hidden;border-right:1.5px solid #fff;
+  transition:filter .15s;cursor:default;
+}
+.slide-proj-bar > div:last-child{border-right:none}
+.slide-proj-bar > div:hover{filter:brightness(1.12)}
+.slide-proj-amt{
+  font-weight:800;font-size:1.05rem;color:var(--text);
+  text-align:right;font-variant-numeric:tabular-nums;line-height:1.05;
+}
+.slide-proj-amt small{
+  display:block;font-size:.62rem;color:var(--text3);font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;
+}
+
+.slide-strip{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;
+}
+.slide-strip-item{
+  background:var(--surface2);border-left:3px solid var(--gov-dark);
+  padding:.75rem .95rem;border-radius:0 5px 5px 0;
+}
+.ssi-id{
+  font-family:ui-monospace,Consolas,monospace;font-size:.72rem;
+  color:var(--text);font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;
+}
+.ssi-meta{font-size:.62rem;color:var(--text3);font-weight:600;margin-top:.2rem}
+.ssi-amt{
+  font-weight:800;font-size:1rem;color:var(--gov-dark);
+  margin-top:.3rem;font-variant-numeric:tabular-nums;
+}
+
 /* PROJECT BARS — versión compacta (Resumen) */
 .proj-list{display:flex;flex-direction:column;gap:.85rem}
 .proj-row{
@@ -625,6 +749,7 @@ body{
 <!-- TABS -->
 <nav class="tabs" role="tablist">
   <button class="tab active" data-tab="resumen" role="tab">Resumen</button>
+  <button class="tab" data-tab="resumen2" role="tab">Resumen 2</button>
   <button class="tab" data-tab="bitacoras" role="tab">Bitácoras de obra</button>
   <button class="tab" data-tab="estimaciones" role="tab">Estimaciones</button>
 </nav>
@@ -756,6 +881,52 @@ body{
       </div>
     </div>
 
+  </div>
+</section>
+
+<!-- ════════ RESUMEN 2 — vista horizontal tipo slide ════════ -->
+<section class="section" id="sec-resumen2">
+  <div class="slide">
+    <div class="slide-frame">
+
+      <div class="slide-hero">
+        <div>
+          <h2>Resumen ejecutivo</h2>
+          <p>Subdirección de Procesos Administrativos de Obra · vista horizontal</p>
+        </div>
+        <div class="slide-hero-meta">
+          Datos en vivo · <span id="r2Now">—</span>
+        </div>
+      </div>
+
+      <div class="slide-stats" id="r2Stats"></div>
+
+      <div class="slide-section">
+        <div class="slide-section-head">
+          <h3>Bitácoras de obra</h3>
+          <p>Distribución por estatus de registro de notas</p>
+        </div>
+        <div class="slide-bar" id="r2BitacorasBar"></div>
+        <div class="slide-bar-legend" id="r2BitacorasLegend"></div>
+      </div>
+
+      <div class="slide-section">
+        <div class="slide-section-head">
+          <h3>Estimaciones</h3>
+          <p>Monto pendiente de pago por proyecto · cada barra suma 100% de su proyecto</p>
+        </div>
+        <div class="slide-projects" id="r2Projects"></div>
+      </div>
+
+      <div class="slide-section">
+        <div class="slide-section-head">
+          <h3>Contratos con mayor monto pendiente</h3>
+          <p>Top 5 a nivel global</p>
+        </div>
+        <div class="slide-strip" id="r2TopContracts"></div>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -1194,6 +1365,101 @@ function renderContractList() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// RENDER RESUMEN 2 — vista horizontal tipo slide
+// ══════════════════════════════════════════════════════════════
+function renderResumen2() {
+  // Hero meta
+  const now = new Date();
+  document.getElementById('r2Now').textContent =
+    now.toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
+
+  // Stats — 4 KPIs sin cajas
+  const totalContracts = eData.length;
+  const totalPend = eData.reduce((s, c) => s + (c.montoPendiente || 0), 0);
+  const totalBitacoras = bData.length;
+  const projects = new Set(eData.map(c => c.proy)).size;
+
+  document.getElementById('r2Stats').innerHTML = `
+    <div class="slide-stat accent-1"><div class="num">${totalContracts.toLocaleString('es-MX')}</div><div class="lbl">Contratos en estimaciones</div></div>
+    <div class="slide-stat accent-2"><div class="num">${esc(fmtMoney(totalPend))}</div><div class="lbl">Pendiente de pago</div></div>
+    <div class="slide-stat accent-3"><div class="num">${totalBitacoras.toLocaleString('es-MX')}</div><div class="lbl">Bitácoras de obra</div></div>
+    <div class="slide-stat accent-4"><div class="num">${projects.toLocaleString('es-MX')}</div><div class="lbl">Proyectos</div></div>
+  `;
+
+  // Bitácoras — barra apilada horizontal
+  const bOk   = bData.filter(r => r.status === 'ok').length;
+  const bWarn = bData.filter(r => r.status === 'warn').length;
+  const bBad  = bData.filter(r => r.status === 'bad').length;
+  const bNa   = bData.filter(r => r.status === 'na').length;
+  const segs = [
+    { count: bBad,  label: 'Críticos',     color: '#c75b39' },
+    { count: bWarn, label: 'En atención',  color: '#b8860b' },
+    { count: bOk,   label: 'Al corriente', color: '#1a6b5a' },
+    { count: bNa,   label: 'Sin datos',    color: '#8a7f73' },
+  ].filter(s => s.count > 0);
+  const bBar = document.getElementById('r2BitacorasBar');
+  bBar.innerHTML = segs.length
+    ? segs.map(s => `<div class="slide-bar-seg" style="flex:${s.count};background:${s.color}" title="${esc(s.label)}: ${s.count}">${s.count} · ${esc(s.label)}</div>`).join('')
+    : '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:.8rem">Sin datos</div>';
+
+  document.getElementById('r2BitacorasLegend').innerHTML = `
+    <span><span class="sw" style="background:#c75b39"></span><strong>${bBad}</strong> críticos (&gt; 120 d)</span>
+    <span><span class="sw" style="background:#b8860b"></span><strong>${bWarn}</strong> en atención (60–120 d)</span>
+    <span><span class="sw" style="background:#1a6b5a"></span><strong>${bOk}</strong> al corriente (&lt; 60 d)</span>
+    <span><span class="sw" style="background:#8a7f73"></span><strong>${bNa}</strong> sin datos</span>
+  `;
+
+  // Estimaciones — una fila por proyecto, barra horizontal con segmentos
+  const pending = eData.filter(c => c.montoPendiente != null && c.montoPendiente > 0);
+  const byProj = new Map();
+  for (const c of pending) {
+    if (!byProj.has(c.proy)) byProj.set(c.proy, []);
+    byProj.get(c.proy).push(c);
+  }
+  const projCols = [...byProj.entries()]
+    .map(([proj, contracts]) => ({
+      proj,
+      contracts: contracts.slice().sort((a, b) => b.montoPendiente - a.montoPendiente),
+      total: contracts.reduce((s, c) => s + c.montoPendiente, 0),
+    }))
+    .sort((a, b) => b.total - a.total);
+
+  document.getElementById('r2Projects').innerHTML = projCols.map(p => {
+    const baseColor = getProjectColor(p.proj);
+    const inner = p.contracts.map(c => {
+      const pct = (c.montoPendiente / p.total * 100);
+      const showLabel = pct >= 8 ? esc(fmtMoney(c.montoPendiente)) : '';
+      return `<div style="flex:${c.montoPendiente};background:${baseColor}" title="${esc(c.contrato)} · ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct.toFixed(2)}%">${showLabel}</div>`;
+    }).join('');
+    return `
+      <div class="slide-proj-row">
+        <span class="slide-proj-tag" style="background:${baseColor}">${esc(p.proj)}</span>
+        <div class="slide-proj-bar">${inner}</div>
+        <div class="slide-proj-amt">${esc(fmtMoney(p.total))}<small>${p.contracts.length} contratos · 100%</small></div>
+      </div>
+    `;
+  }).join('') || `<div style="text-align:center;color:var(--text3);padding:1.2rem;font-size:.85rem">Sin contratos con monto pendiente</div>`;
+
+  // Top 5 contratos — global
+  const top5 = pending.slice().sort((a, b) => b.montoPendiente - a.montoPendiente).slice(0, 5);
+  const grandTotal = pending.reduce((s, c) => s + c.montoPendiente, 0);
+  document.getElementById('r2TopContracts').innerHTML = top5.length
+    ? top5.map(c => {
+        const baseColor = getProjectColor(c.proy);
+        const pct = grandTotal > 0 ? (c.montoPendiente / grandTotal * 100) : 0;
+        return `
+          <div class="slide-strip-item" style="border-left-color:${baseColor}">
+            <span class="ssi-id">${esc(c.contrato)}</span>
+            <div class="ssi-meta">${esc(c.proy)} · ${esc(c.tramo || '—')}</div>
+            <div class="ssi-amt" style="color:${baseColor}">${esc(fmtMoney(c.montoPendiente))}</div>
+            <div class="ssi-meta">${pct.toFixed(2)}% del total pendiente</div>
+          </div>
+        `;
+      }).join('')
+    : `<div style="text-align:center;color:var(--text3);padding:1rem;font-size:.85rem">Sin datos</div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
 // RENDER BITÁCORAS — resumen compacto
 // ══════════════════════════════════════════════════════════════
 const COLORS = { ok: '#1a6b5a', warn: '#b8860b', bad: '#c75b39', na: '#8a7f73' };
@@ -1539,6 +1805,8 @@ async function fetchAll() {
 
   await Promise.allSettled([fetchBitacoras(), fetchEstimaciones()]);
 
+  if (bData.length || eData.length) renderResumen2();
+
   if (_errors.length) {
     const box = document.getElementById('errorBox');
     box.innerHTML = `<div class="error-card">
@@ -1585,6 +1853,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'bitacoras' && bData.length) renderBDetail();
     if (btn.dataset.tab === 'estimaciones' && eData.length) renderEstimacionesDetail();
+    if (btn.dataset.tab === 'resumen2' && (bData.length || eData.length)) renderResumen2();
   });
 });
 
