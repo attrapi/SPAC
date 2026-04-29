@@ -828,6 +828,16 @@ body{
 .rt-badge.rt-ok{background:var(--ok)}
 .rt-badge.rt-na{background:var(--neutral)}
 
+.report-na-list{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem .7rem;
+  font-family:ui-monospace,Consolas,monospace;font-size:.74rem;
+  padding:.5rem 0 1rem;
+}
+.report-na-list > div{
+  padding:.32rem .55rem;background:var(--surface2);border-radius:3px;
+  color:var(--text);font-weight:600;border-left:3px solid var(--neutral);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 .report-footer{
   margin-top:1.8rem;padding-top:.9rem;border-top:1px solid var(--border);
   text-align:center;font-size:.7rem;color:var(--text3);
@@ -1727,8 +1737,12 @@ function renderAlertsNetwork() {
   }
 
   // Hub arriba, categorías en fila, tarjetas debajo.
-  // "Sin reportar" usa tarjetas compactas (24 px) en 2 columnas (mitad de ancho).
-  const cardW = 200, cardGap = 7;
+  // "Sin reportar" usa tarjetas compactas (24 px) en 2 columnas con ancho extra
+  // para que el ID completo del contrato quepa sin recortes.
+  const cardW_normal = 200;        // tarjetas normales (Crítico / Atención)
+  const compactPairW = 260;        // ancho del par compacto en "Sin reportar"
+  const groupSpan = Math.max(cardW_normal, compactPairW);
+  const cardGap = 7;
   const cardH_normal = 40, cardH_compact = 24;
   const cardHFor = g => g.key === 'na' ? cardH_compact : cardH_normal;
   const colsFor  = g => g.key === 'na' ? 2 : 1;
@@ -1736,8 +1750,8 @@ function renderAlertsNetwork() {
   const stackHFor  = g => numRowsFor(g) * (cardHFor(g) + cardGap);
   const hubR = 36, statusR = 26;
   const hubY = 60, statusY = 175, contractStartY = 240;
-  const groupGap = Math.max(cardW + 50, 280);
-  const W = Math.max(820, groupGap * groups.length + 60);
+  const groupGap = groupSpan + 50;
+  const W = Math.max(1080, groupGap * groups.length + 60);
   const cx = W / 2;
   const H = contractStartY + Math.max(...groups.map(stackHFor)) + 30;
 
@@ -1795,29 +1809,28 @@ function renderAlertsNetwork() {
   });
 
   // Tarjetas (foreignObject) — compactas en 2 cols para "Sin reportar"
+  const compactCardW = (compactPairW - cardGap) / 2; // ancho de cada tarjeta compacta
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
     const ch = cardHFor(g);
-    const cols = colsFor(g);
-    const compactW = (cardW - cardGap) / 2; // ancho cuando hay 2 columnas
     g.items.forEach((b, bi) => {
       if (g.key === 'na') {
-        const row = Math.floor(bi / cols);
-        const col = bi % cols;
-        const cardX = sx - cardW / 2 + col * (compactW + cardGap);
+        const row = Math.floor(bi / 2);
+        const col = bi % 2;
+        const cardX = sx - compactPairW / 2 + col * (compactCardW + cardGap);
         const cardY = contractStartY + row * (ch + cardGap);
-        html += `<foreignObject x="${cardX}" y="${cardY}" width="${compactW}" height="${ch}">
+        html += `<foreignObject x="${cardX}" y="${cardY}" width="${compactCardW}" height="${ch}">
           <div xmlns="http://www.w3.org/1999/xhtml" class="ccc ccc-compact" style="--proj-color:${g.color}" title="${esc(b.contract)} · sin reportar">
             <div class="ccc-id">${esc(b.contract)}</div>
           </div>
         </foreignObject>`;
       } else {
-        const cardX = sx - cardW / 2;
+        const cardX = sx - cardW_normal / 2;
         const cardY = contractStartY + bi * (ch + cardGap);
         const days = `${b.label} d`;
         const tooltip = `${b.contract} · ${g.label} · ${days}`;
         const isCrit = g.key === 'bad';
-        html += `<foreignObject x="${cardX}" y="${cardY}" width="${cardW}" height="${ch}">
+        html += `<foreignObject x="${cardX}" y="${cardY}" width="${cardW_normal}" height="${ch}">
           <div xmlns="http://www.w3.org/1999/xhtml" class="ccc${isCrit ? ' critical' : ''}" style="--proj-color:${g.color}" title="${esc(tooltip)}">
             <div class="ccc-id">${esc(b.contract)}</div>
             <div class="ccc-row">
@@ -2485,15 +2498,9 @@ function renderReportResumen2() {
           <span class="rt-badge rt-na">Sin reportar</span>
           Sin datos · ${byStatus.na.length} contratos
         </h3>
-        <table class="report-tbl">
-          <thead><tr><th>Contrato</th><th>Estado</th></tr></thead>
-          <tbody>
-            ${byStatus.na.map(b => `<tr>
-              <td>${esc(b.contract)}</td>
-              <td><em style="color:#8a7f73">sin datos</em></td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
+        <div class="report-na-list">
+          ${byStatus.na.map(b => `<div>${esc(b.contract)}</div>`).join('')}
+        </div>
       ` : ''}
 
       ${(!byStatus.bad.length && !byStatus.warn.length && !byStatus.na.length)
