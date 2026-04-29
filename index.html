@@ -559,11 +559,13 @@ body{
 .cnstl-net-canvas{
   flex:1;
   background:
-    radial-gradient(ellipse at 50% 50%,rgba(107,32,53,.05),transparent 60%),
+    radial-gradient(ellipse at 50% 30%,rgba(107,32,53,.05),transparent 60%),
     linear-gradient(135deg,#fafaf8,#f3eee7);
-  min-height:440px;position:relative;
+  min-height:440px;position:relative;overflow:auto;
 }
-.cnstl-net-canvas svg{display:block;width:100%;height:100%;min-height:440px}
+.cnstl-net-canvas::-webkit-scrollbar{width:8px;height:8px}
+.cnstl-net-canvas::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.cnstl-net-canvas svg{display:block;margin:0 auto}
 .cnstl-net-foot{
   padding:.55rem 1.2rem;background:var(--surface2);
   border-top:1px solid var(--border);font-size:.66rem;
@@ -766,6 +768,158 @@ body{
   color:var(--text2);word-break:break-all;
 }
 
+/* CONTRACT CARD inside SVG (Resumen 2 network) */
+.ccc{
+  display:flex;flex-direction:column;justify-content:center;
+  width:100%;height:100%;background:#fff;
+  border:1.5px solid var(--proj-color, #d4cbbf);
+  border-left:4px solid var(--proj-color, #6b2035);
+  border-radius:5px;padding:4px 8px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  cursor:default;transition:transform .15s, box-shadow .15s;
+  overflow:hidden;
+}
+.ccc:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,.18);z-index:20;position:relative}
+.ccc.critical{
+  border-color:#c75b39;border-left-color:#c75b39;
+  animation:ccc-pulse 1.8s ease-in-out infinite;
+}
+@keyframes ccc-pulse{
+  0%,100%{box-shadow:0 1px 3px rgba(0,0,0,.08), 0 0 0 0 rgba(199,91,57,.5)}
+  50%{box-shadow:0 1px 3px rgba(0,0,0,.08), 0 0 0 8px rgba(199,91,57,0)}
+}
+.ccc-id{
+  font-family:ui-monospace,Consolas,monospace;font-weight:700;color:#1a1612;
+  font-size:10px;line-height:1.15;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ccc-row{display:flex;justify-content:space-between;margin-top:3px;font-size:10px;gap:6px}
+.ccc-monto{font-weight:700;color:#1a1612;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ccc-pct{color:#5c5347;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* State badge en alertas de bitácoras */
+.a-status-badge{
+  display:inline-block;font-size:.55rem;font-weight:800;
+  padding:.18rem .48rem;border-radius:3px;letter-spacing:.06em;
+  text-transform:uppercase;color:#fff;margin-right:.4rem;
+}
+.a-status-badge.bad{background:var(--bad)}
+.a-status-badge.warn{background:var(--warn)}
+.a-status-badge.na{background:var(--neutral)}
+.a-status-badge.ok{background:var(--ok)}
+
+/* REPORTE — modal */
+.report-modal{
+  position:fixed;inset:0;background:rgba(26,22,18,.6);
+  z-index:1000;display:none;
+  align-items:flex-start;justify-content:center;
+  padding:2rem;overflow-y:auto;
+  backdrop-filter:blur(2px);
+}
+.report-modal.active{display:flex}
+.report-content{
+  background:#fff;width:100%;max-width:920px;
+  border-radius:12px;box-shadow:var(--shadow-lg);
+  padding:1.5rem 2.4rem 2.5rem;
+}
+.report-actions{
+  display:flex;gap:.6rem;justify-content:flex-end;margin-bottom:1.2rem;
+  padding-bottom:.7rem;border-bottom:1px solid var(--border);
+  position:sticky;top:-1.5rem;background:#fff;z-index:5;padding-top:1rem;
+  margin:-1.5rem -2.4rem 1.2rem;padding-left:2.4rem;padding-right:2.4rem;
+}
+
+.report-header{
+  text-align:center;padding:1.2rem 0 1.4rem;
+  border-bottom:2px solid var(--gov-dark);margin-bottom:1.5rem;
+}
+.report-header h1{
+  font-family:'Playfair Display',serif;
+  font-size:1.85rem;color:var(--gov-dark);font-weight:700;margin-bottom:.3rem;letter-spacing:-.02em;
+}
+.report-org{
+  font-size:.8rem;color:var(--text2);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+}
+.report-date{font-size:.78rem;color:var(--text3);margin-top:.4rem;font-style:italic}
+
+.report-section{margin-bottom:1.8rem}
+.report-section h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.2rem;color:var(--gov-dark);font-weight:700;
+  border-bottom:1px solid var(--border);padding-bottom:.4rem;margin-bottom:.7rem;
+}
+.report-section .report-sub{font-size:.82rem;color:var(--text3);margin-bottom:.7rem}
+
+.report-kpis{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;
+  padding:1rem 1.2rem;background:var(--surface2);border-radius:8px;
+}
+.report-kpis > div{display:flex;flex-direction:column;gap:.18rem}
+.report-kpis .rk-num{
+  font-size:1.4rem;font-weight:800;color:var(--gov-dark);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1;
+}
+.report-kpis .rk-lbl{font-size:.68rem;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+.report-status-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin-bottom:.9rem}
+.report-status-grid .rs{
+  padding:.55rem .9rem;border-radius:5px;font-size:.8rem;
+  display:flex;align-items:center;gap:.55rem;
+}
+.report-status-grid .rs strong{font-size:1.05rem;font-weight:800;font-variant-numeric:tabular-nums}
+.report-status-grid .bad{background:rgba(199,91,57,.1);color:var(--bad);border-left:3px solid var(--bad)}
+.report-status-grid .warn{background:rgba(184,134,11,.12);color:var(--warn);border-left:3px solid var(--warn)}
+.report-status-grid .ok{background:rgba(26,107,90,.1);color:var(--ok);border-left:3px solid var(--ok)}
+.report-status-grid .na{background:var(--surface2);color:var(--neutral);border-left:3px solid var(--neutral)}
+
+.report-tbl{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:1.2rem}
+.report-tbl thead th{
+  background:var(--gov-dark);color:#fff;padding:.55rem .85rem;text-align:left;font-weight:700;
+  font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;
+}
+.report-tbl tbody td{padding:.45rem .85rem;border-bottom:1px solid var(--border);color:var(--text2)}
+.report-tbl tbody td:first-child{font-family:ui-monospace,Consolas,monospace;font-weight:700;color:var(--text)}
+.report-tbl tbody td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--text);white-space:nowrap}
+.report-tbl tbody tr:nth-child(even){background:var(--surface2)}
+
+.report-proj-h{
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.92rem;color:var(--text2);
+  display:flex;align-items:center;gap:.55rem;margin:1.2rem 0 .55rem;font-weight:600;flex-wrap:wrap;
+}
+
+.rt-badge{
+  display:inline-flex;font-weight:800;font-size:.65rem;
+  padding:.25rem .55rem;border-radius:4px;color:#fff;letter-spacing:.05em;text-transform:uppercase;
+}
+.rt-badge.rt-bad{background:var(--bad)}
+.rt-badge.rt-warn{background:var(--warn)}
+.rt-badge.rt-ok{background:var(--ok)}
+.rt-badge.rt-na{background:var(--neutral)}
+
+.report-footer{
+  margin-top:1.8rem;padding-top:.9rem;border-top:1px solid var(--border);
+  text-align:center;font-size:.7rem;color:var(--text3);
+}
+.report-footer strong{color:var(--gov-dark)}
+
+@media print{
+  body * {visibility:hidden}
+  .report-modal,.report-modal *{visibility:visible}
+  .report-modal{
+    position:absolute;background:#fff;padding:0;display:block !important;
+    overflow:visible;inset:auto;height:auto;
+  }
+  .report-modal .report-actions{display:none !important}
+  .report-content{
+    max-width:none;width:100%;box-shadow:none;border-radius:0;
+    padding:1cm 1.5cm;
+  }
+  .report-section{page-break-inside:avoid}
+  .report-tbl{page-break-inside:auto}
+  .report-tbl tr{page-break-inside:avoid;page-break-after:auto}
+}
+
 /* TOAST */
 .toast{
   position:fixed;bottom:2rem;right:2rem;
@@ -842,8 +996,12 @@ body{
   <div class="section-head">
     <div>
       <h2>Resumen ejecutivo</h2>
-      <p>Indicadores clave de las 5 áreas temáticas de la subdirección · datos en vivo</p>
+      <p>Indicadores clave de las áreas temáticas de la subdirección · datos en vivo</p>
     </div>
+    <button class="btn btn-primary" onclick="openReport()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Generar reporte
+    </button>
   </div>
 
   <div class="summary-grid">
@@ -965,6 +1123,10 @@ body{
       <div class="cnstl-status">
         <span class="cnstl-pulse"></span>
         En vivo · <span id="r2Now">—</span>
+        <button class="btn btn-primary" onclick="openReport()" style="margin-left:.7rem">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Reporte
+        </button>
       </div>
     </div>
 
@@ -1120,6 +1282,20 @@ body{
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- REPORTE MODAL -->
+<div class="report-modal" id="reportModal" onclick="if(event.target===this)closeReport()">
+  <div class="report-content">
+    <div class="report-actions">
+      <button class="btn btn-outline" onclick="closeReport()">Cerrar</button>
+      <button class="btn btn-primary" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir / PDF
+      </button>
+    </div>
+    <div id="reportBody"></div>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════════════════
@@ -1500,16 +1676,19 @@ function renderResumen2() {
   document.getElementById('r2CritList').innerHTML = alerts.length
     ? alerts.map(b => {
         const cls = b.status === 'bad' ? '' : (b.status === 'warn' ? 'warn' : 'na');
-        const meta = b.status === 'bad' ? 'Crítico · más de 120 días' :
-                     b.status === 'warn' ? 'En atención · 60–120 días' :
-                     'Sin reportar';
+        const stateLabel = b.status === 'bad' ? 'Crítico' :
+                           b.status === 'warn' ? 'Atención' :
+                           'Sin reportar';
+        const stateDetail = b.status === 'bad' ? '&gt; 120 días' :
+                            b.status === 'warn' ? '60–120 días' :
+                            'sin datos';
         const days = b.status === 'na' ? 'sin datos' : `${b.label} d`;
         return `
-          <div class="cnstl-alert-item ${cls}" title="${esc(b.contract)} · ${esc(meta)}">
+          <div class="cnstl-alert-item ${cls}" title="${esc(b.contract)} · ${stateLabel} · ${esc(stateDetail)}">
             <span class="a-pulse"></span>
             <div>
               <div class="a-id">${esc(b.contract)}</div>
-              <div class="a-meta">${esc(meta)}</div>
+              <div class="a-meta"><span class="a-status-badge ${b.status}">${esc(stateLabel)}</span>${stateDetail}</div>
             </div>
             <div class="a-days">${esc(days)}</div>
           </div>
@@ -1525,9 +1704,6 @@ function renderNetwork() {
   const container = document.getElementById('r2Network');
   if (!container) return;
 
-  const W = 700, H = 460;
-  const cx = W / 2, cy = H / 2;
-
   const pending = eData.filter(c => c.montoPendiente != null && c.montoPendiente > 0);
   if (!pending.length) {
     container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:440px;color:var(--text3)">Sin datos para visualizar</div>`;
@@ -1542,50 +1718,26 @@ function renderNetwork() {
   const projects = [...byProj.entries()].map(([proj, contracts]) => ({
     proj,
     contracts: contracts.slice().sort((a, b) => b.montoPendiente - a.montoPendiente),
-  }));
+    total: contracts.reduce((s, c) => s + c.montoPendiente, 0),
+  })).sort((a, b) => b.total - a.total);
 
   const criticalSet = new Set(bData.filter(b => b.status === 'bad').map(b => b.contract));
 
-  const allMontos = pending.map(c => c.montoPendiente);
-  const maxMonto = Math.max(...allMontos);
-  const radiusFor = m => 6 + Math.sqrt(m / maxMonto) * 18;
+  // Layout tipo árbol: SPAO arriba, proyectos en fila, contratos como tarjetas debajo
+  const cardW = 200, cardH = 40, cardGap = 7;
+  const hubR = 36, projR = 26;
+  const hubY = 60, projectY = 175, contractStartY = 240;
+  const projectGap = Math.max(cardW + 50, 280);
+  const W = Math.max(820, projectGap * projects.length + 60);
+  const cx = W / 2;
+  const maxContracts = Math.max(...projects.map(p => p.contracts.length));
+  const H = contractStartY + maxContracts * (cardH + cardGap) + 30;
 
-  const projectOrbit = 105;
-  const contractOrbit = 195;
+  const projectXs = projects.map((_, pi) =>
+    (W / (projects.length + 1)) * (pi + 1)
+  );
 
-  let edges = [];
-  let nodes = [];
-
-  nodes.push({ type: 'hub', x: cx, y: cy, r: 38, label: 'SPAO' });
-
-  projects.forEach((p, pi) => {
-    const angle = (pi / projects.length) * Math.PI * 2 - Math.PI / 2;
-    const px = cx + projectOrbit * Math.cos(angle);
-    const py = cy + projectOrbit * Math.sin(angle);
-    const pcolor = getProjectColor(p.proj);
-
-    edges.push({ x1: cx, y1: cy, x2: px, y2: py, color: pcolor, w: 2.5, op: 0.7 });
-    nodes.push({ type: 'project', x: px, y: py, r: 26, label: p.proj, color: pcolor });
-
-    const arcWidth = (Math.PI * 2 / projects.length) * 0.85;
-    const n = p.contracts.length;
-    p.contracts.forEach((c, ci) => {
-      const offset = n === 1 ? 0 : (ci / (n - 1) - 0.5) * arcWidth;
-      const ca = angle + offset;
-      const x2 = cx + contractOrbit * Math.cos(ca);
-      const y2 = cy + contractOrbit * Math.sin(ca);
-      const r = radiusFor(c.montoPendiente);
-      const isCritical = criticalSet.has(c.contrato);
-
-      edges.push({ x1: px, y1: py, x2, y2, color: pcolor, w: 1, op: 0.35 });
-      nodes.push({
-        type: 'contract', x: x2, y: y2, r,
-        color: pcolor, critical: isCritical, contract: c
-      });
-    });
-  });
-
-  let html = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">`;
+  let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
   html += `<defs>
     <radialGradient id="r2hub" cx="40%" cy="40%" r="60%">
       <stop offset="0%" stop-color="#a85568"/>
@@ -1601,31 +1753,66 @@ function renderNetwork() {
   </defs>`;
   html += `<rect width="${W}" height="${H}" fill="url(#r2grid)"/>`;
 
-  edges.forEach(e => {
-    html += `<line x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" stroke="${e.color}" stroke-width="${e.w}" stroke-opacity="${e.op}" stroke-linecap="round"/>`;
+  // Edges: hub -> proyectos
+  projects.forEach((p, pi) => {
+    const px = projectXs[pi];
+    const pcolor = getProjectColor(p.proj);
+    html += `<path d="M ${cx} ${hubY + hubR} C ${cx} ${(hubY + projectY) / 2}, ${px} ${(hubY + projectY) / 2}, ${px} ${projectY - projR}" stroke="${pcolor}" stroke-width="2" stroke-opacity="0.7" fill="none" stroke-linecap="round"/>`;
   });
 
-  nodes.filter(n => n.critical).forEach(n => {
-    html += `<circle cx="${n.x}" cy="${n.y}" r="${n.r + 5}" fill="none" stroke="#c75b39" stroke-width="2" opacity="0.7">
-      <animate attributeName="r" values="${n.r + 3};${n.r + 14};${n.r + 3}" dur="1.8s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.7;0;0.7" dur="1.8s" repeatCount="indefinite"/>
-    </circle>`;
+  // Línea vertical punteada por proyecto, recorriendo sus tarjetas
+  projects.forEach((p, pi) => {
+    const px = projectXs[pi];
+    const pcolor = getProjectColor(p.proj);
+    const lineEnd = contractStartY + (p.contracts.length - 1) * (cardH + cardGap) + cardH / 2;
+    html += `<line x1="${px}" y1="${projectY + projR + 18}" x2="${px}" y2="${lineEnd}" stroke="${pcolor}" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3,4" stroke-linecap="round"/>`;
   });
 
-  nodes.forEach(n => {
-    if (n.type === 'hub') {
-      html += `<circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="url(#r2hub)" stroke="#fff" stroke-width="3" filter="url(#r2glow)"/>`;
-      html += `<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="14" font-weight="800">${esc(n.label)}</text>`;
-    } else if (n.type === 'project') {
-      html += `<circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.color}" stroke="#fff" stroke-width="2.5"/>`;
-      html += `<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="11" font-weight="800">${esc(n.label)}</text>`;
-    } else {
-      const tooltip = `${n.contract.contrato} — ${fmtMoneyFull(n.contract.montoPendiente)}${n.critical ? ' · CRÍTICO en bitácora' : ''}`;
-      html += `<g style="cursor:pointer">
-        <title>${esc(tooltip)}</title>
-        <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.color}" fill-opacity="0.85" stroke="#fff" stroke-width="1.5"/>
-      </g>`;
-    }
+  // Pequeñas líneas horizontales que conectan cada tarjeta con la línea vertical
+  projects.forEach((p, pi) => {
+    const px = projectXs[pi];
+    const pcolor = getProjectColor(p.proj);
+    p.contracts.forEach((c, ci) => {
+      const cardLeftEdge = px - cardW / 2;
+      const cardCenterY = contractStartY + ci * (cardH + cardGap) + cardH / 2;
+      html += `<line x1="${px}" y1="${cardCenterY}" x2="${px}" y2="${cardCenterY}" stroke="${pcolor}" stroke-width="1.5" stroke-opacity="0.4"/>`;
+    });
+  });
+
+  // Hub
+  html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#r2hub)" stroke="#fff" stroke-width="3" filter="url(#r2glow)"/>`;
+  html += `<text x="${cx}" y="${hubY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="14" font-weight="800">SPAO</text>`;
+
+  // Proyectos (con total y count)
+  projects.forEach((p, pi) => {
+    const px = projectXs[pi];
+    const pcolor = getProjectColor(p.proj);
+    html += `<circle cx="${px}" cy="${projectY}" r="${projR}" fill="${pcolor}" stroke="#fff" stroke-width="2.5" filter="url(#r2glow)"/>`;
+    html += `<text x="${px}" y="${projectY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="12" font-weight="800">${esc(p.proj)}</text>`;
+    html += `<text x="${px}" y="${projectY + projR + 14}" text-anchor="middle" fill="#1a1612" font-size="11" font-weight="800">${esc(fmtMoney(p.total))}</text>`;
+    html += `<text x="${px}" y="${projectY + projR + 28}" text-anchor="middle" fill="#8a7f73" font-size="9" font-weight="600">${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'} · 100%</text>`;
+  });
+
+  // Tarjetas de contratos (foreignObject con HTML)
+  projects.forEach((p, pi) => {
+    const px = projectXs[pi];
+    const pcolor = getProjectColor(p.proj);
+    p.contracts.forEach((c, ci) => {
+      const isCritical = criticalSet.has(c.contrato);
+      const cardX = px - cardW / 2;
+      const cardY = contractStartY + ci * (cardH + cardGap);
+      const pct = p.total > 0 ? (c.montoPendiente / p.total * 100).toFixed(1) : '0';
+      const tooltip = `${c.contrato} — ${fmtMoneyFull(c.montoPendiente)} · ${pct}%${isCritical ? ' · CRÍTICO en bitácora' : ''}`;
+      html += `<foreignObject x="${cardX}" y="${cardY}" width="${cardW}" height="${cardH}">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="ccc${isCritical ? ' critical' : ''}" style="--proj-color:${pcolor}" title="${esc(tooltip)}">
+          <div class="ccc-id">${esc(c.contrato)}</div>
+          <div class="ccc-row">
+            <span class="ccc-monto">${esc(fmtMoney(c.montoPendiente))}</span>
+            <span class="ccc-pct">${pct}%${isCritical ? ' · ⚠' : ''}</span>
+          </div>
+        </div>
+      </foreignObject>`;
+    });
   });
 
   html += `</svg>`;
@@ -2044,6 +2231,172 @@ async function fetchAll() {
 
   btn.classList.remove('spinning');
 }
+
+// ══════════════════════════════════════════════════════════════
+// REPORTE — modal estructurado e imprimible
+// ══════════════════════════════════════════════════════════════
+function openReport() {
+  renderReport();
+  document.getElementById('reportModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReport() {
+  document.getElementById('reportModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function renderReport() {
+  const now = new Date();
+  const dateStr = now.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
+
+  // Stats
+  const totalEstContracts = eData.length;
+  const totalPend = eData.reduce((s, c) => s + (c.montoPendiente || 0), 0);
+  const totalPaid = eData.reduce((s, c) => s + (c.montoPagado || 0), 0);
+  const totalEst  = eData.reduce((s, c) => s + (c.montoTotal || 0), 0);
+  const totalBitacoras = bData.length;
+  const projects = new Set(eData.map(c => c.proy)).size;
+  const critCount = bData.filter(b => b.status === 'bad').length;
+  const warnCount = bData.filter(b => b.status === 'warn').length;
+  const okCount   = bData.filter(b => b.status === 'ok').length;
+  const naCount   = bData.filter(b => b.status === 'na').length;
+
+  // Estimaciones agrupadas por proyecto
+  const byProj = new Map();
+  for (const c of eData) {
+    if (!byProj.has(c.proy)) byProj.set(c.proy, []);
+    byProj.get(c.proy).push(c);
+  }
+  const groupedEst = [...byProj.entries()].map(([proj, contracts]) => ({
+    proj,
+    contracts: contracts.slice().sort((a, b) => (b.montoPendiente || 0) - (a.montoPendiente || 0)),
+    total: contracts.reduce((s, c) => s + (c.montoPendiente || 0), 0)
+  })).sort((a, b) => b.total - a.total);
+
+  // Bitácoras ordenadas
+  const sortedBitacoras = bData.slice().sort((a, b) => {
+    const order = { bad: 0, warn: 1, na: 2, ok: 3 };
+    if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+    return (b.days || 0) - (a.days || 0);
+  });
+
+  const critContracts = bData.filter(b => b.status === 'bad').sort((a, b) => (b.days || 0) - (a.days || 0));
+
+  let html = `
+    <div class="report-header">
+      <h1>Reporte de seguimiento</h1>
+      <div class="report-org">Subdirección de Procesos Administrativos de Obra · ATTRAPI</div>
+      <div class="report-date">${esc(dateStr)}</div>
+    </div>
+
+    <section class="report-section">
+      <h2>1 · Resumen ejecutivo</h2>
+      <div class="report-kpis">
+        <div><span class="rk-num">${totalEstContracts.toLocaleString('es-MX')}</span><span class="rk-lbl">Contratos en estimaciones</span></div>
+        <div><span class="rk-num" style="color:var(--bad)">${esc(fmtMoney(totalPend))}</span><span class="rk-lbl">Pendiente de pago</span></div>
+        <div><span class="rk-num" style="color:var(--ok)">${esc(fmtMoney(totalPaid))}</span><span class="rk-lbl">Pagado</span></div>
+        <div><span class="rk-num">${esc(fmtMoney(totalEst))}</span><span class="rk-lbl">Total estimado</span></div>
+        <div><span class="rk-num">${totalBitacoras.toLocaleString('es-MX')}</span><span class="rk-lbl">Bitácoras seguidas</span></div>
+        <div><span class="rk-num">${projects.toLocaleString('es-MX')}</span><span class="rk-lbl">Proyectos</span></div>
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h2>2 · Bitácoras de obra</h2>
+      <p class="report-sub">Distribución por días sin registrar notas (umbral crítico: más de 120 días)</p>
+      <div class="report-status-grid">
+        <div class="rs bad"><strong>${critCount}</strong> Crítico · más de 120 días</div>
+        <div class="rs warn"><strong>${warnCount}</strong> En atención · 60 a 120 días</div>
+        <div class="rs ok"><strong>${okCount}</strong> Al corriente · menos de 60 días</div>
+        <div class="rs na"><strong>${naCount}</strong> Sin datos</div>
+      </div>
+      <table class="report-tbl">
+        <thead>
+          <tr><th>Contrato</th><th style="text-align:right">Días sin registrar</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          ${sortedBitacoras.map(b => {
+            const stateName = b.status === 'bad' ? 'Crítico' :
+                              b.status === 'warn' ? 'En atención' :
+                              b.status === 'ok' ? 'Al corriente' : 'Sin datos';
+            const daysLabel = b.status === 'na' ? '—' : b.label;
+            return `<tr>
+              <td>${esc(b.contract)}</td>
+              <td class="num">${esc(daysLabel)}</td>
+              <td><span class="rt-badge rt-${b.status}">${esc(stateName)}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="report-section">
+      <h2>3 · Estimaciones por proyecto</h2>
+      <p class="report-sub">Monto total estimado pendiente de pago, agrupado por proyecto ferroviario</p>
+      ${groupedEst.map(g => {
+        const pct = totalPend > 0 ? (g.total / totalPend * 100).toFixed(2) : '0';
+        return `
+          <h3 class="report-proj-h">
+            <span class="rt-badge" style="background:${getProjectColor(g.proj)}">${esc(g.proj)}</span>
+            ${esc(fmtMoneyFull(g.total))} · ${pct}% del pendiente · ${g.contracts.length} contratos
+          </h3>
+          <table class="report-tbl">
+            <thead>
+              <tr><th>Contrato</th><th>Tramo</th><th style="text-align:right">Monto pendiente</th><th style="text-align:right">% del proyecto</th></tr>
+            </thead>
+            <tbody>
+              ${g.contracts.map(c => {
+                const pctProj = (g.total > 0 && c.montoPendiente)
+                  ? (c.montoPendiente / g.total * 100).toFixed(2) + '%'
+                  : '—';
+                const monto = c.montoPendiente != null ? fmtMoneyFull(c.montoPendiente) : '<em style="color:#8a7f73">sin monto</em>';
+                return `<tr>
+                  <td>${esc(c.contrato)}</td>
+                  <td>${esc(c.tramo || '—')}</td>
+                  <td class="num">${monto}</td>
+                  <td class="num">${pctProj}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+      }).join('')}
+    </section>
+
+    ${critContracts.length ? `
+      <section class="report-section">
+        <h2 style="color:var(--bad)">4 · Alertas críticas</h2>
+        <p class="report-sub">Contratos con más de 120 días sin registrar notas — atención inmediata</p>
+        <table class="report-tbl">
+          <thead>
+            <tr><th>Contrato</th><th style="text-align:right">Días sin registrar</th></tr>
+          </thead>
+          <tbody>
+            ${critContracts.map(b => `<tr>
+              <td>${esc(b.contract)}</td>
+              <td class="num"><strong style="color:var(--bad)">${esc(b.label)} d</strong></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </section>
+    ` : ''}
+
+    <footer class="report-footer">
+      <p><strong>ATTRAPI</strong> — Subdirección de Procesos Administrativos de Obra</p>
+      <p>Reporte generado el ${esc(dateStr)} · Datos en vivo desde Google Sheets</p>
+    </footer>
+  `;
+
+  document.getElementById('reportBody').innerHTML = html;
+}
+
+// Cerrar modal con Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('reportModal').classList.contains('active')) {
+    closeReport();
+  }
+});
 
 // ══════════════════════════════════════════════════════════════
 // UTILS
