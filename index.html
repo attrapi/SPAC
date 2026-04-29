@@ -561,11 +561,12 @@ body{
   background:
     radial-gradient(ellipse at 50% 30%,rgba(107,32,53,.05),transparent 60%),
     linear-gradient(135deg,#fafaf8,#f3eee7);
-  min-height:440px;position:relative;overflow:auto;
+  min-height:440px;position:relative;
+  overflow-x:hidden;overflow-y:auto;  /* nunca scroll horizontal */
 }
-.cnstl-net-canvas::-webkit-scrollbar{width:8px;height:8px}
+.cnstl-net-canvas::-webkit-scrollbar{width:8px}
 .cnstl-net-canvas::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-.cnstl-net-canvas svg{display:block;margin:0 auto}
+.cnstl-net-canvas svg{display:block;margin:0 auto;max-width:100%}
 .cnstl-net-foot{
   padding:.55rem 1.2rem;background:var(--surface2);
   border-top:1px solid var(--border);font-size:.66rem;
@@ -724,8 +725,8 @@ body{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .ccc-row{display:flex;justify-content:space-between;margin-top:3px;font-size:10px;gap:6px}
-.ccc.ccc-compact{padding:3px 6px;border-left-width:3px}
-.ccc.ccc-compact .ccc-id{font-size:9.5px;line-height:1.1}
+.ccc.ccc-compact{padding:3px 8px}
+.ccc.ccc-compact .ccc-id{font-size:10px;line-height:1.15}
 .ccc-monto{font-weight:700;color:#1a1612;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ccc-pct{color:#5c5347;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 
@@ -1622,19 +1623,19 @@ function renderNetwork() {
 
   const criticalSet = new Set(bData.filter(b => b.status === 'bad').map(b => b.contract));
 
-  // Layout tipo árbol: SPAC arriba, proyectos en fila, contratos como tarjetas debajo
-  const cardW = 200, cardH = 40, cardGap = 7;
+  // Layout tipo árbol adaptable al ancho del contenedor (sin scroll horizontal)
+  const containerW = container.clientWidth;
+  const W = Math.max(540, (containerW || 700) - 4);
+  const projCenterDist = W / (projects.length + 1);
+  const cardW = Math.min(220, Math.max(140, projCenterDist - 18));
+  const cardH = 40, cardGap = 7;
   const hubR = 36, projR = 26;
   const hubY = 60, projectY = 175, contractStartY = 240;
-  const projectGap = Math.max(cardW + 50, 280);
-  const W = Math.max(820, projectGap * projects.length + 60);
   const cx = W / 2;
   const maxContracts = Math.max(...projects.map(p => p.contracts.length));
   const H = contractStartY + maxContracts * (cardH + cardGap) + 30;
 
-  const projectXs = projects.map((_, pi) =>
-    (W / (projects.length + 1)) * (pi + 1)
-  );
+  const projectXs = projects.map((_, pi) => projCenterDist * (pi + 1));
 
   let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
   html += `<defs>
@@ -1736,26 +1737,23 @@ function renderAlertsNetwork() {
     return;
   }
 
-  // Hub arriba, categorías en fila, tarjetas debajo.
-  // "Sin reportar" usa tarjetas compactas (24 px) en 2 columnas con ancho extra
-  // para que el ID completo del contrato quepa sin recortes.
-  const cardW_normal = 200;        // tarjetas normales (Crítico / Atención)
-  const compactPairW = 260;        // ancho del par compacto en "Sin reportar"
-  const groupSpan = Math.max(cardW_normal, compactPairW);
+  // Hub arriba, categorías en fila, tarjetas debajo. Ancho adaptable al contenedor.
+  // "Sin reportar" usa tarjetas compactas (24 px) en 1 columna; el ID completo cabe
+  // siempre porque la tarjeta ocupa todo el ancho asignado a su grupo.
+  const containerW = container.clientWidth;
+  const W = Math.max(540, (containerW || 700) - 4);
+  const groupCenterDist = W / (groups.length + 1);
+  const cardW = Math.min(220, Math.max(140, groupCenterDist - 18));
   const cardGap = 7;
   const cardH_normal = 40, cardH_compact = 24;
   const cardHFor = g => g.key === 'na' ? cardH_compact : cardH_normal;
-  const colsFor  = g => g.key === 'na' ? 2 : 1;
-  const numRowsFor = g => Math.ceil(g.items.length / colsFor(g));
-  const stackHFor  = g => numRowsFor(g) * (cardHFor(g) + cardGap);
+  const stackHFor = g => g.items.length * (cardHFor(g) + cardGap);
   const hubR = 36, statusR = 26;
   const hubY = 60, statusY = 175, contractStartY = 240;
-  const groupGap = groupSpan + 50;
-  const W = Math.max(1080, groupGap * groups.length + 60);
   const cx = W / 2;
   const H = contractStartY + Math.max(...groups.map(stackHFor)) + 30;
 
-  const groupXs = groups.map((_, gi) => (W / (groups.length + 1)) * (gi + 1));
+  const groupXs = groups.map((_, gi) => groupCenterDist * (gi + 1));
 
   let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
   html += `<defs>
@@ -1783,7 +1781,7 @@ function renderAlertsNetwork() {
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
     const ch = cardHFor(g);
-    const lineEnd = contractStartY + (numRowsFor(g) - 1) * (ch + cardGap) + ch / 2;
+    const lineEnd = contractStartY + (g.items.length - 1) * (ch + cardGap) + ch / 2;
     html += `<line x1="${sx}" y1="${statusY + statusR + 28}" x2="${sx}" y2="${lineEnd}" stroke="${g.color}" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3,4" stroke-linecap="round"/>`;
   });
 
@@ -1808,29 +1806,24 @@ function renderAlertsNetwork() {
     html += `<text x="${sx}" y="${statusY + statusR + 28}" text-anchor="middle" fill="#8a7f73" font-size="9" font-weight="600">${esc(g.detail)}</text>`;
   });
 
-  // Tarjetas (foreignObject) — compactas en 2 cols para "Sin reportar"
-  const compactCardW = (compactPairW - cardGap) / 2; // ancho de cada tarjeta compacta
+  // Tarjetas (foreignObject) — todas a 1 col para garantizar que el ID completo se vea
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
     const ch = cardHFor(g);
     g.items.forEach((b, bi) => {
+      const cardX = sx - cardW / 2;
+      const cardY = contractStartY + bi * (ch + cardGap);
       if (g.key === 'na') {
-        const row = Math.floor(bi / 2);
-        const col = bi % 2;
-        const cardX = sx - compactPairW / 2 + col * (compactCardW + cardGap);
-        const cardY = contractStartY + row * (ch + cardGap);
-        html += `<foreignObject x="${cardX}" y="${cardY}" width="${compactCardW}" height="${ch}">
+        html += `<foreignObject x="${cardX}" y="${cardY}" width="${cardW}" height="${ch}">
           <div xmlns="http://www.w3.org/1999/xhtml" class="ccc ccc-compact" style="--proj-color:${g.color}" title="${esc(b.contract)} · sin reportar">
             <div class="ccc-id">${esc(b.contract)}</div>
           </div>
         </foreignObject>`;
       } else {
-        const cardX = sx - cardW_normal / 2;
-        const cardY = contractStartY + bi * (ch + cardGap);
         const days = `${b.label} d`;
         const tooltip = `${b.contract} · ${g.label} · ${days}`;
         const isCrit = g.key === 'bad';
-        html += `<foreignObject x="${cardX}" y="${cardY}" width="${cardW_normal}" height="${ch}">
+        html += `<foreignObject x="${cardX}" y="${cardY}" width="${cardW}" height="${ch}">
           <div xmlns="http://www.w3.org/1999/xhtml" class="ccc${isCrit ? ' critical' : ''}" style="--proj-color:${g.color}" title="${esc(tooltip)}">
             <div class="ccc-id">${esc(b.contract)}</div>
             <div class="ccc-row">
@@ -2522,6 +2515,16 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.getElementById('reportModal').classList.contains('active')) {
     closeReport();
   }
+});
+
+// Re-render de las redes al cambiar el ancho de ventana
+let _resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => {
+    if (eData.length) renderNetwork();
+    if (bData.length) renderAlertsNetwork();
+  }, 200);
 });
 
 // ══════════════════════════════════════════════════════════════
