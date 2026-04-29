@@ -724,8 +724,8 @@ body{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .ccc-row{display:flex;justify-content:space-between;margin-top:3px;font-size:10px;gap:6px}
-.ccc.ccc-compact{padding:3px 8px}
-.ccc.ccc-compact .ccc-id{font-size:11px}
+.ccc.ccc-compact{padding:3px 6px;border-left-width:3px}
+.ccc.ccc-compact .ccc-id{font-size:9.5px;line-height:1.1}
 .ccc-monto{font-weight:700;color:#1a1612;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ccc-pct{color:#5c5347;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 
@@ -1726,18 +1726,20 @@ function renderAlertsNetwork() {
     return;
   }
 
-  // Mismo layout que renderNetwork: hub arriba, categorías en fila, tarjetas debajo.
-  // Las tarjetas de "Sin reportar" son compactas (solo ID del contrato).
+  // Hub arriba, categorías en fila, tarjetas debajo.
+  // "Sin reportar" usa tarjetas compactas (24 px) en 2 columnas (mitad de ancho).
   const cardW = 200, cardGap = 7;
   const cardH_normal = 40, cardH_compact = 24;
   const cardHFor = g => g.key === 'na' ? cardH_compact : cardH_normal;
+  const colsFor  = g => g.key === 'na' ? 2 : 1;
+  const numRowsFor = g => Math.ceil(g.items.length / colsFor(g));
+  const stackHFor  = g => numRowsFor(g) * (cardHFor(g) + cardGap);
   const hubR = 36, statusR = 26;
   const hubY = 60, statusY = 175, contractStartY = 240;
   const groupGap = Math.max(cardW + 50, 280);
   const W = Math.max(820, groupGap * groups.length + 60);
   const cx = W / 2;
-  const maxStack = Math.max(...groups.map(g => g.items.length * (cardHFor(g) + cardGap)));
-  const H = contractStartY + maxStack + 30;
+  const H = contractStartY + Math.max(...groups.map(stackHFor)) + 30;
 
   const groupXs = groups.map((_, gi) => (W / (groups.length + 1)) * (gi + 1));
 
@@ -1767,7 +1769,7 @@ function renderAlertsNetwork() {
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
     const ch = cardHFor(g);
-    const lineEnd = contractStartY + (g.items.length - 1) * (ch + cardGap) + ch / 2;
+    const lineEnd = contractStartY + (numRowsFor(g) - 1) * (ch + cardGap) + ch / 2;
     html += `<line x1="${sx}" y1="${statusY + statusR + 28}" x2="${sx}" y2="${lineEnd}" stroke="${g.color}" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3,4" stroke-linecap="round"/>`;
   });
 
@@ -1792,21 +1794,26 @@ function renderAlertsNetwork() {
     html += `<text x="${sx}" y="${statusY + statusR + 28}" text-anchor="middle" fill="#8a7f73" font-size="9" font-weight="600">${esc(g.detail)}</text>`;
   });
 
-  // Tarjetas (foreignObject) — compactas para "Sin reportar"
+  // Tarjetas (foreignObject) — compactas en 2 cols para "Sin reportar"
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
     const ch = cardHFor(g);
+    const cols = colsFor(g);
+    const compactW = (cardW - cardGap) / 2; // ancho cuando hay 2 columnas
     g.items.forEach((b, bi) => {
-      const cardX = sx - cardW / 2;
-      const cardY = contractStartY + bi * (ch + cardGap);
       if (g.key === 'na') {
-        // Compacta: solo el ID del contrato
-        html += `<foreignObject x="${cardX}" y="${cardY}" width="${cardW}" height="${ch}">
+        const row = Math.floor(bi / cols);
+        const col = bi % cols;
+        const cardX = sx - cardW / 2 + col * (compactW + cardGap);
+        const cardY = contractStartY + row * (ch + cardGap);
+        html += `<foreignObject x="${cardX}" y="${cardY}" width="${compactW}" height="${ch}">
           <div xmlns="http://www.w3.org/1999/xhtml" class="ccc ccc-compact" style="--proj-color:${g.color}" title="${esc(b.contract)} · sin reportar">
             <div class="ccc-id">${esc(b.contract)}</div>
           </div>
         </foreignObject>`;
       } else {
+        const cardX = sx - cardW / 2;
+        const cardY = contractStartY + bi * (ch + cardGap);
         const days = `${b.label} d`;
         const tooltip = `${b.contract} · ${g.label} · ${days}`;
         const isCrit = g.key === 'bad';
