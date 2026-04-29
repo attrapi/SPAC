@@ -398,29 +398,41 @@ body{
 }
 
 /* PROJECT BARS — versión compacta (Resumen) */
-.proj-list{display:flex;flex-direction:column;gap:.55rem}
+.proj-list{display:flex;flex-direction:column;gap:.85rem}
 .proj-row{
-  display:grid;grid-template-columns:auto 1fr auto;gap:.7rem;align-items:center;
-  font-size:.75rem;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  grid-template-rows:auto auto;
+  column-gap:.75rem;row-gap:.3rem;
+  align-items:center;font-size:.75rem;
 }
 .proj-tag{
   display:inline-flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:.68rem;letter-spacing:.05em;
-  padding:.3rem .55rem;border-radius:4px;color:#fff;min-width:46px;
-  white-space:nowrap;
+  font-weight:800;font-size:.7rem;letter-spacing:.05em;
+  padding:.4rem .6rem;border-radius:4px;color:#fff;min-width:48px;
+  white-space:nowrap;grid-row:1;
 }
 .proj-bar{
-  display:flex;height:14px;background:var(--surface2);border-radius:3px;
-  overflow:hidden;border:1px solid var(--border);min-width:60px;
+  display:flex;height:28px;background:var(--surface2);border-radius:4px;
+  overflow:hidden;border:1px solid var(--border);min-width:80px;grid-row:1;
 }
 .proj-seg{
-  border-right:1.5px solid #fff;transition:opacity .15s,filter .15s;cursor:default;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:.66rem;font-weight:700;
+  text-shadow:0 1px 1px rgba(0,0,0,.35);
+  white-space:nowrap;overflow:hidden;padding:0 .35rem;
+  border-right:1.5px solid #fff;transition:filter .15s;cursor:default;
 }
 .proj-seg:last-child{border-right:none}
-.proj-seg:hover{filter:brightness(1.15)}
+.proj-seg:hover{filter:brightness(1.12)}
 .proj-amount{
-  font-weight:700;color:var(--text);text-align:right;
-  font-variant-numeric:tabular-nums;font-size:.78rem;white-space:nowrap;
+  font-weight:800;color:var(--text);text-align:right;
+  font-variant-numeric:tabular-nums;font-size:.85rem;white-space:nowrap;grid-row:1;
+}
+.proj-meta-line{
+  grid-column:2 / 3;grid-row:2;
+  font-size:.66rem;color:var(--text3);font-weight:600;
+  display:flex;gap:.7rem;align-items:center;
 }
 
 /* PROJECT BARS — versión grande (Estimaciones tab) */
@@ -981,17 +993,21 @@ function renderEstimacionesSummary() {
     return;
   }
 
+  const grandTotal = groups.reduce((s, g) => s + g.totalPend, 0);
   list.innerHTML = groups.map(g => {
     const baseColor = getProjectColor(g.proj);
-    const segments = g.contracts
-      .filter(c => c.montoPendiente && c.montoPendiente > 0)
-      .map(c => `<div class="proj-seg" style="flex:${c.montoPendiente};background:${baseColor}" title="${esc(c.contrato)} — ${esc(fmtMoneyFull(c.montoPendiente))}"></div>`)
+    const withMonto = g.contracts.filter(c => c.montoPendiente && c.montoPendiente > 0);
+    const segments = withMonto
+      .map(c => `<div class="proj-seg" style="flex:${c.montoPendiente};background:${baseColor}" title="${esc(c.contrato)} — ${esc(fmtMoneyFull(c.montoPendiente))}">${esc(fmtMoney(c.montoPendiente))}</div>`)
       .join('');
+    const pct = grandTotal > 0 ? (g.totalPend / grandTotal * 100).toFixed(1) : '0';
+    const meta = `${withMonto.length} de ${g.contracts.length} contratos · ${pct}% del total`;
     return `
       <div class="proj-row">
         <span class="proj-tag" style="background:${baseColor}">${esc(g.proj)}</span>
         <div class="proj-bar">${segments || '<div style="flex:1;background:var(--surface2)"></div>'}</div>
         <span class="proj-amount">${esc(fmtMoney(g.totalPend))}</span>
+        <div class="proj-meta-line">${esc(meta)}</div>
       </div>
     `;
   }).join('');
