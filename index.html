@@ -385,9 +385,9 @@ body{
 
         <div class="summary-foot">
           <div class="legend-mini">
-            <span><span class="sw" style="background:#1a6b5a"></span>Al corriente</span>
-            <span><span class="sw" style="background:#b8860b"></span>1–30 d</span>
-            <span><span class="sw" style="background:#c75b39"></span>&gt; 30 d</span>
+            <span><span class="sw" style="background:#1a6b5a"></span>&lt; 60 d</span>
+            <span><span class="sw" style="background:#b8860b"></span>60–120 d</span>
+            <span><span class="sw" style="background:#c75b39"></span>&gt; 120 d</span>
           </div>
           <span id="bFootNote">—</span>
         </div>
@@ -521,11 +521,14 @@ function parseDaysValue(raw) {
   if (/sin\s+datos/i.test(t)) return { days: null, status: 'na', label: 'Sin datos' };
   const num = parseFloat(t.replace(/[,\s]/g, ''));
   if (isNaN(num)) return { days: null, status: 'na', label: t };
+  // El signo en la hoja indica dirección del cálculo; lo que importa es la
+  // magnitud: días sin registrar notas. Se clasifica por |num|.
+  const days = Math.abs(num);
   let status;
-  if (num <= 0) status = 'ok';
-  else if (num <= 30) status = 'warn';
+  if (days < 60) status = 'ok';
+  else if (days <= 120) status = 'warn';
   else status = 'bad';
-  return { days: num, status, label: Math.round(num).toLocaleString('es-MX') };
+  return { days, status, label: Math.round(days).toLocaleString('es-MX') };
 }
 
 function processBitacoras(rows, src) {
@@ -555,8 +558,8 @@ const thresholdLinePlugin = {
   afterDatasetsDraw(chart) {
     const { ctx, chartArea, scales: { x } } = chart;
     if (!x) return;
-    if ((x.max ?? 0) < 30) return;
-    const xPos = x.getPixelForValue(30);
+    if ((x.max ?? 0) < 120) return;
+    const xPos = x.getPixelForValue(120);
     if (xPos < chartArea.left || xPos > chartArea.right) return;
     ctx.save();
     ctx.strokeStyle = '#c75b39';
