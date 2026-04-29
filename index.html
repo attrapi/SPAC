@@ -558,18 +558,28 @@ const thresholdLinePlugin = {
   afterDatasetsDraw(chart) {
     const { ctx, chartArea, scales: { x } } = chart;
     if (!x) return;
-    if ((x.max ?? 0) < 120) return;
-    const xPos = x.getPixelForValue(120);
-    if (xPos < chartArea.left || xPos > chartArea.right) return;
-    ctx.save();
-    ctx.strokeStyle = '#c75b39';
-    ctx.setLineDash([4, 3]);
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(xPos, chartArea.top);
-    ctx.lineTo(xPos, chartArea.bottom);
-    ctx.stroke();
-    ctx.restore();
+    const xMax = x.max ?? 0;
+    const drawLine = (value, color, label) => {
+      if (xMax < value) return;
+      const xPos = x.getPixelForValue(value);
+      if (xPos < chartArea.left || xPos > chartArea.right) return;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.setLineDash([4, 3]);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(xPos, chartArea.top);
+      ctx.lineTo(xPos, chartArea.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      ctx.font = "600 9px 'Plus Jakarta Sans', sans-serif";
+      ctx.textAlign = 'center';
+      ctx.fillText(label, xPos, chartArea.top - 2);
+      ctx.restore();
+    };
+    drawLine(60,  '#b8860b', '60 d');
+    drawLine(120, '#c75b39', '120 d');
   }
 };
 
@@ -630,7 +640,7 @@ function renderBitacoras() {
       responsive: true,
       maintainAspectRatio: false,
       animation: { duration: 500, easing: 'easeOutQuart' },
-      layout: { padding: { right: 38, top: 4, bottom: 0, left: 0 } },
+      layout: { padding: { right: 38, top: 14, bottom: 0, left: 0 } },
       plugins: {
         legend: { display: false },
         tooltip: {
