@@ -138,6 +138,9 @@ body{
 .tab.active{color:var(--gov-dark);border-bottom-color:var(--gov-dark)}
 
 /* SECTION */
+.section{display:none}
+.section.active{display:block;animation:fadeIn .25s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .section-head{
   max-width:1600px;margin:1.5rem auto .4rem;padding:0 2.5rem;
   display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:.8rem;
@@ -261,6 +264,81 @@ body{
   padding:2rem 1rem;color:var(--text3);font-size:.85rem;text-align:center;min-height:300px;
 }
 
+/* DETAIL VIEW (Bitácoras) */
+.kpi-row{
+  max-width:1600px;margin:1.2rem auto 0;padding:0 2.5rem;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;
+}
+.kpi{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1rem 1.2rem;
+  box-shadow:var(--shadow-sm);transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.k-total::before{background:var(--gov-dark)}
+.kpi.k-ok::before{background:var(--ok)}
+.kpi.k-warn::before{background:var(--warn)}
+.kpi.k-bad::before{background:var(--bad)}
+.kpi.k-neutral::before{background:var(--neutral)}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);font-weight:700}
+.kpi-value{font-size:1.65rem;font-weight:800;letter-spacing:-.02em;margin-top:.3rem;line-height:1}
+.kpi.k-total .kpi-value{color:var(--gov-dark)}
+.kpi.k-ok .kpi-value{color:var(--ok)}
+.kpi.k-warn .kpi-value{color:var(--warn)}
+.kpi.k-bad .kpi-value{color:var(--bad)}
+.kpi.k-neutral .kpi-value{color:var(--neutral)}
+.kpi-sub{font-size:.68rem;color:var(--text3);margin-top:.25rem}
+
+.grid-1{max-width:1600px;margin:1rem auto 2rem;padding:0 2.5rem}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;
+}
+.card-head{
+  padding:1rem 1.3rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;
+}
+.card-head h3{font-size:.95rem;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.card-head p{font-size:.72rem;color:var(--text3);margin-top:.15rem}
+
+.chart-wrap-detail{position:relative;width:100%}
+.chart-scroll-detail{overflow-y:auto;max-height:75vh;padding:.5rem .3rem}
+.chart-scroll-detail::-webkit-scrollbar{width:10px}
+.chart-scroll-detail::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
+.chart-scroll-detail::-webkit-scrollbar-thumb:hover{background:var(--text4)}
+
+.legend-bar{
+  display:flex;flex-wrap:wrap;gap:.9rem;align-items:center;
+  padding:.8rem 1.3rem;border-top:1px solid var(--border);
+  background:var(--surface2);font-size:.74rem;color:var(--text2);
+}
+.legend-bar > span{display:inline-flex;align-items:center;gap:.4rem;font-weight:600}
+.legend-bar .sw{width:14px;height:10px;border-radius:2px}
+
+.controls-inline{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.tbl-search{
+  padding:.6rem .85rem .6rem 2.3rem;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);font-size:.8rem;font-family:inherit;
+  outline:none;width:220px;transition:all .2s;
+}
+.tbl-search:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text4);width:14px;height:14px;pointer-events:none}
+.sort-select{
+  background:var(--surface);border:1.5px solid var(--border);color:var(--text2);
+  padding:.55rem .75rem;border-radius:var(--radius-sm);font-size:.78rem;
+  font-family:inherit;cursor:pointer;outline:none;transition:all .2s;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a7f73' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .65rem center;
+  padding-right:1.9rem;
+}
+.sort-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
+
 /* ERROR */
 .error-box{max-width:1600px;margin:1rem auto;padding:0 2.5rem}
 .error-card{
@@ -302,8 +380,9 @@ body{
 @media(max-width:768px){
   .header{padding:1rem}
   .header-text h1{font-size:1.05rem}
-  .tabs,.summary-grid,.section-head{padding:0 1rem}
+  .tabs,.summary-grid,.section-head,.kpi-row,.grid-1{padding:0 1rem}
   .summary-grid{grid-template-columns:1fr}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
   .gov-banner{font-size:.6rem;padding:.4rem .8rem}
 }
 </style>
@@ -338,13 +417,14 @@ body{
 <!-- TABS -->
 <nav class="tabs" role="tablist">
   <button class="tab active" data-tab="resumen" role="tab">Resumen</button>
+  <button class="tab" data-tab="bitacoras" role="tab">Bitácoras de obra</button>
 </nav>
 
 <!-- ERROR -->
 <div class="error-box" id="errorBox" style="display:none"></div>
 
 <!-- ════════ RESUMEN ════════ -->
-<section class="section">
+<section class="section active" id="sec-resumen">
   <div class="section-head">
     <div>
       <h2>Resumen ejecutivo</h2>
@@ -446,6 +526,62 @@ body{
   </div>
 </section>
 
+<!-- ════════ BITÁCORAS DE OBRA — detalle ════════ -->
+<section class="section" id="sec-bitacoras">
+  <div class="section-head">
+    <div>
+      <h2>Bitácoras de obra — detalle completo</h2>
+      <p>Días sin registrar notas por contrato · incluye contratos sin datos</p>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi k-total"><div class="kpi-label">Contratos</div><div class="kpi-value" id="kdTotal">—</div><div class="kpi-sub">En la hoja</div></div>
+    <div class="kpi k-ok"><div class="kpi-label">Al corriente</div><div class="kpi-value" id="kdOk">—</div><div class="kpi-sub">&lt; 60 días</div></div>
+    <div class="kpi k-warn"><div class="kpi-label">En atención</div><div class="kpi-value" id="kdWarn">—</div><div class="kpi-sub">60 a 120 días</div></div>
+    <div class="kpi k-bad"><div class="kpi-label">Crítico</div><div class="kpi-value" id="kdBad">—</div><div class="kpi-sub">&gt; 120 días</div></div>
+    <div class="kpi k-neutral"><div class="kpi-label">Sin datos</div><div class="kpi-value" id="kdNa">—</div><div class="kpi-sub">No reportado</div></div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Detalle por contrato</h3>
+          <p id="bdCount">—</p>
+        </div>
+        <div class="controls-inline">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" class="tbl-search" id="bdSearch" placeholder="Buscar contrato...">
+          </div>
+          <select class="sort-select" id="bdSort">
+            <option value="days-desc">Días: mayor a menor</option>
+            <option value="days-asc">Días: menor a mayor</option>
+            <option value="contract-asc">Contrato: A → Z</option>
+            <option value="contract-desc">Contrato: Z → A</option>
+          </select>
+        </div>
+      </div>
+      <div style="padding:.6rem .8rem">
+        <div class="chart-scroll-detail">
+          <div class="chart-wrap-detail"><canvas id="bdChart"></canvas></div>
+        </div>
+      </div>
+      <div class="legend-bar">
+        <span><span class="sw" style="background:#1a6b5a"></span>&lt; 60 d</span>
+        <span><span class="sw" style="background:#b8860b"></span>60–120 d</span>
+        <span><span class="sw" style="background:#c75b39"></span>&gt; 120 d</span>
+        <span><span class="sw" style="background:#cfc8bc"></span>Sin datos</span>
+        <span style="margin-left:auto;color:var(--text3);font-weight:500">
+          <span style="display:inline-block;width:18px;border-top:2px dashed var(--warn);margin-right:.3rem;vertical-align:middle"></span>60 d
+          <span style="display:inline-block;width:18px;border-top:2px dashed var(--bad);margin:0 .3rem 0 .8rem;vertical-align:middle"></span>120 d
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer class="footer">
   <p><strong>ATTRAPI</strong> — Subdirección de Procesos Administrativos de Obra<br>
@@ -473,6 +609,8 @@ const TOP_N = 6; // máximo de barras en la mini gráfica
 
 let bData = [];
 let bChart = null;
+let bdChart = null;
+let bdSortMode = 'days-desc';
 
 // ══════════════════════════════════════════════════════════════
 // CSV PARSER
@@ -697,6 +835,149 @@ function renderBitacoras() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// RENDER DETALLE — Bitácoras de obra (incluye sin datos)
+// ══════════════════════════════════════════════════════════════
+function renderBDetail() {
+  const total = bData.length;
+  const ok = bData.filter(r => r.status === 'ok').length;
+  const warn = bData.filter(r => r.status === 'warn').length;
+  const bad = bData.filter(r => r.status === 'bad').length;
+  const na = bData.filter(r => r.status === 'na').length;
+  document.getElementById('kdTotal').textContent = total.toLocaleString('es-MX');
+  document.getElementById('kdOk').textContent = ok.toLocaleString('es-MX');
+  document.getElementById('kdWarn').textContent = warn.toLocaleString('es-MX');
+  document.getElementById('kdBad').textContent = bad.toLocaleString('es-MX');
+  document.getElementById('kdNa').textContent = na.toLocaleString('es-MX');
+
+  const q = document.getElementById('bdSearch').value.toLowerCase().trim();
+  let rows = bData.filter(r => !q || r.contract.toLowerCase().includes(q));
+
+  rows.sort((a, b) => {
+    switch (bdSortMode) {
+      case 'contract-asc':  return a.contract.localeCompare(b.contract, 'es');
+      case 'contract-desc': return b.contract.localeCompare(a.contract, 'es');
+      case 'days-asc': {
+        if (a.days == null && b.days == null) return 0;
+        if (a.days == null) return 1;
+        if (b.days == null) return -1;
+        return a.days - b.days;
+      }
+      case 'days-desc':
+      default: {
+        if (a.days == null && b.days == null) return 0;
+        if (a.days == null) return 1;
+        if (b.days == null) return -1;
+        return b.days - a.days;
+      }
+    }
+  });
+
+  document.getElementById('bdCount').textContent =
+    `${rows.length.toLocaleString('es-MX')} contrato${rows.length === 1 ? '' : 's'}`;
+
+  const wrap = document.querySelector('.chart-wrap-detail');
+  wrap.style.height = Math.max(320, rows.length * 30 + 60) + 'px';
+
+  const ctx = document.getElementById('bdChart');
+  if (bdChart) bdChart.destroy();
+  if (!rows.length) {
+    wrap.style.height = '180px';
+    ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+    return;
+  }
+
+  // Para "sin datos" usamos un valor fantasma proporcional al rango
+  const numericVals = rows.map(r => r.days).filter(v => v != null && v > 0);
+  const maxVal = numericVals.length ? Math.max(...numericVals) : 100;
+  const ghost = Math.max(2, maxVal * 0.015);
+
+  const labels = rows.map(r => r.contract);
+  const data = rows.map(r => r.days != null ? r.days : ghost);
+  const colors = rows.map(r => r.status === 'na' ? '#cfc8bc' : COLORS[r.status]);
+
+  bdChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderRadius: 4,
+        borderSkipped: false,
+        borderWidth: rows.map(r => r.status === 'na' ? 1 : 0),
+        borderColor: '#b0a697',
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 500, easing: 'easeOutQuart' },
+      layout: { padding: { right: 60, top: 18, bottom: 4 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a1612',
+          titleFont: { family: "'Plus Jakarta Sans'", weight: '700', size: 12 },
+          bodyFont: { family: "'Plus Jakarta Sans'", size: 11 },
+          padding: 10,
+          callbacks: {
+            title: (items) => items[0].label,
+            label: (c) => {
+              const r = rows[c.dataIndex];
+              if (r.status === 'na') return 'Sin datos';
+              const d = Math.round(r.days);
+              const tag = r.status === 'ok' ? 'al corriente' : r.status === 'warn' ? 'en atención' : 'crítico';
+              return `${d.toLocaleString('es-MX')} días · ${tag}`;
+            }
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          offset: 4,
+          color: (c) => rows[c.dataIndex].status === 'na' ? '#8a7f73' : colors[c.dataIndex],
+          font: { family: "'Plus Jakarta Sans', sans-serif", weight: '700', size: 11 },
+          formatter: (_, c) => {
+            const r = rows[c.dataIndex];
+            return r.status === 'na' ? 'sin datos' : Math.round(r.days).toLocaleString('es-MX') + ' d';
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,.05)' },
+          ticks: {
+            font: { family: "'Plus Jakarta Sans'", size: 10 },
+            color: '#8a7f73',
+            callback: (v) => Math.round(v).toLocaleString('es-MX')
+          },
+          title: {
+            display: true, text: 'Días sin registrar notas',
+            font: { family: "'Plus Jakarta Sans'", size: 11, weight: '600' },
+            color: '#5c5347'
+          }
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            font: { family: 'ui-monospace,Consolas,monospace', size: 10 },
+            color: '#5c5347',
+            autoSkip: false,
+            callback: function(v) {
+              const lbl = this.getLabelForValue(v);
+              return lbl.length > 28 ? lbl.slice(0, 26) + '…' : lbl;
+            }
+          }
+        }
+      }
+    },
+    plugins: [thresholdLinePlugin]
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
 // MASTER FETCH
 // ══════════════════════════════════════════════════════════════
 async function fetchAll() {
@@ -713,6 +994,7 @@ async function fetchAll() {
     cont.style.flexDirection = 'column';
     cont.style.flex = '1';
     renderBitacoras();
+    renderBDetail();
   } catch (e) {
     console.error(e);
     document.getElementById('errorBox').innerHTML = `<div class="error-card">
@@ -750,6 +1032,32 @@ function showToast(msg, type = 'info') {
   clearTimeout(t._tm);
   t._tm = setTimeout(() => t.classList.remove('show'), 4000);
 }
+
+// ══════════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'bitacoras' && bData.length) renderBDetail();
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+// SEARCH + SORT (detalle)
+// ══════════════════════════════════════════════════════════════
+let bdSearchTimer;
+document.getElementById('bdSearch').addEventListener('input', () => {
+  clearTimeout(bdSearchTimer);
+  bdSearchTimer = setTimeout(renderBDetail, 200);
+});
+document.getElementById('bdSort').addEventListener('change', (e) => {
+  bdSortMode = e.target.value;
+  renderBDetail();
+});
 
 // ══════════════════════════════════════════════════════════════
 // INIT
