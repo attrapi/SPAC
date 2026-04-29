@@ -339,56 +339,73 @@ body{
 }
 .sort-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
 
-/* VERTICAL BARS — pildoras por proyecto (Resumen) */
+/* VERTICAL BARS — pildoras por proyecto (Resumen)
+   Barra angosta a la izquierda + lista legible a la derecha */
 .vert-bars{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
   gap:1rem;
 }
 .vert-bar-wrap{
-  display:flex;flex-direction:column;align-items:stretch;gap:.5rem;
+  display:flex;flex-direction:column;
+  border:1px solid var(--border);border-radius:8px;background:var(--surface);
+  overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.vert-bar-head{
+  padding:.55rem .85rem;color:#fff;font-weight:800;font-size:.78rem;
+  letter-spacing:.06em;text-align:center;
+}
+.vert-bar-body{
+  display:grid;grid-template-columns:22px 1fr;gap:.75rem;
+  padding:.7rem .85rem;flex:1;min-height:140px;
 }
 .vert-bar{
   display:flex;flex-direction:column;
-  width:100%;height:300px;
-  border:1px solid var(--border);border-radius:6px;
+  width:22px;
+  border:1px solid var(--border);border-radius:4px;
   overflow:hidden;background:var(--surface2);
-  box-shadow:0 1px 3px rgba(0,0,0,.05);
 }
 .vert-seg{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  color:#fff;font-weight:700;text-shadow:0 1px 1px rgba(0,0,0,.35);
-  text-align:center;padding:.25rem .35rem;
-  border-bottom:1.5px solid #fff;
-  transition:filter .15s;cursor:default;overflow:hidden;line-height:1.15;
+  border-bottom:1.5px solid #fff;transition:filter .15s;cursor:default;min-height:2px;
 }
 .vert-seg:last-child{border-bottom:none}
-.vert-seg:hover{filter:brightness(1.12)}
-.vert-seg .vs-id{
-  font-size:.62rem;font-family:ui-monospace,Consolas,monospace;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
-  opacity:.95;
+.vert-seg:hover{filter:brightness(1.15)}
+
+.vert-list{display:flex;flex-direction:column;gap:0;flex:1;min-width:0}
+.vert-list-item{
+  display:grid;grid-template-columns:1fr auto auto;gap:.55rem;align-items:center;
+  font-size:.72rem;padding:.32rem 0;border-bottom:1px solid var(--border);
 }
-.vert-seg .vs-amt{font-size:.74rem;margin-top:.12rem}
-.vert-seg .vs-pct{font-size:.66rem;opacity:.9;margin-top:.04rem}
+.vert-list-item:last-child{border-bottom:none}
+.vli-id{
+  font-family:ui-monospace,Consolas,monospace;font-size:.7rem;
+  color:var(--text);font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;
+}
+.vli-amt{
+  font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;
+  font-size:.72rem;white-space:nowrap;
+}
+.vli-pct{
+  font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;
+  font-size:.7rem;white-space:nowrap;text-align:right;min-width:48px;
+}
 
 .vert-foot{
-  display:flex;flex-direction:column;align-items:center;gap:.2rem;
-  padding:.55rem .4rem;border:1px solid var(--border);border-radius:6px;
-  background:var(--surface);
+  display:grid;grid-template-columns:1fr auto auto;gap:.55rem;align-items:center;
+  padding:.55rem .85rem;background:var(--surface2);
+  border-top:1.5px solid var(--border2);
 }
-.proj-tag-vert{
-  display:inline-flex;font-weight:800;font-size:.72rem;
-  padding:.32rem .7rem;border-radius:4px;color:#fff;letter-spacing:.05em;
+.v-total-lbl{
+  font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--text2);font-weight:800;
 }
-.vert-total{
-  font-weight:800;font-size:.95rem;color:var(--text);
-  font-variant-numeric:tabular-nums;margin-top:.1rem;
+.v-total-amt,.v-total-pct{
+  color:var(--gov-dark);font-weight:800;font-size:.8rem;
+  font-variant-numeric:tabular-nums;
 }
-.vert-100{
-  font-size:.62rem;color:var(--gov-dark);font-weight:800;
-  text-transform:uppercase;letter-spacing:.1em;
-}
+.v-total-pct{text-align:right;min-width:48px}
+
 .vert-empty{
   padding:1.5rem 1rem;text-align:center;color:var(--text3);
   font-size:.78rem;font-style:italic;
@@ -1064,22 +1081,29 @@ function renderEstimacionesSummary() {
       const baseColor = getProjectColor(p.proj);
       const segs = p.contracts.map(c => {
         const pct = p.total > 0 ? (c.montoPendiente / p.total * 100) : 0;
+        return `<div class="vert-seg" style="flex:${c.montoPendiente};background:${baseColor}" title="${esc(c.contrato)} — ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct.toFixed(2)}%"></div>`;
+      }).join('');
+      const items = p.contracts.map(c => {
+        const pct = p.total > 0 ? (c.montoPendiente / p.total * 100) : 0;
         return `
-          <div class="vert-seg" style="flex:${c.montoPendiente};background:${baseColor}"
-               title="${esc(c.contrato)} — ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct.toFixed(2)}%">
-            <span class="vs-id">${esc(c.contrato)}</span>
-            <span class="vs-amt">${esc(fmtMoney(c.montoPendiente))}</span>
-            <span class="vs-pct">${pct.toFixed(1)}%</span>
+          <div class="vert-list-item" title="${esc(c.contrato)} — ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct.toFixed(2)}%">
+            <span class="vli-id">${esc(c.contrato)}</span>
+            <span class="vli-amt">${esc(fmtMoney(c.montoPendiente))}</span>
+            <span class="vli-pct">${pct.toFixed(2)}%</span>
           </div>
         `;
       }).join('');
       return `
         <div class="vert-bar-wrap">
-          <div class="vert-bar">${segs}</div>
+          <div class="vert-bar-head" style="background:${baseColor}">${esc(p.proj)} · ${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'}</div>
+          <div class="vert-bar-body">
+            <div class="vert-bar">${segs}</div>
+            <div class="vert-list">${items}</div>
+          </div>
           <div class="vert-foot">
-            <span class="proj-tag-vert" style="background:${baseColor}">${esc(p.proj)}</span>
-            <span class="vert-total">${esc(fmtMoney(p.total))}</span>
-            <span class="vert-100">100% · ${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'}</span>
+            <span class="v-total-lbl">Total</span>
+            <span class="v-total-amt">${esc(fmtMoney(p.total))}</span>
+            <span class="v-total-pct">100.00%</span>
           </div>
         </div>
       `;
