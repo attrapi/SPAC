@@ -339,6 +339,47 @@ body{
 }
 .sort-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
 
+/* SUB-LABEL en el card del resumen */
+.sub-label{
+  font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--text4);font-weight:700;margin-bottom:.55rem;
+}
+
+/* PENDING LIST — contratos con monto pendiente (Resumen) */
+.pending-list{
+  display:flex;flex-direction:column;
+  border:1px solid var(--border);border-radius:6px;overflow:hidden;
+  max-height:280px;overflow-y:auto;
+  background:var(--surface);
+}
+.pending-list::-webkit-scrollbar{width:8px}
+.pending-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.pending-row{
+  display:grid;grid-template-columns:auto 1fr auto;gap:.55rem;align-items:center;
+  padding:.45rem .65rem;border-bottom:1px solid var(--border);
+  font-size:.74rem;transition:background .15s;
+}
+.pending-row:hover{background:var(--surface2)}
+.pending-row:last-child{border-bottom:none}
+.pending-row .p-tag{
+  font-weight:800;font-size:.62rem;letter-spacing:.04em;
+  padding:.18rem .42rem;border-radius:3px;color:#fff;min-width:36px;
+  text-align:center;
+}
+.pending-row .p-id{
+  font-family:ui-monospace,Consolas,monospace;font-size:.72rem;
+  color:var(--text);font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.pending-row .p-amt{
+  font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;
+  font-size:.74rem;white-space:nowrap;
+}
+.pending-empty{
+  padding:1rem;text-align:center;color:var(--text3);
+  font-size:.78rem;font-style:italic;
+}
+
 /* PROJECT BARS — versión compacta (Resumen) */
 .proj-list{display:flex;flex-direction:column;gap:.55rem}
 .proj-row{
@@ -566,8 +607,13 @@ body{
             <span class="chip neutral"><span class="d"></span><span id="eProjectCount">—</span> proyectos</span>
           </div>
         </div>
-        <div style="padding:.8rem 1.1rem .9rem;flex:1">
+        <div style="padding:.8rem 1.1rem .4rem">
+          <div class="sub-label">Distribución por proyecto</div>
           <div id="eProjectList" class="proj-list"></div>
+        </div>
+        <div style="padding:.4rem 1.1rem .9rem;flex:1">
+          <div class="sub-label">Contratos con monto pendiente</div>
+          <div id="ePendingList" class="pending-list"></div>
         </div>
         <div class="summary-foot">
           <span style="color:var(--text3);font-weight:500" id="eFootNote">—</span>
@@ -933,8 +979,30 @@ function renderEstimacionesSummary() {
     `;
   }).join('');
 
+  // Lista de contratos con monto pendiente (orden desc)
+  const pending = eData
+    .filter(c => c.montoPendiente != null && c.montoPendiente > 0)
+    .sort((a, b) => b.montoPendiente - a.montoPendiente);
+
+  const pendingEl = document.getElementById('ePendingList');
+  if (!pending.length) {
+    pendingEl.innerHTML = `<div class="pending-empty">Ningún contrato con monto pendiente</div>`;
+  } else {
+    pendingEl.innerHTML = pending.map(c => {
+      const baseColor = getProjectColor(c.proy);
+      const proyTramo = [c.proy, c.tramo].filter(Boolean).join(' ');
+      return `
+        <div class="pending-row" title="${esc(c.contrato)} · ${esc(proyTramo)} · ${esc(fmtMoneyFull(c.montoPendiente))}">
+          <span class="p-tag" style="background:${baseColor}">${esc(c.proy)}</span>
+          <span class="p-id">${esc(c.contrato)}</span>
+          <span class="p-amt">${esc(fmtMoney(c.montoPendiente))}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
   document.getElementById('eFootNote').textContent =
-    `${eData.length} contratos · ${groups.length} proyectos`;
+    `${eData.length} contratos · ${groups.length} proyectos · ${pending.length} con monto pendiente`;
 }
 
 // ══════════════════════════════════════════════════════════════
