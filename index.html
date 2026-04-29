@@ -151,12 +151,12 @@ body{
 }
 .section-head p{font-size:.78rem;color:var(--text3);margin-top:.2rem}
 
-/* SUMMARY GRID — 5 tarjetas compactas */
+/* SUMMARY GRID — 4 tarjetas en 2×2 */
 .summary-grid{
   max-width:1600px;margin:1rem auto 2rem;padding:0 2.5rem;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
-  gap:1.1rem;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1.2rem;
 }
 
 .summary-card{
@@ -221,7 +221,7 @@ body{
 
 /* CHART inside summary card */
 .summary-chart{padding:.6rem .9rem .3rem}
-.chart-wrap-mini{position:relative;height:240px}
+.chart-wrap-mini{position:relative;height:340px}
 
 .summary-foot{
   padding:.55rem 1.2rem;border-top:1px solid var(--border);
@@ -470,128 +470,209 @@ body{
   font-size:.78rem;font-style:italic;
 }
 
-/* RESUMEN 2 — layout tipo slide horizontal */
-.slide{max-width:1500px;margin:1.5rem auto 2rem;padding:0 2.5rem}
-.slide-frame{
+/* RESUMEN 2 — Constellation Dashboard */
+.cnstl-frame{max-width:1500px;margin:1.5rem auto 2rem;padding:0 2.5rem;display:flex;flex-direction:column;gap:1.1rem}
+
+.cnstl-hero{
+  background:linear-gradient(135deg,#fff,#f7f4ee);
+  border:1px solid var(--border);border-radius:12px;
+  padding:1.4rem 1.8rem;
+  display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.cnstl-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gov-dark),var(--teal),var(--gold),var(--navy));
+}
+.cnstl-hero h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.75rem;color:var(--gov-dark);font-weight:700;letter-spacing:-.02em;
+}
+.cnstl-hero p{font-size:.82rem;color:var(--text3);margin-top:.3rem;font-weight:500}
+.cnstl-status{
+  font-size:.7rem;color:var(--text2);font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  display:flex;align-items:center;gap:.5rem;
+}
+.cnstl-pulse{
+  width:8px;height:8px;border-radius:50%;background:var(--teal);
+  animation:cnstl-pulse 2s ease-in-out infinite;
+}
+@keyframes cnstl-pulse{
+  0%,100%{box-shadow:0 0 0 3px rgba(26,107,90,.25)}
+  50%{box-shadow:0 0 0 8px rgba(26,107,90,0)}
+}
+
+/* KPI strip */
+.cnstl-kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem}
+.cnstl-kpi{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;padding:2.4rem 2.8rem;
-  box-shadow:0 4px 28px rgba(26,22,18,.08);
-  display:flex;flex-direction:column;gap:2rem;
+  border-radius:10px;padding:.95rem 1.1rem;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
 }
+.cnstl-kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.cnstl-kpi::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent,var(--gov-dark));
+}
+.cnstl-kpi .num{
+  font-size:1.6rem;font-weight:800;color:var(--accent,var(--gov-dark));
+  letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;
+}
+.cnstl-kpi .lbl{
+  font-size:.62rem;color:var(--text3);font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;margin-top:.4rem;
+}
+.cnstl-kpi .sub{font-size:.66rem;color:var(--text4);font-weight:600;margin-top:.2rem}
 
-.slide-hero{
-  display:flex;justify-content:space-between;align-items:flex-end;
-  padding-bottom:1.4rem;border-bottom:2px solid var(--gov-dark);gap:1rem;flex-wrap:wrap;
+/* Main grid */
+.cnstl-main{display:grid;grid-template-columns:1.55fr 1fr;gap:1.1rem}
+@media(max-width:1024px){.cnstl-main{grid-template-columns:1fr}}
+
+/* Network card */
+.cnstl-net-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:var(--shadow-sm);
 }
-.slide-hero h2{
+.cnstl-net-head{
+  padding:.8rem 1.2rem;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;
+  background:linear-gradient(135deg,#fcfaf6,#f5efe6);
+}
+.cnstl-net-head h3{
   font-family:'Playfair Display',serif;
-  font-size:2rem;color:var(--gov-dark);font-weight:700;letter-spacing:-.02em;line-height:1.1;
+  font-size:1.05rem;color:var(--gov-dark);font-weight:700;
 }
-.slide-hero p{font-size:.85rem;color:var(--text3);margin-top:.35rem;font-weight:500}
-.slide-hero-meta{
-  font-size:.7rem;color:var(--text4);text-align:right;
-  text-transform:uppercase;letter-spacing:.1em;font-weight:700;
+.cnstl-net-legend{display:flex;gap:.85rem;font-size:.66rem;color:var(--text2);font-weight:600}
+.cnstl-net-legend span{display:inline-flex;align-items:center;gap:.4rem}
+.cnstl-net-legend .ld{width:11px;height:11px;border-radius:50%;display:inline-block}
+.cnstl-net-legend .pulse-mini{
+  border:2px solid #c75b39;background:transparent;
+  animation:pulse-mini 1.6s ease-in-out infinite;
+}
+@keyframes pulse-mini{
+  0%,100%{box-shadow:0 0 0 2px rgba(199,91,57,.2)}
+  50%{box-shadow:0 0 0 6px rgba(199,91,57,0)}
+}
+.cnstl-net-canvas{
+  flex:1;
+  background:
+    radial-gradient(ellipse at 50% 50%,rgba(107,32,53,.05),transparent 60%),
+    linear-gradient(135deg,#fafaf8,#f3eee7);
+  min-height:440px;position:relative;
+}
+.cnstl-net-canvas svg{display:block;width:100%;height:100%;min-height:440px}
+.cnstl-net-foot{
+  padding:.55rem 1.2rem;background:var(--surface2);
+  border-top:1px solid var(--border);font-size:.66rem;
+  color:var(--text3);font-weight:500;
 }
 
-.slide-stats{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;
+/* Alerts panel */
+.cnstl-alerts{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:var(--shadow-sm);
 }
-.slide-stat{position:relative;padding-left:1.25rem}
-.slide-stat:not(:first-child)::before{
-  content:'';position:absolute;left:0;top:.3rem;bottom:.3rem;
-  width:1px;background:var(--border);
+.cnstl-alerts-head{
+  padding:.8rem 1.2rem;
+  background:linear-gradient(135deg,rgba(199,91,57,.08),rgba(199,91,57,.02));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.6rem;
 }
-.slide-stat .num{
-  font-size:2.3rem;font-weight:800;font-variant-numeric:tabular-nums;
-  letter-spacing:-.03em;line-height:1;color:var(--text);
-}
-.slide-stat .lbl{
-  font-size:.7rem;color:var(--text3);font-weight:700;
-  text-transform:uppercase;letter-spacing:.08em;margin-top:.45rem;
-}
-.slide-stat.accent-1 .num{color:var(--gov-dark)}
-.slide-stat.accent-2 .num{color:var(--bad)}
-.slide-stat.accent-3 .num{color:var(--teal)}
-.slide-stat.accent-4 .num{color:var(--gold)}
-
-.slide-section{display:flex;flex-direction:column;gap:.85rem}
-.slide-section-head{
-  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
-  border-bottom:1px solid var(--border);padding-bottom:.55rem;
-}
-.slide-section-head h3{
+.cnstl-alert-icon{font-size:1.1rem;color:var(--bad)}
+.cnstl-alerts-head h3{
   font-family:'Playfair Display',serif;
-  font-size:1.18rem;color:var(--gov-dark);font-weight:700;letter-spacing:-.01em;
+  font-size:1.05rem;color:var(--bad);font-weight:700;flex:1;
 }
-.slide-section-head p{font-size:.78rem;color:var(--text3);font-weight:500}
-
-.slide-bar{
-  display:flex;height:38px;border-radius:6px;overflow:hidden;
-  border:1px solid var(--border);background:var(--surface2);
+.cnstl-alert-count{
+  background:var(--bad);color:#fff;font-weight:800;font-size:.78rem;
+  padding:.2rem .55rem;border-radius:50px;min-width:24px;text-align:center;
 }
-.slide-bar-seg{
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-weight:700;font-size:.78rem;
-  text-shadow:0 1px 1px rgba(0,0,0,.35);
-  border-right:2px solid #fff;padding:0 .7rem;
-  white-space:nowrap;overflow:hidden;
-  transition:filter .15s;cursor:default;
+.cnstl-alerts-list{display:flex;flex-direction:column;max-height:520px;overflow-y:auto}
+.cnstl-alerts-list::-webkit-scrollbar{width:8px}
+.cnstl-alerts-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.cnstl-alert-item{
+  padding:.65rem 1.2rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:auto 1fr auto;gap:.7rem;align-items:center;
+  font-size:.74rem;transition:background .15s;
 }
-.slide-bar-seg:last-child{border-right:none}
-.slide-bar-seg:hover{filter:brightness(1.12)}
-.slide-bar-legend{
-  display:flex;flex-wrap:wrap;gap:1.4rem;font-size:.78rem;color:var(--text2);
+.cnstl-alert-item:hover{background:var(--surface2)}
+.cnstl-alert-item:last-child{border-bottom:none}
+.cnstl-alert-item .a-pulse{
+  width:9px;height:9px;border-radius:50%;background:var(--bad);
+  animation:cnstl-pulse-red 1.8s ease-in-out infinite;
 }
-.slide-bar-legend > span{display:inline-flex;align-items:center;gap:.45rem;font-weight:500}
-.slide-bar-legend .sw{width:14px;height:14px;border-radius:3px}
-.slide-bar-legend strong{color:var(--text);font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums}
-
-.slide-projects{display:grid;grid-template-columns:1fr;gap:.8rem}
-.slide-proj-row{
-  display:grid;grid-template-columns:90px 1fr 180px;gap:1rem;align-items:center;
+.cnstl-alert-item.warn .a-pulse{background:var(--warn);animation-name:cnstl-pulse-yellow}
+.cnstl-alert-item.na .a-pulse{background:var(--neutral);animation:none}
+@keyframes cnstl-pulse-red{
+  0%,100%{box-shadow:0 0 0 0 rgba(199,91,57,.45)}
+  70%{box-shadow:0 0 0 8px rgba(199,91,57,0)}
 }
-.slide-proj-tag{
-  font-weight:800;font-size:.8rem;letter-spacing:.06em;
-  padding:.5rem .8rem;border-radius:5px;color:#fff;text-align:center;
+@keyframes cnstl-pulse-yellow{
+  0%,100%{box-shadow:0 0 0 0 rgba(184,134,11,.45)}
+  70%{box-shadow:0 0 0 8px rgba(184,134,11,0)}
 }
-.slide-proj-bar{
-  height:34px;background:var(--surface2);
-  border-radius:5px;overflow:hidden;border:1px solid var(--border);display:flex;
-}
-.slide-proj-bar > div{
-  display:flex;align-items:center;padding:0 .65rem;
-  color:#fff;font-weight:700;font-size:.72rem;
-  text-shadow:0 1px 1px rgba(0,0,0,.35);
-  white-space:nowrap;overflow:hidden;border-right:1.5px solid #fff;
-  transition:filter .15s;cursor:default;
-}
-.slide-proj-bar > div:last-child{border-right:none}
-.slide-proj-bar > div:hover{filter:brightness(1.12)}
-.slide-proj-amt{
-  font-weight:800;font-size:1.05rem;color:var(--text);
-  text-align:right;font-variant-numeric:tabular-nums;line-height:1.05;
-}
-.slide-proj-amt small{
-  display:block;font-size:.62rem;color:var(--text3);font-weight:700;
-  text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem;
-}
-
-.slide-strip{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;
-}
-.slide-strip-item{
-  background:var(--surface2);border-left:3px solid var(--gov-dark);
-  padding:.75rem .95rem;border-radius:0 5px 5px 0;
-}
-.ssi-id{
-  font-family:ui-monospace,Consolas,monospace;font-size:.72rem;
+.cnstl-alert-item .a-id{
+  font-family:ui-monospace,Consolas,monospace;font-size:.73rem;
   color:var(--text);font-weight:700;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.ssi-meta{font-size:.62rem;color:var(--text3);font-weight:600;margin-top:.2rem}
-.ssi-amt{
-  font-weight:800;font-size:1rem;color:var(--gov-dark);
-  margin-top:.3rem;font-variant-numeric:tabular-nums;
+.cnstl-alert-item .a-meta{
+  font-size:.6rem;color:var(--text3);font-weight:700;margin-top:.15rem;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.cnstl-alert-item .a-days{
+  font-weight:800;font-size:.85rem;color:var(--bad);
+  font-variant-numeric:tabular-nums;text-align:right;
+}
+.cnstl-alert-item.warn .a-days{color:var(--warn)}
+.cnstl-alert-item.na .a-days{color:var(--neutral);font-size:.7rem;font-style:italic;font-weight:600}
+
+/* Data table */
+.cnstl-data{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.cnstl-data-head{
+  padding:.8rem 1.2rem;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;
+  background:linear-gradient(135deg,#fcfaf6,#f5efe6);
+}
+.cnstl-data-head h3{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;color:var(--gov-dark);font-weight:700;
+}
+.cnstl-data-body{max-height:480px;overflow:auto}
+.cnstl-data-body::-webkit-scrollbar{width:10px;height:10px}
+.cnstl-data-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
+.r2-tbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.r2-tbl thead{position:sticky;top:0;z-index:2}
+.r2-tbl thead th{
+  padding:.7rem 1rem;text-align:left;font-weight:700;font-size:.66rem;
+  text-transform:uppercase;letter-spacing:.08em;
+  background:var(--gov-dark);color:#fff;
+  border-bottom:2px solid #4a1525;white-space:nowrap;
+}
+.r2-tbl thead th:nth-child(2){background:var(--teal)}
+.r2-tbl thead th:nth-child(3){background:var(--navy)}
+.r2-tbl thead th:nth-child(4),.r2-tbl thead th:nth-child(5){background:var(--gold);text-align:right}
+.r2-tbl tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+.r2-tbl tbody tr:nth-child(even){background:var(--surface2)}
+.r2-tbl tbody tr:hover{background:rgba(107,32,53,.04)}
+.r2-tbl tbody td{padding:.55rem 1rem;color:var(--text2);vertical-align:middle}
+.r2-tbl tbody td:first-child{
+  font-family:ui-monospace,Consolas,monospace;font-weight:700;color:var(--text);
+}
+.r2-tbl tbody td.r2-monto,.r2-tbl tbody td.r2-pct{
+  text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--text);white-space:nowrap;
+}
+.r2-tbl .r2-empty-cell{color:var(--text4);font-style:italic;font-size:.72rem}
+.r2-tbl .r2-tag{
+  display:inline-flex;font-weight:800;font-size:.65rem;letter-spacing:.05em;
+  padding:.2rem .5rem;border-radius:3px;color:#fff;
 }
 
 /* PROJECT BARS — versión compacta (Resumen) */
@@ -868,64 +949,62 @@ body{
       </div>
     </div>
 
-    <div class="summary-card">
-      <div class="summary-head">
-        <div class="summary-title"><span class="summary-num">5</span><h3>Tema 5</h3></div>
-        <p class="summary-meta">Pendiente de configurar</p>
-      </div>
-      <div class="placeholder-body">
-        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg></div>
-        <p>Espacio reservado para el quinto Excel de la subdirección.</p>
-        <span class="hint">URL CSV + columnas</span>
-      </div>
-    </div>
 
   </div>
 </section>
 
-<!-- ════════ RESUMEN 2 — vista horizontal tipo slide ════════ -->
+<!-- ════════ RESUMEN 2 — Constellation Dashboard ════════ -->
 <section class="section" id="sec-resumen2">
-  <div class="slide">
-    <div class="slide-frame">
+  <div class="cnstl-frame">
 
-      <div class="slide-hero">
-        <div>
-          <h2>Resumen ejecutivo</h2>
-          <p>Subdirección de Procesos Administrativos de Obra · vista horizontal</p>
-        </div>
-        <div class="slide-hero-meta">
-          Datos en vivo · <span id="r2Now">—</span>
-        </div>
+    <div class="cnstl-hero">
+      <div>
+        <h2>SPAO · Command Center</h2>
+        <p>Constelación de proyectos y contratos · visualización en red</p>
       </div>
-
-      <div class="slide-stats" id="r2Stats"></div>
-
-      <div class="slide-section">
-        <div class="slide-section-head">
-          <h3>Bitácoras de obra</h3>
-          <p>Distribución por estatus de registro de notas</p>
-        </div>
-        <div class="slide-bar" id="r2BitacorasBar"></div>
-        <div class="slide-bar-legend" id="r2BitacorasLegend"></div>
+      <div class="cnstl-status">
+        <span class="cnstl-pulse"></span>
+        En vivo · <span id="r2Now">—</span>
       </div>
-
-      <div class="slide-section">
-        <div class="slide-section-head">
-          <h3>Estimaciones</h3>
-          <p>Monto pendiente de pago por proyecto · cada barra suma 100% de su proyecto</p>
-        </div>
-        <div class="slide-projects" id="r2Projects"></div>
-      </div>
-
-      <div class="slide-section">
-        <div class="slide-section-head">
-          <h3>Contratos con mayor monto pendiente</h3>
-          <p>Top 5 a nivel global</p>
-        </div>
-        <div class="slide-strip" id="r2TopContracts"></div>
-      </div>
-
     </div>
+
+    <div class="cnstl-kpi-strip" id="r2KpiOrbit"></div>
+
+    <div class="cnstl-main">
+      <div class="cnstl-net-card">
+        <div class="cnstl-net-head">
+          <h3>Red SPAO — Proyectos × Contratos</h3>
+          <div class="cnstl-net-legend">
+            <span><span class="ld" style="background:linear-gradient(135deg,#a85568,#6b2035)"></span>Hub SPAO</span>
+            <span><span class="ld" style="background:#1a6b5a"></span>Proyecto</span>
+            <span><span class="ld pulse-mini"></span>Crítico</span>
+          </div>
+        </div>
+        <div id="r2Network" class="cnstl-net-canvas"></div>
+        <div class="cnstl-net-foot">Tamaño del nodo ∝ monto pendiente · halo rojo pulsante = bitácora crítica · hover para detalle</div>
+      </div>
+
+      <div class="cnstl-alerts">
+        <div class="cnstl-alerts-head">
+          <span class="cnstl-alert-icon">⚠</span>
+          <h3>Alertas · Bitácoras</h3>
+          <span class="cnstl-alert-count" id="r2CritCount">—</span>
+        </div>
+        <div id="r2CritList" class="cnstl-alerts-list"></div>
+      </div>
+    </div>
+
+    <div class="cnstl-data">
+      <div class="cnstl-data-head">
+        <h3>Estimaciones — datos completos</h3>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="r2Search" class="tbl-search" placeholder="Buscar contrato, proyecto o tramo...">
+        </div>
+      </div>
+      <div id="r2Table" class="cnstl-data-body"></div>
+    </div>
+
   </div>
 </section>
 
@@ -1062,7 +1141,7 @@ const SOURCES = {
   }
 };
 const REFRESH_MS = 60000;
-const TOP_N = 6;
+const TOP_N = 10;
 
 let bData = [];
 let bChart = null;
@@ -1364,98 +1443,239 @@ function renderContractList() {
 }
 
 // ══════════════════════════════════════════════════════════════
-// RENDER RESUMEN 2 — vista horizontal tipo slide
+// RENDER RESUMEN 2 — Constellation Dashboard (red SPAO)
 // ══════════════════════════════════════════════════════════════
 function renderResumen2() {
-  // Hero meta
   const now = new Date();
   document.getElementById('r2Now').textContent =
     now.toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
 
-  // Stats — 4 KPIs sin cajas
+  // KPI strip — 5 cards con accent color
   const totalContracts = eData.length;
   const totalPend = eData.reduce((s, c) => s + (c.montoPendiente || 0), 0);
   const totalBitacoras = bData.length;
   const projects = new Set(eData.map(c => c.proy)).size;
+  const criticalCount = bData.filter(b => b.status === 'bad').length;
 
-  document.getElementById('r2Stats').innerHTML = `
-    <div class="slide-stat accent-1"><div class="num">${totalContracts.toLocaleString('es-MX')}</div><div class="lbl">Contratos en estimaciones</div></div>
-    <div class="slide-stat accent-2"><div class="num">${esc(fmtMoney(totalPend))}</div><div class="lbl">Pendiente de pago</div></div>
-    <div class="slide-stat accent-3"><div class="num">${totalBitacoras.toLocaleString('es-MX')}</div><div class="lbl">Bitácoras de obra</div></div>
-    <div class="slide-stat accent-4"><div class="num">${projects.toLocaleString('es-MX')}</div><div class="lbl">Proyectos</div></div>
+  document.getElementById('r2KpiOrbit').innerHTML = `
+    <div class="cnstl-kpi" style="--accent:var(--gov-dark)">
+      <div class="num">${totalContracts.toLocaleString('es-MX')}</div>
+      <div class="lbl">Contratos</div>
+      <div class="sub">en estimaciones</div>
+    </div>
+    <div class="cnstl-kpi" style="--accent:var(--bad)">
+      <div class="num">${esc(fmtMoney(totalPend))}</div>
+      <div class="lbl">Pendiente de pago</div>
+      <div class="sub">monto total</div>
+    </div>
+    <div class="cnstl-kpi" style="--accent:var(--teal)">
+      <div class="num">${totalBitacoras.toLocaleString('es-MX')}</div>
+      <div class="lbl">Bitácoras</div>
+      <div class="sub">contratos en seguimiento</div>
+    </div>
+    <div class="cnstl-kpi" style="--accent:var(--gold)">
+      <div class="num">${projects.toLocaleString('es-MX')}</div>
+      <div class="lbl">Proyectos</div>
+      <div class="sub">ferroviarios</div>
+    </div>
+    <div class="cnstl-kpi" style="--accent:var(--warn)">
+      <div class="num">${criticalCount.toLocaleString('es-MX')}</div>
+      <div class="lbl">Críticos</div>
+      <div class="sub">bitácora &gt; 120 d</div>
+    </div>
   `;
 
-  // Bitácoras — barra apilada horizontal
-  const bOk   = bData.filter(r => r.status === 'ok').length;
-  const bWarn = bData.filter(r => r.status === 'warn').length;
-  const bBad  = bData.filter(r => r.status === 'bad').length;
-  const bNa   = bData.filter(r => r.status === 'na').length;
-  const segs = [
-    { count: bBad,  label: 'Críticos',     color: '#c75b39' },
-    { count: bWarn, label: 'En atención',  color: '#b8860b' },
-    { count: bOk,   label: 'Al corriente', color: '#1a6b5a' },
-    { count: bNa,   label: 'Sin datos',    color: '#8a7f73' },
-  ].filter(s => s.count > 0);
-  const bBar = document.getElementById('r2BitacorasBar');
-  bBar.innerHTML = segs.length
-    ? segs.map(s => `<div class="slide-bar-seg" style="flex:${s.count};background:${s.color}" title="${esc(s.label)}: ${s.count}">${s.count} · ${esc(s.label)}</div>`).join('')
-    : '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:.8rem">Sin datos</div>';
+  // Alertas — bitácoras críticas, en atención y sin reportar
+  const alerts = bData
+    .filter(b => b.status === 'bad' || b.status === 'warn' || b.status === 'na')
+    .sort((a, b) => {
+      const order = { bad: 0, warn: 1, na: 2 };
+      const da = order[a.status], db = order[b.status];
+      if (da !== db) return da - db;
+      return (b.days || 0) - (a.days || 0);
+    });
 
-  document.getElementById('r2BitacorasLegend').innerHTML = `
-    <span><span class="sw" style="background:#c75b39"></span><strong>${bBad}</strong> críticos (&gt; 120 d)</span>
-    <span><span class="sw" style="background:#b8860b"></span><strong>${bWarn}</strong> en atención (60–120 d)</span>
-    <span><span class="sw" style="background:#1a6b5a"></span><strong>${bOk}</strong> al corriente (&lt; 60 d)</span>
-    <span><span class="sw" style="background:#8a7f73"></span><strong>${bNa}</strong> sin datos</span>
-  `;
+  document.getElementById('r2CritCount').textContent = criticalCount;
 
-  // Estimaciones — una fila por proyecto, barra horizontal con segmentos
+  document.getElementById('r2CritList').innerHTML = alerts.length
+    ? alerts.map(b => {
+        const cls = b.status === 'bad' ? '' : (b.status === 'warn' ? 'warn' : 'na');
+        const meta = b.status === 'bad' ? 'Crítico · más de 120 días' :
+                     b.status === 'warn' ? 'En atención · 60–120 días' :
+                     'Sin reportar';
+        const days = b.status === 'na' ? 'sin datos' : `${b.label} d`;
+        return `
+          <div class="cnstl-alert-item ${cls}" title="${esc(b.contract)} · ${esc(meta)}">
+            <span class="a-pulse"></span>
+            <div>
+              <div class="a-id">${esc(b.contract)}</div>
+              <div class="a-meta">${esc(meta)}</div>
+            </div>
+            <div class="a-days">${esc(days)}</div>
+          </div>
+        `;
+      }).join('')
+    : `<div style="text-align:center;color:var(--text3);padding:2rem;font-size:.85rem">Ninguna alerta — todo al corriente</div>`;
+
+  renderNetwork();
+  renderR2Table();
+}
+
+function renderNetwork() {
+  const container = document.getElementById('r2Network');
+  if (!container) return;
+
+  const W = 700, H = 460;
+  const cx = W / 2, cy = H / 2;
+
   const pending = eData.filter(c => c.montoPendiente != null && c.montoPendiente > 0);
+  if (!pending.length) {
+    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:440px;color:var(--text3)">Sin datos para visualizar</div>`;
+    return;
+  }
+
   const byProj = new Map();
   for (const c of pending) {
     if (!byProj.has(c.proy)) byProj.set(c.proy, []);
     byProj.get(c.proy).push(c);
   }
-  const projCols = [...byProj.entries()]
-    .map(([proj, contracts]) => ({
-      proj,
-      contracts: contracts.slice().sort((a, b) => b.montoPendiente - a.montoPendiente),
-      total: contracts.reduce((s, c) => s + c.montoPendiente, 0),
-    }))
-    .sort((a, b) => b.total - a.total);
+  const projects = [...byProj.entries()].map(([proj, contracts]) => ({
+    proj,
+    contracts: contracts.slice().sort((a, b) => b.montoPendiente - a.montoPendiente),
+  }));
 
-  document.getElementById('r2Projects').innerHTML = projCols.map(p => {
-    const baseColor = getProjectColor(p.proj);
-    const inner = p.contracts.map(c => {
-      const pct = (c.montoPendiente / p.total * 100);
-      const showLabel = pct >= 8 ? esc(fmtMoney(c.montoPendiente)) : '';
-      return `<div style="flex:${c.montoPendiente};background:${baseColor}" title="${esc(c.contrato)} · ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct.toFixed(2)}%">${showLabel}</div>`;
-    }).join('');
+  const criticalSet = new Set(bData.filter(b => b.status === 'bad').map(b => b.contract));
+
+  const allMontos = pending.map(c => c.montoPendiente);
+  const maxMonto = Math.max(...allMontos);
+  const radiusFor = m => 6 + Math.sqrt(m / maxMonto) * 18;
+
+  const projectOrbit = 105;
+  const contractOrbit = 195;
+
+  let edges = [];
+  let nodes = [];
+
+  nodes.push({ type: 'hub', x: cx, y: cy, r: 38, label: 'SPAO' });
+
+  projects.forEach((p, pi) => {
+    const angle = (pi / projects.length) * Math.PI * 2 - Math.PI / 2;
+    const px = cx + projectOrbit * Math.cos(angle);
+    const py = cy + projectOrbit * Math.sin(angle);
+    const pcolor = getProjectColor(p.proj);
+
+    edges.push({ x1: cx, y1: cy, x2: px, y2: py, color: pcolor, w: 2.5, op: 0.7 });
+    nodes.push({ type: 'project', x: px, y: py, r: 26, label: p.proj, color: pcolor });
+
+    const arcWidth = (Math.PI * 2 / projects.length) * 0.85;
+    const n = p.contracts.length;
+    p.contracts.forEach((c, ci) => {
+      const offset = n === 1 ? 0 : (ci / (n - 1) - 0.5) * arcWidth;
+      const ca = angle + offset;
+      const x2 = cx + contractOrbit * Math.cos(ca);
+      const y2 = cy + contractOrbit * Math.sin(ca);
+      const r = radiusFor(c.montoPendiente);
+      const isCritical = criticalSet.has(c.contrato);
+
+      edges.push({ x1: px, y1: py, x2, y2, color: pcolor, w: 1, op: 0.35 });
+      nodes.push({
+        type: 'contract', x: x2, y: y2, r,
+        color: pcolor, critical: isCritical, contract: c
+      });
+    });
+  });
+
+  let html = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">`;
+  html += `<defs>
+    <radialGradient id="r2hub" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#a85568"/>
+      <stop offset="100%" stop-color="#6b2035"/>
+    </radialGradient>
+    <pattern id="r2grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(107,32,53,0.05)" stroke-width="1"/>
+    </pattern>
+    <filter id="r2glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>`;
+  html += `<rect width="${W}" height="${H}" fill="url(#r2grid)"/>`;
+
+  edges.forEach(e => {
+    html += `<line x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" stroke="${e.color}" stroke-width="${e.w}" stroke-opacity="${e.op}" stroke-linecap="round"/>`;
+  });
+
+  nodes.filter(n => n.critical).forEach(n => {
+    html += `<circle cx="${n.x}" cy="${n.y}" r="${n.r + 5}" fill="none" stroke="#c75b39" stroke-width="2" opacity="0.7">
+      <animate attributeName="r" values="${n.r + 3};${n.r + 14};${n.r + 3}" dur="1.8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;0;0.7" dur="1.8s" repeatCount="indefinite"/>
+    </circle>`;
+  });
+
+  nodes.forEach(n => {
+    if (n.type === 'hub') {
+      html += `<circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="url(#r2hub)" stroke="#fff" stroke-width="3" filter="url(#r2glow)"/>`;
+      html += `<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="14" font-weight="800">${esc(n.label)}</text>`;
+    } else if (n.type === 'project') {
+      html += `<circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.color}" stroke="#fff" stroke-width="2.5"/>`;
+      html += `<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="11" font-weight="800">${esc(n.label)}</text>`;
+    } else {
+      const tooltip = `${n.contract.contrato} — ${fmtMoneyFull(n.contract.montoPendiente)}${n.critical ? ' · CRÍTICO en bitácora' : ''}`;
+      html += `<g style="cursor:pointer">
+        <title>${esc(tooltip)}</title>
+        <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.color}" fill-opacity="0.85" stroke="#fff" stroke-width="1.5"/>
+      </g>`;
+    }
+  });
+
+  html += `</svg>`;
+  container.innerHTML = html;
+}
+
+function renderR2Table() {
+  const totalPend = eData.reduce((s, c) => s + (c.montoPendiente || 0), 0);
+  const q = (document.getElementById('r2Search')?.value || '').toLowerCase().trim();
+  const filtered = eData.filter(c =>
+    !q ||
+    c.contrato.toLowerCase().includes(q) ||
+    c.proy.toLowerCase().includes(q) ||
+    (c.tramo || '').toLowerCase().includes(q)
+  );
+  const sorted = filtered.slice().sort((a, b) => (b.montoPendiente || 0) - (a.montoPendiente || 0));
+
+  const rows = sorted.map(c => {
+    const baseColor = getProjectColor(c.proy);
+    const pct = (totalPend > 0 && c.montoPendiente)
+      ? (c.montoPendiente / totalPend * 100).toFixed(2) + '%'
+      : '<span class="r2-empty-cell">—</span>';
+    const monto = c.montoPendiente != null
+      ? fmtMoneyFull(c.montoPendiente)
+      : '<span class="r2-empty-cell">sin monto</span>';
     return `
-      <div class="slide-proj-row">
-        <span class="slide-proj-tag" style="background:${baseColor}">${esc(p.proj)}</span>
-        <div class="slide-proj-bar">${inner}</div>
-        <div class="slide-proj-amt">${esc(fmtMoney(p.total))}<small>${p.contracts.length} contratos · 100%</small></div>
-      </div>
+      <tr>
+        <td>${esc(c.contrato)}</td>
+        <td><span class="r2-tag" style="background:${baseColor}">${esc(c.proy)}</span></td>
+        <td>${c.tramo ? esc(c.tramo) : '<span class="r2-empty-cell">—</span>'}</td>
+        <td class="r2-monto">${monto}</td>
+        <td class="r2-pct">${pct}</td>
+      </tr>
     `;
-  }).join('') || `<div style="text-align:center;color:var(--text3);padding:1.2rem;font-size:.85rem">Sin contratos con monto pendiente</div>`;
+  }).join('');
 
-  // Top 5 contratos — global
-  const top5 = pending.slice().sort((a, b) => b.montoPendiente - a.montoPendiente).slice(0, 5);
-  const grandTotal = pending.reduce((s, c) => s + c.montoPendiente, 0);
-  document.getElementById('r2TopContracts').innerHTML = top5.length
-    ? top5.map(c => {
-        const baseColor = getProjectColor(c.proy);
-        const pct = grandTotal > 0 ? (c.montoPendiente / grandTotal * 100) : 0;
-        return `
-          <div class="slide-strip-item" style="border-left-color:${baseColor}">
-            <span class="ssi-id">${esc(c.contrato)}</span>
-            <div class="ssi-meta">${esc(c.proy)} · ${esc(c.tramo || '—')}</div>
-            <div class="ssi-amt" style="color:${baseColor}">${esc(fmtMoney(c.montoPendiente))}</div>
-            <div class="ssi-meta">${pct.toFixed(2)}% del total pendiente</div>
-          </div>
-        `;
-      }).join('')
-    : `<div style="text-align:center;color:var(--text3);padding:1rem;font-size:.85rem">Sin datos</div>`;
+  document.getElementById('r2Table').innerHTML = `<table class="r2-tbl">
+    <thead>
+      <tr>
+        <th>Contrato</th>
+        <th>Proyecto</th>
+        <th>Tramo</th>
+        <th>Monto pendiente</th>
+        <th>%</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text3)">Sin resultados</td></tr>'}
+    </tbody>
+  </table>`;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1861,6 +2081,13 @@ let eSearchTimer;
 document.getElementById('eSearch').addEventListener('input', () => {
   clearTimeout(eSearchTimer);
   eSearchTimer = setTimeout(renderContractList, 200);
+});
+
+// SEARCH (tabla de Resumen 2)
+let r2SearchTimer;
+document.getElementById('r2Search').addEventListener('input', () => {
+  clearTimeout(r2SearchTimer);
+  r2SearchTimer = setTimeout(renderR2Table, 200);
 });
 
 // ══════════════════════════════════════════════════════════════
