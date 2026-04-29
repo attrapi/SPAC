@@ -7,6 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236b2035'/%3E%3Cstop offset='1' stop-color='%238b3a50'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='12' fill='url(%23g)'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Plus Jakarta Sans,Arial,sans-serif' font-weight='800' font-size='24' fill='%23d4a84b'%3ESPAO%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -200,12 +201,10 @@ body{
 .kpi.k-neutral .kpi-value{color:var(--neutral)}
 .kpi-sub{font-size:.7rem;color:var(--text3);margin-top:.3rem}
 
-/* GRID: chart + table */
-.grid-2{
+/* CHART WRAPPER */
+.grid-1{
   max-width:1600px;margin:1rem auto 2rem;padding:0 2.5rem;
-  display:grid;grid-template-columns:1.15fr 1fr;gap:1.2rem;
 }
-@media(max-width:1100px){.grid-2{grid-template-columns:1fr}}
 
 .card{
   background:var(--surface);border:1px solid var(--border);
@@ -223,47 +222,24 @@ body{
 .card-body{padding:1.1rem 1.3rem;flex:1}
 
 /* CHART */
-.chart-wrap{position:relative;height:420px}
+.chart-wrap{position:relative;width:100%}
+.chart-scroll{overflow-y:auto;max-height:75vh;padding:.4rem .2rem}
+.chart-scroll::-webkit-scrollbar{width:10px}
+.chart-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
+.chart-scroll::-webkit-scrollbar-thumb:hover{background:var(--text4)}
 
-/* TABLE */
-.tbl-wrap{overflow:auto;max-height:480px;border-radius:0 0 var(--radius) var(--radius)}
-.tbl{width:100%;border-collapse:collapse;font-size:.82rem}
-.tbl thead{position:sticky;top:0;z-index:2}
-.tbl thead th{
-  padding:.75rem 1rem;text-align:left;font-weight:700;font-size:.68rem;
-  text-transform:uppercase;letter-spacing:.08em;
-  background:var(--gov-dark);color:#fff;
-  border-bottom:2px solid #4a1525;white-space:nowrap;
-  cursor:pointer;user-select:none;transition:filter .2s;
+/* LEGEND */
+.legend{
+  display:flex;flex-wrap:wrap;gap:.9rem;align-items:center;
+  padding:.8rem 1.3rem;border-top:1px solid var(--border);
+  background:var(--surface2);font-size:.74rem;color:var(--text2);
 }
-.tbl thead th:nth-child(2){background:var(--navy)}
-.tbl thead th:hover{filter:brightness(.92)}
-.tbl thead th .sort-icon{margin-left:.35rem;opacity:.55;font-size:.65rem}
-.tbl tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
-.tbl tbody tr:nth-child(even){background:var(--surface2)}
-.tbl tbody tr:hover{background:rgba(107,32,53,.04)}
-.tbl tbody td{padding:.65rem 1rem;color:var(--text2)}
-.tbl tbody td:first-child{color:var(--text);font-weight:600;font-family:ui-monospace,Consolas,monospace;font-size:.78rem}
-.tbl tbody td:nth-child(2){text-align:right;white-space:nowrap}
+.legend-item{display:inline-flex;align-items:center;gap:.4rem;font-weight:600}
+.legend-swatch{width:14px;height:10px;border-radius:2px}
 
-.pill{
-  display:inline-flex;align-items:center;gap:.35rem;
-  padding:.25rem .65rem;border-radius:50px;
-  font-size:.74rem;font-weight:700;font-family:inherit;
-}
-.pill.ok{background:rgba(26,107,90,.1);color:var(--ok)}
-.pill.warn{background:rgba(184,134,11,.12);color:var(--warn)}
-.pill.bad{background:rgba(199,91,57,.12);color:var(--bad)}
-.pill.neutral{background:var(--surface2);color:var(--neutral);border:1px solid var(--border)}
-.pill .dot{width:7px;height:7px;border-radius:50%}
-.pill.ok .dot{background:var(--ok)}
-.pill.warn .dot{background:var(--warn)}
-.pill.bad .dot{background:var(--bad)}
-.pill.neutral .dot{background:var(--neutral)}
-
-/* SEARCH */
+/* CONTROLS in card head */
 .tbl-search{
-  padding:.65rem .9rem .65rem 2.4rem;
+  padding:.6rem .85rem .6rem 2.3rem;
   background:var(--surface);border:1.5px solid var(--border);
   border-radius:var(--radius-sm);font-size:.8rem;font-family:inherit;
   outline:none;width:240px;transition:all .2s;
@@ -271,6 +247,19 @@ body{
 .tbl-search:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
 .search-wrap{position:relative}
 .search-wrap svg{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text4);width:14px;height:14px;pointer-events:none}
+
+.sort-select{
+  background:var(--surface);border:1.5px solid var(--border);color:var(--text2);
+  padding:.55rem .75rem;border-radius:var(--radius-sm);font-size:.78rem;
+  font-family:inherit;cursor:pointer;outline:none;transition:all .2s;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a7f73' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .65rem center;
+  padding-right:1.9rem;
+}
+.sort-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
+
+.controls-inline{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
 
 /* PLACEHOLDER */
 .placeholder{
@@ -429,40 +418,40 @@ body{
       </div>
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head">
-          <div>
-            <h3>Distribución por días sin registrar</h3>
-            <p>Solo contratos con dato numérico</p>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrap"><canvas id="bChart"></canvas></div>
-        </div>
-      </div>
-
+    <div class="grid-1">
       <div class="card">
         <div class="card-head">
           <div>
             <h3>Detalle por contrato</h3>
-            <p id="tblCount">—</p>
+            <p id="chartCount">—</p>
           </div>
-          <div class="search-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" class="tbl-search" id="bSearch" placeholder="Buscar contrato...">
+          <div class="controls-inline">
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" class="tbl-search" id="bSearch" placeholder="Buscar contrato...">
+            </div>
+            <select class="sort-select" id="bSortSelect">
+              <option value="days-desc">Días: mayor a menor</option>
+              <option value="days-asc">Días: menor a mayor</option>
+              <option value="contract-asc">Contrato: A → Z</option>
+              <option value="contract-desc">Contrato: Z → A</option>
+            </select>
           </div>
         </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th data-sort="contract">Contrato <span class="sort-icon">⇅</span></th>
-                <th data-sort="days">Días sin registrar <span class="sort-icon">⇅</span></th>
-              </tr>
-            </thead>
-            <tbody id="bTbody"></tbody>
-          </table>
+        <div class="card-body" style="padding:.6rem .8rem">
+          <div class="chart-scroll">
+            <div class="chart-wrap"><canvas id="bChart"></canvas></div>
+          </div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:#1a6b5a"></span>Al corriente (≤ 0)</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#b8860b"></span>En atención (1–30)</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#c75b39"></span>Crítico (&gt; 30)</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:#cfc8bc"></span>Sin datos</span>
+          <span class="legend-item" style="margin-left:auto;color:var(--text3);font-weight:500">
+            <span style="display:inline-block;width:18px;border-top:2px dashed var(--bad);margin-right:.3rem;vertical-align:middle"></span>
+            Umbral crítico (30 días)
+          </span>
         </div>
       </div>
     </div>
@@ -527,8 +516,8 @@ const SOURCES = {
 };
 const REFRESH_MS = 60000;
 
-let bData = [];        // [{contract, daysRaw, days, status}]
-let bSort = { col: 'days', asc: false };
+let bData = [];        // [{contract, days, status, label}]
+let bSortMode = 'days-desc';
 let bChart = null;
 
 // ══════════════════════════════════════════════════════════════
@@ -635,22 +624,88 @@ function renderBitacoras() {
   document.getElementById('kNa').textContent = na.toLocaleString('es-MX');
 
   renderBChart();
-  renderBTable();
 }
 
-function renderBChart() {
-  const numeric = bData.filter(r => r.days != null);
-  const sorted = [...numeric].sort((a, b) => b.days - a.days);
+const COLORS = {
+  ok: '#1a6b5a', warn: '#b8860b', bad: '#c75b39', na: '#cfc8bc'
+};
 
-  const labels = sorted.map(r => r.contract);
-  const data = sorted.map(r => r.days);
-  const colors = sorted.map(r =>
-    r.status === 'ok' ? '#1a6b5a' :
-    r.status === 'warn' ? '#b8860b' : '#c75b39'
-  );
+// Custom plugin: vertical reference line at 30 days (umbral crítico)
+const thresholdLinePlugin = {
+  id: 'thresholdLine',
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea, scales: { x } } = chart;
+    if (!x) return;
+    const xMax = x.max ?? 0;
+    if (xMax < 30) return;
+    const xPos = x.getPixelForValue(30);
+    if (xPos < chartArea.left || xPos > chartArea.right) return;
+    ctx.save();
+    ctx.strokeStyle = '#c75b39';
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(xPos, chartArea.top);
+    ctx.lineTo(xPos, chartArea.bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#c75b39';
+    ctx.font = "600 10px 'Plus Jakarta Sans', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('30 d', xPos, chartArea.top - 4);
+    ctx.restore();
+  }
+};
+
+function renderBChart() {
+  const q = document.getElementById('bSearch').value.toLowerCase().trim();
+  let rows = bData.filter(r => !q || r.contract.toLowerCase().includes(q));
+
+  rows.sort((a, b) => {
+    switch (bSortMode) {
+      case 'contract-asc':  return a.contract.localeCompare(b.contract, 'es');
+      case 'contract-desc': return b.contract.localeCompare(a.contract, 'es');
+      case 'days-asc': {
+        if (a.days == null && b.days == null) return 0;
+        if (a.days == null) return 1;
+        if (b.days == null) return -1;
+        return a.days - b.days;
+      }
+      case 'days-desc':
+      default: {
+        if (a.days == null && b.days == null) return 0;
+        if (a.days == null) return 1;
+        if (b.days == null) return -1;
+        return b.days - a.days;
+      }
+    }
+  });
+
+  document.getElementById('chartCount').textContent =
+    `${rows.length.toLocaleString('es-MX')} contrato${rows.length === 1 ? '' : 's'}`;
+
+  // Altura dinámica: ~30 px por barra, mínimo 320
+  const wrap = document.querySelector('.chart-wrap');
+  wrap.style.height = Math.max(320, rows.length * 30 + 60) + 'px';
+
+  // Para "sin datos" mostramos un valor "fantasma" igual al menor positivo (o 1) para que la barra sea visible
+  const numericVals = rows.map(r => r.days).filter(v => v != null && v > 0);
+  const ghost = numericVals.length ? Math.max(1, Math.min(...numericVals) * 0.4) : 1;
+
+  const labels = rows.map(r => r.contract);
+  const data = rows.map(r => r.days != null ? r.days : ghost);
+  const colors = rows.map(r => COLORS[r.status] || COLORS.na);
+  const isNa = rows.map(r => r.status === 'na');
 
   const ctx = document.getElementById('bChart');
   if (bChart) bChart.destroy();
+
+  if (!rows.length) {
+    wrap.style.height = '180px';
+    ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+    return;
+  }
+
   bChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -661,12 +716,16 @@ function renderBChart() {
         backgroundColor: colors,
         borderRadius: 4,
         borderSkipped: false,
+        borderWidth: rows.map(r => r.status === 'na' ? 1 : 0),
+        borderColor: '#b0a697',
       }]
     },
     options: {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      layout: { padding: { right: 60, top: 10, bottom: 4 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -675,64 +734,59 @@ function renderBChart() {
           bodyFont: { family: "'Plus Jakarta Sans'", size: 11 },
           padding: 10,
           callbacks: {
-            label: (ctx) => `${Math.round(ctx.parsed.x).toLocaleString('es-MX')} días`
+            title: (items) => items[0].label,
+            label: (c) => {
+              const r = rows[c.dataIndex];
+              if (r.status === 'na') return 'Sin datos';
+              const d = Math.round(r.days);
+              const tag = r.status === 'ok' ? 'al corriente' : r.status === 'warn' ? 'en atención' : 'crítico';
+              return `${d.toLocaleString('es-MX')} días · ${tag}`;
+            }
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          offset: 4,
+          color: (c) => isNa[c.dataIndex] ? '#8a7f73' : colors[c.dataIndex],
+          font: { family: "'Plus Jakarta Sans', sans-serif", weight: '700', size: 11 },
+          formatter: (_, c) => {
+            const r = rows[c.dataIndex];
+            if (r.status === 'na') return 'sin datos';
+            return Math.round(r.days).toLocaleString('es-MX') + ' d';
           }
         }
       },
       scales: {
         x: {
+          beginAtZero: true,
           grid: { color: 'rgba(0,0,0,.05)' },
-          ticks: { font: { family: "'Plus Jakarta Sans'", size: 10 }, color: '#8a7f73' },
-          title: { display: true, text: 'Días', font: { family: "'Plus Jakarta Sans'", size: 11, weight: '600' }, color: '#5c5347' }
+          ticks: {
+            font: { family: "'Plus Jakarta Sans'", size: 10 },
+            color: '#8a7f73',
+            callback: (v) => Math.round(v).toLocaleString('es-MX')
+          },
+          title: {
+            display: true, text: 'Días sin registrar notas',
+            font: { family: "'Plus Jakarta Sans'", size: 11, weight: '600' },
+            color: '#5c5347'
+          }
         },
         y: {
           grid: { display: false },
           ticks: {
             font: { family: 'ui-monospace,Consolas,monospace', size: 10 },
             color: '#5c5347',
-            autoSkip: false
+            autoSkip: false,
+            callback: function(value) {
+              const lbl = this.getLabelForValue(value);
+              return lbl.length > 28 ? lbl.slice(0, 26) + '…' : lbl;
+            }
           }
         }
       }
-    }
-  });
-}
-
-function renderBTable() {
-  const q = document.getElementById('bSearch').value.toLowerCase().trim();
-  let rows = bData.filter(r => !q || r.contract.toLowerCase().includes(q));
-
-  rows.sort((a, b) => {
-    if (bSort.col === 'contract') {
-      return bSort.asc ? a.contract.localeCompare(b.contract, 'es') : b.contract.localeCompare(a.contract, 'es');
-    }
-    // days: nulls al final siempre
-    const av = a.days, bv = b.days;
-    if (av == null && bv == null) return 0;
-    if (av == null) return 1;
-    if (bv == null) return -1;
-    return bSort.asc ? av - bv : bv - av;
-  });
-
-  document.getElementById('tblCount').textContent =
-    `${rows.length.toLocaleString('es-MX')} contrato${rows.length === 1 ? '' : 's'}`;
-
-  const tbody = document.getElementById('bTbody');
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="2" class="empty-state" style="padding:2rem">Sin resultados</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = rows.map(r => `
-    <tr>
-      <td title="${esc(r.contract)}">${esc(r.contract)}</td>
-      <td><span class="pill ${r.status}"><span class="dot"></span>${esc(r.label)}</span></td>
-    </tr>
-  `).join('');
-
-  // sort indicators
-  document.querySelectorAll('.tbl thead th').forEach(th => {
-    const isCur = th.dataset.sort === bSort.col;
-    th.querySelector('.sort-icon').textContent = isCur ? (bSort.asc ? '▲' : '▼') : '⇅';
+    },
+    plugins: [thresholdLinePlugin]
   });
 }
 
@@ -778,16 +832,12 @@ async function fetchAll() {
 let searchTimer;
 document.getElementById('bSearch').addEventListener('input', () => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(renderBTable, 200);
+  searchTimer = setTimeout(renderBChart, 200);
 });
 
-document.querySelectorAll('.tbl thead th').forEach(th => {
-  th.addEventListener('click', () => {
-    const col = th.dataset.sort;
-    if (bSort.col === col) bSort.asc = !bSort.asc;
-    else { bSort.col = col; bSort.asc = col === 'contract'; }
-    renderBTable();
-  });
+document.getElementById('bSortSelect').addEventListener('change', (e) => {
+  bSortMode = e.target.value;
+  renderBChart();
 });
 
 // ══════════════════════════════════════════════════════════════
