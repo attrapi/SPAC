@@ -345,31 +345,34 @@ body{
   color:var(--text4);font-weight:700;margin-bottom:.55rem;
 }
 
-/* PENDING LIST — contratos con monto pendiente (Resumen) */
-.pending-list{
+/* PENDING LIST — contratos con monto pendiente (Resumen)
+   Una columna por proyecto, cada una con su propio total = 100% */
+.pending-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:.6rem;max-height:340px;overflow-y:auto;
+}
+.pending-grid::-webkit-scrollbar{width:8px}
+.pending-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.pending-col{
   display:flex;flex-direction:column;
   border:1px solid var(--border);border-radius:6px;overflow:hidden;
-  max-height:280px;overflow-y:auto;
   background:var(--surface);
 }
-.pending-list::-webkit-scrollbar{width:8px}
-.pending-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.pending-col-head{
+  padding:.45rem .65rem;color:#fff;font-weight:800;font-size:.72rem;
+  letter-spacing:.05em;text-align:center;
+}
 .pending-row{
-  display:grid;grid-template-columns:auto 1fr auto auto;gap:.55rem;align-items:center;
-  padding:.45rem .7rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:1fr auto auto;gap:.5rem;align-items:center;
+  padding:.42rem .65rem;border-bottom:1px solid var(--border);
   font-size:.74rem;transition:background .15s;
 }
 .pending-row:hover{background:var(--surface2)}
 .pending-row:last-of-type{border-bottom:none}
-.pending-row .p-tag{
-  font-weight:800;font-size:.62rem;letter-spacing:.04em;
-  padding:.18rem .42rem;border-radius:3px;color:#fff;min-width:36px;
-  text-align:center;
-}
 .pending-row .p-id{
-  font-family:ui-monospace,Consolas,monospace;font-size:.72rem;
+  font-family:ui-monospace,Consolas,monospace;font-size:.71rem;
   color:var(--text);font-weight:600;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;
 }
 .pending-row .p-amt{
   font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;
@@ -377,14 +380,13 @@ body{
 }
 .pending-row .p-pct{
   font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;
-  font-size:.72rem;white-space:nowrap;text-align:right;min-width:48px;
+  font-size:.72rem;white-space:nowrap;text-align:right;min-width:46px;
 }
 .pending-row.pending-total{
   background:var(--surface2);border-top:1.5px solid var(--border2);
-  position:sticky;bottom:0;z-index:1;
+  margin-top:auto; /* empuja al pie de la columna */
 }
 .pending-row.pending-total .p-total-label{
-  grid-column:1 / 3;
   font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;
   color:var(--text2);font-weight:800;
 }
@@ -1012,38 +1014,56 @@ function renderEstimacionesSummary() {
     `;
   }).join('');
 
-  // Lista de contratos con monto pendiente (orden desc)
-  const pending = eData
-    .filter(c => c.montoPendiente != null && c.montoPendiente > 0)
-    .sort((a, b) => b.montoPendiente - a.montoPendiente);
+  // Lista de contratos con monto pendiente — agrupada por proyecto
+  // Cada proyecto suma su propio 100%
+  const pending = eData.filter(c => c.montoPendiente != null && c.montoPendiente > 0);
 
-  const pendingTotal = pending.reduce((s, c) => s + (c.montoPendiente || 0), 0);
+  const byProj = new Map();
+  for (const c of pending) {
+    if (!byProj.has(c.proy)) byProj.set(c.proy, []);
+    byProj.get(c.proy).push(c);
+  }
+  const projCols = [...byProj.entries()]
+    .map(([proj, contracts]) => ({
+      proj,
+      contracts: contracts.slice().sort((a, b) => b.montoPendiente - a.montoPendiente),
+      total: contracts.reduce((s, c) => s + c.montoPendiente, 0),
+    }))
+    .sort((a, b) => b.total - a.total);
+
   const pendingEl = document.getElementById('ePendingList');
   if (!pending.length) {
     pendingEl.innerHTML = `<div class="pending-empty">Ningún contrato con monto pendiente</div>`;
   } else {
-    const rows = pending.map(c => {
-      const baseColor = getProjectColor(c.proy);
-      const proyTramo = [c.proy, c.tramo].filter(Boolean).join(' ');
-      const pct = pendingTotal > 0 ? (c.montoPendiente / pendingTotal * 100) : 0;
-      return `
-        <div class="pending-row" title="${esc(c.contrato)} · ${esc(proyTramo)} · ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct.toFixed(2)}%">
-          <span class="p-tag" style="background:${baseColor}">${esc(c.proy)}</span>
-          <span class="p-id">${esc(c.contrato)}</span>
-          <span class="p-amt">${esc(fmtMoney(c.montoPendiente))}</span>
-          <span class="p-pct">${pct.toFixed(2)}%</span>
-        </div>
-      `;
-    }).join('');
-
-    const totalRow = `
-      <div class="pending-row pending-total" title="${esc(fmtMoneyFull(pendingTotal))} · 100%">
-        <span class="p-total-label">Total</span>
-        <span class="p-amt">${esc(fmtMoney(pendingTotal))}</span>
-        <span class="p-pct">100.00%</span>
-      </div>
-    `;
-    pendingEl.innerHTML = rows + totalRow;
+    pendingEl.innerHTML = `<div class="pending-grid">${
+      projCols.map(p => {
+        const baseColor = getProjectColor(p.proj);
+        const rows = p.contracts.map(c => {
+          const pct = p.total > 0 ? (c.montoPendiente / p.total * 100) : 0;
+          return `
+            <div class="pending-row" title="${esc(c.contrato)} — ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct.toFixed(2)}%">
+              <span class="p-id">${esc(c.contrato)}</span>
+              <span class="p-amt">${esc(fmtMoney(c.montoPendiente))}</span>
+              <span class="p-pct">${pct.toFixed(2)}%</span>
+            </div>
+          `;
+        }).join('');
+        const totalRow = `
+          <div class="pending-row pending-total" title="${esc(fmtMoneyFull(p.total))} · 100%">
+            <span class="p-total-label">Total ${esc(p.proj)}</span>
+            <span class="p-amt">${esc(fmtMoney(p.total))}</span>
+            <span class="p-pct">100.00%</span>
+          </div>
+        `;
+        return `
+          <div class="pending-col">
+            <div class="pending-col-head" style="background:${baseColor}">${esc(p.proj)}</div>
+            ${rows}
+            ${totalRow}
+          </div>
+        `;
+      }).join('')
+    }</div>`;
   }
 
   document.getElementById('eFootNote').textContent =
