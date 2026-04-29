@@ -37,7 +37,6 @@
   --teal-pale:rgba(26,107,90,.08);
 
   --navy:#2c3e6b;
-  --navy-light:#4a5f8a;
   --navy-pale:rgba(44,62,107,.07);
 
   --copper:#a0522d;
@@ -81,7 +80,7 @@ body{
 .header{
   background:var(--surface);
   border-bottom:3px solid var(--gov-dark);
-  padding:1.5rem 2.5rem;
+  padding:1.4rem 2.5rem;
   box-shadow:var(--shadow-sm);
 }
 .header-inner{
@@ -94,33 +93,22 @@ body{
   background:linear-gradient(135deg,var(--gov-dark),var(--gov-mid));
   display:flex;align-items:center;justify-content:center;
   color:#fff;font-size:1.05rem;font-weight:800;letter-spacing:.05em;
-  box-shadow:0 2px 8px rgba(107,32,53,.25);
-  flex-shrink:0;
+  box-shadow:0 2px 8px rgba(107,32,53,.25);flex-shrink:0;
 }
 .header-text h1{
   font-family:'Playfair Display',serif;
   font-size:1.45rem;font-weight:700;color:var(--gov-dark);
   line-height:1.2;letter-spacing:-.01em;
 }
-.header-text p{
-  font-size:.78rem;color:var(--text3);margin-top:.15rem;
-  font-weight:500;letter-spacing:.02em;
-}
+.header-text p{font-size:.78rem;color:var(--text3);margin-top:.15rem;font-weight:500;letter-spacing:.02em}
 .header-actions{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
 
 .badge{
   display:inline-flex;align-items:center;gap:.4rem;
-  padding:.4rem .9rem;border-radius:50px;font-size:.73rem;font-weight:600;
-  letter-spacing:.02em;
+  padding:.4rem .9rem;border-radius:50px;font-size:.73rem;font-weight:600;letter-spacing:.02em;
 }
-.badge.live{
-  background:rgba(26,107,90,.1);color:var(--teal);
-  border:1px solid rgba(26,107,90,.2);
-}
-.badge.live::before{
-  content:'';width:7px;height:7px;border-radius:50%;background:var(--teal);
-  animation:pulse-dot 2s ease-in-out infinite;
-}
+.badge.live{background:rgba(26,107,90,.1);color:var(--teal);border:1px solid rgba(26,107,90,.2)}
+.badge.live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse-dot 2s ease-in-out infinite}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
 
 .btn{
@@ -137,170 +125,154 @@ body{
 /* TABS */
 .tabs{
   max-width:1600px;margin:1.4rem auto 0;padding:0 2.5rem;
-  display:flex;gap:.4rem;flex-wrap:wrap;
-  border-bottom:1.5px solid var(--border);
+  display:flex;gap:.4rem;flex-wrap:wrap;border-bottom:1.5px solid var(--border);
 }
 .tab{
   background:transparent;border:none;cursor:pointer;
-  padding:.85rem 1.3rem;font-family:inherit;font-size:.82rem;font-weight:600;
+  padding:.8rem 1.3rem;font-family:inherit;font-size:.82rem;font-weight:600;
   color:var(--text3);letter-spacing:.01em;
   border-bottom:3px solid transparent;margin-bottom:-1.5px;
   transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;
 }
 .tab:hover{color:var(--gov-mid)}
-.tab.active{
-  color:var(--gov-dark);
-  border-bottom-color:var(--gov-dark);
-}
-.tab .pending{
-  font-size:.62rem;background:var(--surface2);color:var(--text4);
-  padding:.15rem .5rem;border-radius:50px;font-weight:700;letter-spacing:.05em;
-  border:1px solid var(--border);
-}
-.tab.active .pending{background:var(--gov-pale);color:var(--gov-mid);border-color:rgba(107,32,53,.2)}
+.tab.active{color:var(--gov-dark);border-bottom-color:var(--gov-dark)}
 
 /* SECTION */
-.section{display:none;animation:fadeIn .25s ease-out}
-.section.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
 .section-head{
   max-width:1600px;margin:1.5rem auto .4rem;padding:0 2.5rem;
   display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:.8rem;
 }
 .section-head h2{
   font-family:'Playfair Display',serif;
-  font-size:1.25rem;font-weight:700;color:var(--text);letter-spacing:-.01em;
+  font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:-.01em;
 }
 .section-head p{font-size:.78rem;color:var(--text3);margin-top:.2rem}
 
-/* KPIs */
-.kpi-row{
-  max-width:1600px;margin:1rem auto;padding:0 2.5rem;
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;
-}
-.kpi{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:1.2rem 1.4rem;
-  box-shadow:var(--shadow-sm);transition:all .2s;
-  position:relative;overflow:hidden;
-}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.kpi.k-total::before{background:var(--gov-dark)}
-.kpi.k-ok::before{background:var(--ok)}
-.kpi.k-warn::before{background:var(--warn)}
-.kpi.k-bad::before{background:var(--bad)}
-.kpi.k-neutral::before{background:var(--neutral)}
-.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.kpi-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);font-weight:700}
-.kpi-value{font-size:1.85rem;font-weight:800;letter-spacing:-.03em;margin-top:.35rem;line-height:1}
-.kpi.k-total .kpi-value{color:var(--gov-dark)}
-.kpi.k-ok .kpi-value{color:var(--ok)}
-.kpi.k-warn .kpi-value{color:var(--warn)}
-.kpi.k-bad .kpi-value{color:var(--bad)}
-.kpi.k-neutral .kpi-value{color:var(--neutral)}
-.kpi-sub{font-size:.7rem;color:var(--text3);margin-top:.3rem}
-
-/* CHART WRAPPER */
-.grid-1{
+/* SUMMARY GRID — 5 tarjetas compactas */
+.summary-grid{
   max-width:1600px;margin:1rem auto 2rem;padding:0 2.5rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
+  gap:1.1rem;
 }
 
-.card{
+.summary-card{
   background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius);box-shadow:var(--shadow-sm);
-  display:flex;flex-direction:column;min-height:0;
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
 }
-.card-head{
-  padding:1rem 1.3rem;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;
+.summary-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gov-dark);
 }
-.card-head h3{
-  font-size:.95rem;font-weight:700;color:var(--text);letter-spacing:-.01em;
-}
-.card-head p{font-size:.72rem;color:var(--text3);margin-top:.15rem}
-.card-body{padding:1.1rem 1.3rem;flex:1}
+.summary-card:nth-child(2)::before{background:var(--teal)}
+.summary-card:nth-child(3)::before{background:var(--gold)}
+.summary-card:nth-child(4)::before{background:var(--navy)}
+.summary-card:nth-child(5)::before{background:var(--copper)}
+.summary-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
 
-/* CHART */
-.chart-wrap{position:relative;width:100%}
-.chart-scroll{overflow-y:auto;max-height:75vh;padding:.4rem .2rem}
-.chart-scroll::-webkit-scrollbar{width:10px}
-.chart-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
-.chart-scroll::-webkit-scrollbar-thumb:hover{background:var(--text4)}
+.summary-head{
+  padding:1rem 1.2rem .85rem;border-bottom:1px solid var(--border);
+}
+.summary-title{display:flex;align-items:center;gap:.55rem}
+.summary-num{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--gov-pale);color:var(--gov-dark);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:800;flex-shrink:0;
+}
+.summary-card:nth-child(2) .summary-num{background:var(--teal-pale);color:var(--teal)}
+.summary-card:nth-child(3) .summary-num{background:var(--gold-pale);color:var(--gold)}
+.summary-card:nth-child(4) .summary-num{background:var(--navy-pale);color:var(--navy)}
+.summary-card:nth-child(5) .summary-num{background:var(--copper-pale);color:var(--copper)}
+.summary-head h3{font-size:.98rem;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.summary-meta{font-size:.72rem;color:var(--text3);margin-top:.3rem;margin-left:2.05rem}
 
-/* LEGEND */
-.legend{
-  display:flex;flex-wrap:wrap;gap:.9rem;align-items:center;
-  padding:.8rem 1.3rem;border-top:1px solid var(--border);
-  background:var(--surface2);font-size:.74rem;color:var(--text2);
+/* STATS BAR inside summary card */
+.summary-stats{
+  display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;
+  padding:.85rem 1.2rem;background:var(--surface2);
+  border-bottom:1px solid var(--border);
 }
-.legend-item{display:inline-flex;align-items:center;gap:.4rem;font-weight:600}
-.legend-swatch{width:14px;height:10px;border-radius:2px}
+.stat-big{display:flex;flex-direction:column;line-height:1.05}
+.stat-big .num{font-size:1.5rem;font-weight:800;color:var(--gov-dark);letter-spacing:-.02em}
+.stat-big .lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);font-weight:700;margin-top:.15rem}
+.stat-divider{width:1px;height:30px;background:var(--border)}
+.stat-chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:.35rem;
+  padding:.25rem .55rem;border-radius:50px;
+  font-size:.7rem;font-weight:700;letter-spacing:.01em;
+  border:1px solid transparent;
+}
+.chip .d{width:6px;height:6px;border-radius:50%}
+.chip.ok{background:rgba(26,107,90,.1);color:var(--ok)}
+.chip.ok .d{background:var(--ok)}
+.chip.warn{background:rgba(184,134,11,.12);color:var(--warn)}
+.chip.warn .d{background:var(--warn)}
+.chip.bad{background:rgba(199,91,57,.12);color:var(--bad)}
+.chip.bad .d{background:var(--bad)}
+.chip.neutral{background:var(--surface);color:var(--neutral);border-color:var(--border)}
+.chip.neutral .d{background:var(--neutral)}
 
-/* CONTROLS in card head */
-.tbl-search{
-  padding:.6rem .85rem .6rem 2.3rem;
-  background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);font-size:.8rem;font-family:inherit;
-  outline:none;width:240px;transition:all .2s;
-}
-.tbl-search:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
-.search-wrap{position:relative}
-.search-wrap svg{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text4);width:14px;height:14px;pointer-events:none}
+/* CHART inside summary card */
+.summary-chart{padding:.6rem .9rem .3rem}
+.chart-wrap-mini{position:relative;height:240px}
 
-.sort-select{
-  background:var(--surface);border:1.5px solid var(--border);color:var(--text2);
-  padding:.55rem .75rem;border-radius:var(--radius-sm);font-size:.78rem;
-  font-family:inherit;cursor:pointer;outline:none;transition:all .2s;
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a7f73' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right .65rem center;
-  padding-right:1.9rem;
+.summary-foot{
+  padding:.55rem 1.2rem;border-top:1px solid var(--border);
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.4rem;
+  font-size:.7rem;color:var(--text3);
 }
-.sort-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
+.summary-foot .legend-mini{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center}
+.summary-foot .legend-mini > span{display:inline-flex;align-items:center;gap:.3rem;font-weight:600}
+.summary-foot .legend-mini .sw{width:9px;height:9px;border-radius:2px}
 
-.controls-inline{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
-
-/* PLACEHOLDER */
-.placeholder{
-  max-width:1600px;margin:2rem auto;padding:0 2.5rem;
+/* PLACEHOLDER cards */
+.placeholder-body{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem 1.4rem;text-align:center;gap:.7rem;
+  background:repeating-linear-gradient(45deg,var(--surface),var(--surface) 12px,var(--surface2) 12px,var(--surface2) 24px);
+  min-height:340px;
 }
-.placeholder-card{
-  background:var(--surface);border:2px dashed var(--border2);
-  border-radius:var(--radius);padding:3.5rem 2rem;text-align:center;
+.placeholder-body .ic{
+  width:46px;height:46px;border-radius:50%;background:var(--surface);
+  border:1.5px dashed var(--border2);
+  display:flex;align-items:center;justify-content:center;color:var(--text3);
 }
-.placeholder-card .ic{
-  width:54px;height:54px;border-radius:50%;background:var(--surface2);
-  border:1.5px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 1rem;color:var(--text3);
-}
-.placeholder-card h3{font-size:1.05rem;color:var(--text2);font-weight:700;margin-bottom:.4rem}
-.placeholder-card p{font-size:.85rem;color:var(--text3);max-width:560px;margin:0 auto;line-height:1.55}
-.placeholder-card .hint{
-  display:inline-block;margin-top:1rem;font-size:.72rem;color:var(--text4);
-  background:var(--surface2);border:1px solid var(--border);padding:.4rem .9rem;
-  border-radius:50px;font-family:ui-monospace,Consolas,monospace;
+.placeholder-body p{font-size:.82rem;color:var(--text3);max-width:280px;line-height:1.5}
+.placeholder-body .hint{
+  font-size:.65rem;color:var(--text4);background:var(--surface);
+  border:1px solid var(--border);padding:.3rem .7rem;border-radius:50px;
+  font-family:ui-monospace,Consolas,monospace;
 }
 
-/* LOADING / EMPTY */
-.loading-overlay{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;gap:1.2rem}
-.loader{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--gov-dark);border-radius:50%;animation:spin .9s linear infinite}
-.loading-text{color:var(--text3);font-size:.85rem;font-weight:500}
-.empty-state{text-align:center;padding:3rem 2rem;color:var(--text3)}
+/* LOADING / EMPTY inside card */
+.card-loading{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:3rem 1rem;gap:.8rem;min-height:300px;
+}
+.loader{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gov-dark);border-radius:50%;animation:spin .9s linear infinite}
+.loading-text{color:var(--text3);font-size:.8rem;font-weight:500}
+.card-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem 1rem;color:var(--text3);font-size:.85rem;text-align:center;min-height:300px;
+}
 
 /* ERROR */
-.error-box{max-width:1600px;margin:1.5rem auto;padding:0 2.5rem}
+.error-box{max-width:1600px;margin:1rem auto;padding:0 2.5rem}
 .error-card{
   background:#fff5f5;border:1.5px solid rgba(199,91,57,.25);
-  border-radius:var(--radius);padding:1.2rem 1.5rem;
-  display:flex;align-items:flex-start;gap:1rem;
-  color:var(--terracotta);font-size:.84rem;line-height:1.5;
+  border-radius:var(--radius);padding:1rem 1.3rem;
+  display:flex;align-items:flex-start;gap:.9rem;
+  color:var(--terracotta);font-size:.82rem;line-height:1.5;
 }
-.error-card strong{display:block;margin-bottom:.2rem;font-size:.88rem;color:#9b3520}
+.error-card strong{display:block;margin-bottom:.2rem;font-size:.86rem;color:#9b3520}
 .error-card code{
   display:block;margin-top:.5rem;background:rgba(199,91,57,.06);
-  padding:.5rem .8rem;border-radius:4px;font-size:.75rem;
+  padding:.45rem .7rem;border-radius:4px;font-size:.72rem;
   color:var(--text2);word-break:break-all;
 }
 
@@ -322,7 +294,7 @@ body{
 /* FOOTER */
 .footer{
   background:var(--surface2);border-top:1px solid var(--border);
-  text-align:center;padding:1.4rem 2rem;margin-top:1rem;
+  text-align:center;padding:1.3rem 2rem;margin-top:1rem;
 }
 .footer p{font-size:.72rem;color:var(--text4);line-height:1.6}
 .footer strong{color:var(--gov-dark);font-weight:700}
@@ -330,10 +302,9 @@ body{
 @media(max-width:768px){
   .header{padding:1rem}
   .header-text h1{font-size:1.05rem}
-  .tabs,.kpi-row,.grid-2,.section-head,.placeholder{padding:0 1rem}
-  .kpi-value{font-size:1.4rem}
+  .tabs,.summary-grid,.section-head{padding:0 1rem}
+  .summary-grid{grid-template-columns:1fr}
   .gov-banner{font-size:.6rem;padding:.4rem .8rem}
-  .chart-wrap{height:340px}
 }
 </style>
 </head>
@@ -351,11 +322,11 @@ body{
       <div class="header-icon">SPAO</div>
       <div class="header-text">
         <h1>Subdirección de Procesos Administrativos de Obra</h1>
-        <p>Tablero consolidado · 4 fuentes de información</p>
+        <p>Resumen ejecutivo · 5 áreas temáticas</p>
       </div>
     </div>
     <div class="header-actions">
-      <span class="badge live" id="liveBadge">En vivo</span>
+      <span class="badge live">En vivo</span>
       <button class="btn btn-outline" id="refreshBtn" onclick="fetchAll()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
         Actualizar
@@ -366,129 +337,112 @@ body{
 
 <!-- TABS -->
 <nav class="tabs" role="tablist">
-  <button class="tab active" data-tab="bitacoras" role="tab">Bitácoras de obra</button>
-  <button class="tab" data-tab="r2" role="tab">Resumen 2 <span class="pending">PENDIENTE</span></button>
-  <button class="tab" data-tab="r3" role="tab">Resumen 3 <span class="pending">PENDIENTE</span></button>
-  <button class="tab" data-tab="r4" role="tab">Resumen 4 <span class="pending">PENDIENTE</span></button>
+  <button class="tab active" data-tab="resumen" role="tab">Resumen</button>
 </nav>
 
-<!-- ERROR BOX -->
+<!-- ERROR -->
 <div class="error-box" id="errorBox" style="display:none"></div>
 
-<!-- ════════ SECTION 1: BITÁCORAS ════════ -->
-<section class="section active" id="sec-bitacoras">
+<!-- ════════ RESUMEN ════════ -->
+<section class="section">
   <div class="section-head">
     <div>
-      <h2>Bitácoras de obra — días sin registrar notas</h2>
-      <p>Por contrato. Origen: hoja publicada de Google Sheets · actualización automática.</p>
+      <h2>Resumen ejecutivo</h2>
+      <p>Indicadores clave de las 5 áreas temáticas de la subdirección · datos en vivo</p>
     </div>
   </div>
 
-  <div id="b-loading" class="loading-overlay">
-    <div class="loader"></div>
-    <div class="loading-text">Conectando con Google Sheets...</div>
-  </div>
+  <div class="summary-grid">
 
-  <div id="b-content" style="display:none">
-    <div class="kpi-row">
-      <div class="kpi k-total">
-        <div class="kpi-label">Contratos</div>
-        <div class="kpi-value" id="kTotal">—</div>
-        <div class="kpi-sub">Registros en hoja</div>
+    <!-- 1. BITÁCORAS DE OBRA -->
+    <div class="summary-card" id="card-bitacoras">
+      <div class="summary-head">
+        <div class="summary-title">
+          <span class="summary-num">1</span>
+          <h3>Bitácoras de obra</h3>
+        </div>
+        <p class="summary-meta">Días sin registrar notas · por contrato</p>
       </div>
-      <div class="kpi k-ok">
-        <div class="kpi-label">Al corriente</div>
-        <div class="kpi-value" id="kOk">—</div>
-        <div class="kpi-sub">≤ 0 días</div>
-      </div>
-      <div class="kpi k-warn">
-        <div class="kpi-label">En atención</div>
-        <div class="kpi-value" id="kWarn">—</div>
-        <div class="kpi-sub">1 a 30 días</div>
-      </div>
-      <div class="kpi k-bad">
-        <div class="kpi-label">Críticos</div>
-        <div class="kpi-value" id="kBad">—</div>
-        <div class="kpi-sub">Más de 30 días</div>
-      </div>
-      <div class="kpi k-neutral">
-        <div class="kpi-label">Sin datos</div>
-        <div class="kpi-value" id="kNa">—</div>
-        <div class="kpi-sub">No reportado</div>
-      </div>
-    </div>
 
-    <div class="grid-1">
-      <div class="card">
-        <div class="card-head">
-          <div>
-            <h3>Detalle por contrato</h3>
-            <p id="chartCount">—</p>
+      <div id="bLoading" class="card-loading">
+        <div class="loader"></div>
+        <div class="loading-text">Cargando datos...</div>
+      </div>
+
+      <div id="bContent" style="display:none;flex:1;flex-direction:column">
+        <div class="summary-stats">
+          <div class="stat-big">
+            <span class="num" id="bTotal">—</span>
+            <span class="lbl">Contratos</span>
           </div>
-          <div class="controls-inline">
-            <div class="search-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input type="text" class="tbl-search" id="bSearch" placeholder="Buscar contrato...">
-            </div>
-            <select class="sort-select" id="bSortSelect">
-              <option value="days-desc">Días: mayor a menor</option>
-              <option value="days-asc">Días: menor a mayor</option>
-              <option value="contract-asc">Contrato: A → Z</option>
-              <option value="contract-desc">Contrato: Z → A</option>
-            </select>
-          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-chips" id="bChips"></div>
         </div>
-        <div class="card-body" style="padding:.6rem .8rem">
-          <div class="chart-scroll">
-            <div class="chart-wrap"><canvas id="bChart"></canvas></div>
-          </div>
+
+        <div class="summary-chart">
+          <div class="chart-wrap-mini"><canvas id="bChart"></canvas></div>
         </div>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:#1a6b5a"></span>Al corriente (≤ 0)</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#b8860b"></span>En atención (1–30)</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#c75b39"></span>Crítico (&gt; 30)</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:#cfc8bc"></span>Sin datos</span>
-          <span class="legend-item" style="margin-left:auto;color:var(--text3);font-weight:500">
-            <span style="display:inline-block;width:18px;border-top:2px dashed var(--bad);margin-right:.3rem;vertical-align:middle"></span>
-            Umbral crítico (30 días)
-          </span>
+
+        <div class="summary-foot">
+          <div class="legend-mini">
+            <span><span class="sw" style="background:#1a6b5a"></span>Al corriente</span>
+            <span><span class="sw" style="background:#b8860b"></span>1–30 d</span>
+            <span><span class="sw" style="background:#c75b39"></span>&gt; 30 d</span>
+          </div>
+          <span id="bFootNote">—</span>
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ════════ SECTIONS 2/3/4: PLACEHOLDERS ════════ -->
-<section class="section" id="sec-r2">
-  <div class="placeholder">
-    <div class="placeholder-card">
-      <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-      <h3>Resumen 2 — pendiente de configurar</h3>
-      <p>Este espacio está reservado para el segundo Excel de la subdirección. Cuando se proporcione la URL publicada y las columnas relevantes, se conectará automáticamente con KPIs, gráfico y tabla en este mismo formato.</p>
-      <div class="hint">Listo para recibir: URL CSV + columnas a mostrar</div>
+    <!-- 2-5: PLACEHOLDERS -->
+    <div class="summary-card">
+      <div class="summary-head">
+        <div class="summary-title"><span class="summary-num">2</span><h3>Tema 2</h3></div>
+        <p class="summary-meta">Pendiente de configurar</p>
+      </div>
+      <div class="placeholder-body">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <p>Espacio reservado para el segundo Excel de la subdirección.</p>
+        <span class="hint">URL CSV + columnas</span>
+      </div>
     </div>
-  </div>
-</section>
 
-<section class="section" id="sec-r3">
-  <div class="placeholder">
-    <div class="placeholder-card">
-      <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
-      <h3>Resumen 3 — pendiente de configurar</h3>
-      <p>Este espacio está reservado para el tercer Excel de la subdirección. Mismo patrón de despliegue: KPIs + gráfico + tabla, alimentado desde Google Sheets publicado.</p>
-      <div class="hint">Listo para recibir: URL CSV + columnas a mostrar</div>
+    <div class="summary-card">
+      <div class="summary-head">
+        <div class="summary-title"><span class="summary-num">3</span><h3>Tema 3</h3></div>
+        <p class="summary-meta">Pendiente de configurar</p>
+      </div>
+      <div class="placeholder-body">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
+        <p>Espacio reservado para el tercer Excel de la subdirección.</p>
+        <span class="hint">URL CSV + columnas</span>
+      </div>
     </div>
-  </div>
-</section>
 
-<section class="section" id="sec-r4">
-  <div class="placeholder">
-    <div class="placeholder-card">
-      <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg></div>
-      <h3>Resumen 4 — pendiente de configurar</h3>
-      <p>Este espacio está reservado para el cuarto Excel de la subdirección. Cuando se proporcione, se integrará al mismo tablero con su propia pestaña y visualizaciones.</p>
-      <div class="hint">Listo para recibir: URL CSV + columnas a mostrar</div>
+    <div class="summary-card">
+      <div class="summary-head">
+        <div class="summary-title"><span class="summary-num">4</span><h3>Tema 4</h3></div>
+        <p class="summary-meta">Pendiente de configurar</p>
+      </div>
+      <div class="placeholder-body">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg></div>
+        <p>Espacio reservado para el cuarto Excel de la subdirección.</p>
+        <span class="hint">URL CSV + columnas</span>
+      </div>
     </div>
+
+    <div class="summary-card">
+      <div class="summary-head">
+        <div class="summary-title"><span class="summary-num">5</span><h3>Tema 5</h3></div>
+        <p class="summary-meta">Pendiente de configurar</p>
+      </div>
+      <div class="placeholder-body">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg></div>
+        <p>Espacio reservado para el quinto Excel de la subdirección.</p>
+        <span class="hint">URL CSV + columnas</span>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -503,7 +457,7 @@ body{
 
 <script>
 // ══════════════════════════════════════════════════════════════
-// CONFIG — fuente de la sección 1 (Bitácoras)
+// CONFIG
 // ══════════════════════════════════════════════════════════════
 const SOURCES = {
   bitacoras: {
@@ -511,26 +465,14 @@ const SOURCES = {
     gid: '1525114050',
     contractHeader: /^contrato$/i,
     daysHeader: /d[ií]as\s+sin\s+registrar\s+notas/i,
-    headerRow: 1, // segunda fila (la primera es "BESOP")
+    headerRow: 1,
   }
 };
 const REFRESH_MS = 60000;
+const TOP_N = 6; // máximo de barras en la mini gráfica
 
-let bData = [];        // [{contract, days, status, label}]
-let bSortMode = 'days-desc';
+let bData = [];
 let bChart = null;
-
-// ══════════════════════════════════════════════════════════════
-// TABS
-// ══════════════════════════════════════════════════════════════
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
-  });
-});
 
 // ══════════════════════════════════════════════════════════════
 // CSV PARSER
@@ -543,16 +485,13 @@ function parseCSV(text) {
     if (c === '"') {
       if (inQuotes && text[i+1] === '"') { field += '"'; i++; }
       else inQuotes = !inQuotes;
-    } else if (c === ',' && !inQuotes) {
-      row.push(field); field = '';
-    } else if ((c === '\n' || c === '\r') && !inQuotes) {
+    } else if (c === ',' && !inQuotes) { row.push(field); field = ''; }
+    else if ((c === '\n' || c === '\r') && !inQuotes) {
       row.push(field); field = '';
       if (row.length > 1 || row.some(f => f.trim())) rows.push(row);
       row = [];
       if (c === '\r' && text[i+1] === '\n') i++;
-    } else {
-      field += c;
-    }
+    } else { field += c; }
   }
   row.push(field);
   if (row.length > 1 || row.some(f => f.trim())) rows.push(row);
@@ -560,7 +499,7 @@ function parseCSV(text) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// FETCH (CSV publicado)
+// FETCH
 // ══════════════════════════════════════════════════════════════
 async function fetchCSV(src) {
   const url = `https://docs.google.com/spreadsheets/d/e/${src.sheetKey}/pub?gid=${src.gid}&single=true&output=csv&_t=${Date.now()}`;
@@ -601,15 +540,36 @@ function processBitacoras(rows, src) {
     .map(r => {
       const contract = (r[ci] || '').trim();
       if (!contract) return null;
-      const parsed = parseDaysValue(r[di]);
-      return { contract, ...parsed };
+      return { contract, ...parseDaysValue(r[di]) };
     })
     .filter(Boolean);
 }
 
 // ══════════════════════════════════════════════════════════════
-// RENDER BITÁCORAS
+// RENDER BITÁCORAS — resumen compacto
 // ══════════════════════════════════════════════════════════════
+const COLORS = { ok: '#1a6b5a', warn: '#b8860b', bad: '#c75b39', na: '#8a7f73' };
+
+const thresholdLinePlugin = {
+  id: 'thresholdLine',
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea, scales: { x } } = chart;
+    if (!x) return;
+    if ((x.max ?? 0) < 30) return;
+    const xPos = x.getPixelForValue(30);
+    if (xPos < chartArea.left || xPos > chartArea.right) return;
+    ctx.save();
+    ctx.strokeStyle = '#c75b39';
+    ctx.setLineDash([4, 3]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(xPos, chartArea.top);
+    ctx.lineTo(xPos, chartArea.bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
 function renderBitacoras() {
   const total = bData.length;
   const ok = bData.filter(r => r.status === 'ok').length;
@@ -617,127 +577,68 @@ function renderBitacoras() {
   const bad = bData.filter(r => r.status === 'bad').length;
   const na = bData.filter(r => r.status === 'na').length;
 
-  document.getElementById('kTotal').textContent = total.toLocaleString('es-MX');
-  document.getElementById('kOk').textContent = ok.toLocaleString('es-MX');
-  document.getElementById('kWarn').textContent = warn.toLocaleString('es-MX');
-  document.getElementById('kBad').textContent = bad.toLocaleString('es-MX');
-  document.getElementById('kNa').textContent = na.toLocaleString('es-MX');
+  document.getElementById('bTotal').textContent = total.toLocaleString('es-MX');
+  document.getElementById('bChips').innerHTML = `
+    <span class="chip bad"><span class="d"></span>${bad} crítico${bad === 1 ? '' : 's'}</span>
+    <span class="chip warn"><span class="d"></span>${warn} atención</span>
+    <span class="chip ok"><span class="d"></span>${ok} al corriente</span>
+    <span class="chip neutral"><span class="d"></span>${na} sin datos</span>
+  `;
 
-  renderBChart();
-}
+  // Gráfica mini: top N por días desc, solo numéricos
+  const numeric = bData.filter(r => r.days != null).sort((a, b) => b.days - a.days);
+  const top = numeric.slice(0, TOP_N);
 
-const COLORS = {
-  ok: '#1a6b5a', warn: '#b8860b', bad: '#c75b39', na: '#cfc8bc'
-};
-
-// Custom plugin: vertical reference line at 30 days (umbral crítico)
-const thresholdLinePlugin = {
-  id: 'thresholdLine',
-  afterDatasetsDraw(chart) {
-    const { ctx, chartArea, scales: { x } } = chart;
-    if (!x) return;
-    const xMax = x.max ?? 0;
-    if (xMax < 30) return;
-    const xPos = x.getPixelForValue(30);
-    if (xPos < chartArea.left || xPos > chartArea.right) return;
-    ctx.save();
-    ctx.strokeStyle = '#c75b39';
-    ctx.setLineDash([5, 4]);
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(xPos, chartArea.top);
-    ctx.lineTo(xPos, chartArea.bottom);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = '#c75b39';
-    ctx.font = "600 10px 'Plus Jakarta Sans', sans-serif";
-    ctx.textAlign = 'center';
-    ctx.fillText('30 d', xPos, chartArea.top - 4);
-    ctx.restore();
+  const foot = document.getElementById('bFootNote');
+  if (numeric.length > TOP_N) {
+    foot.textContent = `Mostrando ${TOP_N} de ${numeric.length} con dato`;
+  } else if (numeric.length > 0) {
+    foot.textContent = `${numeric.length} contrato${numeric.length === 1 ? '' : 's'} con dato numérico`;
+  } else {
+    foot.textContent = 'Sin contratos con dato numérico';
   }
-};
-
-function renderBChart() {
-  const q = document.getElementById('bSearch').value.toLowerCase().trim();
-  let rows = bData.filter(r => !q || r.contract.toLowerCase().includes(q));
-
-  rows.sort((a, b) => {
-    switch (bSortMode) {
-      case 'contract-asc':  return a.contract.localeCompare(b.contract, 'es');
-      case 'contract-desc': return b.contract.localeCompare(a.contract, 'es');
-      case 'days-asc': {
-        if (a.days == null && b.days == null) return 0;
-        if (a.days == null) return 1;
-        if (b.days == null) return -1;
-        return a.days - b.days;
-      }
-      case 'days-desc':
-      default: {
-        if (a.days == null && b.days == null) return 0;
-        if (a.days == null) return 1;
-        if (b.days == null) return -1;
-        return b.days - a.days;
-      }
-    }
-  });
-
-  document.getElementById('chartCount').textContent =
-    `${rows.length.toLocaleString('es-MX')} contrato${rows.length === 1 ? '' : 's'}`;
-
-  // Altura dinámica: ~30 px por barra, mínimo 320
-  const wrap = document.querySelector('.chart-wrap');
-  wrap.style.height = Math.max(320, rows.length * 30 + 60) + 'px';
-
-  // Para "sin datos" mostramos un valor "fantasma" igual al menor positivo (o 1) para que la barra sea visible
-  const numericVals = rows.map(r => r.days).filter(v => v != null && v > 0);
-  const ghost = numericVals.length ? Math.max(1, Math.min(...numericVals) * 0.4) : 1;
-
-  const labels = rows.map(r => r.contract);
-  const data = rows.map(r => r.days != null ? r.days : ghost);
-  const colors = rows.map(r => COLORS[r.status] || COLORS.na);
-  const isNa = rows.map(r => r.status === 'na');
 
   const ctx = document.getElementById('bChart');
   if (bChart) bChart.destroy();
 
-  if (!rows.length) {
-    wrap.style.height = '180px';
+  if (!top.length) {
     ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
     return;
   }
+
+  const labels = top.map(r => r.contract);
+  const data = top.map(r => r.days);
+  const colors = top.map(r => COLORS[r.status]);
 
   bChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
       datasets: [{
-        label: 'Días sin registrar notas',
         data,
         backgroundColor: colors,
-        borderRadius: 4,
+        borderRadius: 3,
         borderSkipped: false,
-        borderWidth: rows.map(r => r.status === 'na' ? 1 : 0),
-        borderColor: '#b0a697',
+        barThickness: 16,
       }]
     },
     options: {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 600, easing: 'easeOutQuart' },
-      layout: { padding: { right: 60, top: 10, bottom: 4 } },
+      animation: { duration: 500, easing: 'easeOutQuart' },
+      layout: { padding: { right: 38, top: 4, bottom: 0, left: 0 } },
       plugins: {
         legend: { display: false },
         tooltip: {
           backgroundColor: '#1a1612',
-          titleFont: { family: "'Plus Jakarta Sans'", weight: '700', size: 12 },
-          bodyFont: { family: "'Plus Jakarta Sans'", size: 11 },
-          padding: 10,
+          titleFont: { family: "'Plus Jakarta Sans'", weight: '700', size: 11 },
+          bodyFont: { family: "'Plus Jakarta Sans'", size: 10 },
+          padding: 8,
           callbacks: {
             title: (items) => items[0].label,
             label: (c) => {
-              const r = rows[c.dataIndex];
-              if (r.status === 'na') return 'Sin datos';
+              const r = top[c.dataIndex];
               const d = Math.round(r.days);
               const tag = r.status === 'ok' ? 'al corriente' : r.status === 'warn' ? 'en atención' : 'crítico';
               return `${d.toLocaleString('es-MX')} días · ${tag}`;
@@ -747,14 +648,10 @@ function renderBChart() {
         datalabels: {
           anchor: 'end',
           align: 'end',
-          offset: 4,
-          color: (c) => isNa[c.dataIndex] ? '#8a7f73' : colors[c.dataIndex],
-          font: { family: "'Plus Jakarta Sans', sans-serif", weight: '700', size: 11 },
-          formatter: (_, c) => {
-            const r = rows[c.dataIndex];
-            if (r.status === 'na') return 'sin datos';
-            return Math.round(r.days).toLocaleString('es-MX') + ' d';
-          }
+          offset: 3,
+          color: (c) => colors[c.dataIndex],
+          font: { family: "'Plus Jakarta Sans', sans-serif", weight: '700', size: 10 },
+          formatter: (v) => Math.round(v).toLocaleString('es-MX') + ' d'
         }
       },
       scales: {
@@ -762,25 +659,21 @@ function renderBChart() {
           beginAtZero: true,
           grid: { color: 'rgba(0,0,0,.05)' },
           ticks: {
-            font: { family: "'Plus Jakarta Sans'", size: 10 },
+            font: { family: "'Plus Jakarta Sans'", size: 9 },
             color: '#8a7f73',
+            maxTicksLimit: 5,
             callback: (v) => Math.round(v).toLocaleString('es-MX')
-          },
-          title: {
-            display: true, text: 'Días sin registrar notas',
-            font: { family: "'Plus Jakarta Sans'", size: 11, weight: '600' },
-            color: '#5c5347'
           }
         },
         y: {
           grid: { display: false },
           ticks: {
-            font: { family: 'ui-monospace,Consolas,monospace', size: 10 },
+            font: { family: 'ui-monospace,Consolas,monospace', size: 9 },
             color: '#5c5347',
             autoSkip: false,
-            callback: function(value) {
-              const lbl = this.getLabelForValue(value);
-              return lbl.length > 28 ? lbl.slice(0, 26) + '…' : lbl;
+            callback: function(v) {
+              const lbl = this.getLabelForValue(v);
+              return lbl.length > 22 ? lbl.slice(0, 20) + '…' : lbl;
             }
           }
         }
@@ -801,8 +694,11 @@ async function fetchAll() {
   try {
     const rows = await fetchCSV(SOURCES.bitacoras);
     bData = processBitacoras(rows, SOURCES.bitacoras);
-    document.getElementById('b-loading').style.display = 'none';
-    document.getElementById('b-content').style.display = 'block';
+    document.getElementById('bLoading').style.display = 'none';
+    const cont = document.getElementById('bContent');
+    cont.style.display = 'flex';
+    cont.style.flexDirection = 'column';
+    cont.style.flex = '1';
     renderBitacoras();
   } catch (e) {
     console.error(e);
@@ -816,8 +712,8 @@ async function fetchAll() {
     </div>`;
     document.getElementById('errorBox').style.display = 'block';
     if (!bData.length) {
-      document.getElementById('b-loading').innerHTML =
-        `<div class="empty-state"><p style="font-size:2rem">📋</p><p>Sin datos</p></div>`;
+      document.getElementById('bLoading').innerHTML =
+        `<div class="card-empty"><p>📋</p><p>Sin datos</p></div>`;
     } else {
       showToast('No se pudo actualizar. Reintentando en 60 s.', 'error');
     }
@@ -825,20 +721,6 @@ async function fetchAll() {
     btn.classList.remove('spinning');
   }
 }
-
-// ══════════════════════════════════════════════════════════════
-// SEARCH + SORT
-// ══════════════════════════════════════════════════════════════
-let searchTimer;
-document.getElementById('bSearch').addEventListener('input', () => {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(renderBChart, 200);
-});
-
-document.getElementById('bSortSelect').addEventListener('change', (e) => {
-  bSortMode = e.target.value;
-  renderBChart();
-});
 
 // ══════════════════════════════════════════════════════════════
 // UTILS
