@@ -339,6 +339,70 @@ body{
 }
 .sort-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
 
+/* PROJECT BARS — versión compacta (Resumen) */
+.proj-list{display:flex;flex-direction:column;gap:.55rem}
+.proj-row{
+  display:grid;grid-template-columns:auto 1fr auto;gap:.7rem;align-items:center;
+  font-size:.75rem;
+}
+.proj-tag{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.68rem;letter-spacing:.05em;
+  padding:.3rem .55rem;border-radius:4px;color:#fff;min-width:46px;
+  white-space:nowrap;
+}
+.proj-bar{
+  display:flex;height:14px;background:var(--surface2);border-radius:3px;
+  overflow:hidden;border:1px solid var(--border);min-width:60px;
+}
+.proj-seg{
+  border-right:1.5px solid #fff;transition:opacity .15s,filter .15s;cursor:default;
+}
+.proj-seg:last-child{border-right:none}
+.proj-seg:hover{filter:brightness(1.15)}
+.proj-amount{
+  font-weight:700;color:var(--text);text-align:right;
+  font-variant-numeric:tabular-nums;font-size:.78rem;white-space:nowrap;
+}
+
+/* PROJECT BARS — versión grande (Estimaciones tab) */
+.proj-list-large{display:flex;flex-direction:column;gap:1.4rem}
+.proj-row-lg{
+  display:grid;
+  grid-template-columns:80px 1fr 130px;
+  grid-template-rows:auto auto;
+  column-gap:1rem;row-gap:.3rem;align-items:center;
+}
+.proj-row-lg .proj-tag{font-size:.8rem;padding:.45rem .8rem;min-width:60px}
+.proj-row-lg .proj-bar{height:30px;border-radius:5px}
+.proj-row-lg .proj-amount{font-size:1rem;font-weight:800}
+.proj-row-lg .proj-meta{
+  grid-column:2 / 3;font-size:.7rem;color:var(--text3);
+  display:flex;gap:1rem;flex-wrap:wrap;
+}
+
+/* CONTRACT LIST */
+.contract-list{padding:.3rem 0;max-height:65vh;overflow:auto}
+.contract-list::-webkit-scrollbar{width:10px}
+.contract-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}
+.contract-item{
+  padding:.85rem 1.4rem;border-bottom:1px solid var(--border);
+  font-size:.82rem;transition:background .15s;
+  display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;
+}
+.contract-item:hover{background:var(--surface2)}
+.contract-item:last-child{border-bottom:none}
+.contract-text{
+  font-family:ui-monospace,Consolas,monospace;
+  color:var(--text2);line-height:1.4;
+  display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;flex:1;min-width:0;
+}
+.contract-text .c-id{color:var(--text);font-weight:700;font-size:.85rem}
+.contract-text .c-pipe{color:var(--text4);font-weight:400;font-family:inherit}
+.contract-text .c-proj{font-weight:700}
+.contract-text .c-monto{color:var(--text);font-weight:700;font-size:.85rem}
+.contract-text .c-monto.empty{color:var(--text4);font-weight:500;font-style:italic}
+
 /* ERROR */
 .error-box{max-width:1600px;margin:1rem auto;padding:0 2.5rem}
 .error-card{
@@ -418,6 +482,7 @@ body{
 <nav class="tabs" role="tablist">
   <button class="tab active" data-tab="resumen" role="tab">Resumen</button>
   <button class="tab" data-tab="bitacoras" role="tab">Bitácoras de obra</button>
+  <button class="tab" data-tab="estimaciones" role="tab">Estimaciones</button>
 </nav>
 
 <!-- ERROR -->
@@ -474,16 +539,39 @@ body{
       </div>
     </div>
 
-    <!-- 2-5: PLACEHOLDERS -->
-    <div class="summary-card">
+    <!-- 2. ESTIMACIONES -->
+    <div class="summary-card" id="card-estimaciones">
       <div class="summary-head">
-        <div class="summary-title"><span class="summary-num">2</span><h3>Tema 2</h3></div>
-        <p class="summary-meta">Pendiente de configurar</p>
+        <div class="summary-title">
+          <span class="summary-num">2</span>
+          <h3>Estimaciones</h3>
+        </div>
+        <p class="summary-meta">Pendiente de pago por proyecto</p>
       </div>
-      <div class="placeholder-body">
-        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-        <p>Espacio reservado para el segundo Excel de la subdirección.</p>
-        <span class="hint">URL CSV + columnas</span>
+
+      <div id="eLoading" class="card-loading">
+        <div class="loader"></div>
+        <div class="loading-text">Cargando datos...</div>
+      </div>
+
+      <div id="eContent" style="display:none;flex:1;flex-direction:column">
+        <div class="summary-stats">
+          <div class="stat-big">
+            <span class="num" id="eTotalPend">—</span>
+            <span class="lbl">Pendiente de pago</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-chips">
+            <span class="chip neutral"><span class="d"></span><span id="eContractCount">—</span> contratos</span>
+            <span class="chip neutral"><span class="d"></span><span id="eProjectCount">—</span> proyectos</span>
+          </div>
+        </div>
+        <div style="padding:.8rem 1.1rem .9rem;flex:1">
+          <div id="eProjectList" class="proj-list"></div>
+        </div>
+        <div class="summary-foot">
+          <span style="color:var(--text3);font-weight:500" id="eFootNote">—</span>
+        </div>
       </div>
     </div>
 
@@ -494,7 +582,7 @@ body{
       </div>
       <div class="placeholder-body">
         <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
-        <p>Espacio reservado para el tercer Excel de la subdirección.</p>
+        <p>Espacio reservado para el siguiente Excel de la subdirección.</p>
         <span class="hint">URL CSV + columnas</span>
       </div>
     </div>
@@ -582,6 +670,54 @@ body{
   </div>
 </section>
 
+<!-- ════════ ESTIMACIONES — detalle ════════ -->
+<section class="section" id="sec-estimaciones">
+  <div class="section-head">
+    <div>
+      <h2>Estimaciones — detalle por proyecto y contrato</h2>
+      <p>Monto total estimado pendiente de pago, agrupado por proyecto ferroviario</p>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi k-total"><div class="kpi-label">Contratos</div><div class="kpi-value" id="eKContracts">—</div></div>
+    <div class="kpi k-bad"><div class="kpi-label">Pendiente de pago</div><div class="kpi-value" id="eKPend">—</div><div class="kpi-sub">Suma total</div></div>
+    <div class="kpi k-ok"><div class="kpi-label">Pagado</div><div class="kpi-value" id="eKPaid">—</div></div>
+    <div class="kpi k-warn"><div class="kpi-label">Total estimado</div><div class="kpi-value" id="eKTotal">—</div></div>
+    <div class="kpi k-neutral"><div class="kpi-label">Proyectos</div><div class="kpi-value" id="eKProjects">—</div></div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Distribución por proyecto</h3>
+          <p>Cada bloque dentro de la barra representa un contrato · pasa el cursor para ver el detalle</p>
+        </div>
+      </div>
+      <div style="padding:1.2rem 1.4rem">
+        <div id="eDetailProjects" class="proj-list-large"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Listado de contratos</h3>
+          <p id="eListCount">—</p>
+        </div>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" class="tbl-search" id="eSearch" placeholder="Buscar contrato, proyecto o tramo...">
+        </div>
+      </div>
+      <div id="eContractList" class="contract-list"></div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer class="footer">
   <p><strong>ATTRAPI</strong> — Subdirección de Procesos Administrativos de Obra<br>
@@ -602,15 +738,33 @@ const SOURCES = {
     contractHeader: /^contrato$/i,
     daysHeader: /d[ií]as\s+sin\s+registrar\s+notas/i,
     headerRow: 1,
+  },
+  estimaciones: {
+    sheetKey: '2PACX-1vQsmPUjJmeQBHSNZyizKuWXo4PjYJU1d7gw89ZK1v1uOt9rEeQkSyv1M5XVULOW3Q',
+    gid: '1129467386',
+    headerRows: 2,
+    cols: { proy: 1, tramo: 2, contrato: 4, montoPagado: 30, montoPendiente: 31, montoTotal: 32 },
   }
 };
 const REFRESH_MS = 60000;
-const TOP_N = 6; // máximo de barras en la mini gráfica
+const TOP_N = 6;
 
 let bData = [];
 let bChart = null;
 let bdChart = null;
 let bdSortMode = 'days-desc';
+
+let eData = [];
+
+const PROJECT_PALETTE = ['#6b2035','#1a6b5a','#b8860b','#2c3e6b','#a0522d','#c75b39','#4a5568','#8b6914'];
+const PROJECT_COLOR_MAP = {};
+function getProjectColor(proj) {
+  if (!PROJECT_COLOR_MAP[proj]) {
+    const idx = Object.keys(PROJECT_COLOR_MAP).length;
+    PROJECT_COLOR_MAP[proj] = PROJECT_PALETTE[idx % PROJECT_PALETTE.length];
+  }
+  return PROJECT_COLOR_MAP[proj];
+}
 
 // ══════════════════════════════════════════════════════════════
 // CSV PARSER
@@ -684,6 +838,182 @@ function processBitacoras(rows, src) {
       return { contract, ...parseDaysValue(r[di]) };
     })
     .filter(Boolean);
+}
+
+// ══════════════════════════════════════════════════════════════
+// PARSE ESTIMACIONES
+// ══════════════════════════════════════════════════════════════
+function parseMoney(s) {
+  if (s == null) return null;
+  const t = String(s).replace(/[$\s,]/g, '').trim();
+  if (!t || t === '-') return null;
+  const n = parseFloat(t);
+  return isNaN(n) ? null : n;
+}
+
+function fmtMoney(n) {
+  if (n == null) return '—';
+  if (n === 0) return '$0';
+  const abs = Math.abs(n);
+  if (abs >= 1e9) return '$' + (n / 1e9).toFixed(2) + ' B';
+  if (abs >= 1e6) return '$' + (n / 1e6).toFixed(2) + ' M';
+  if (abs >= 1e3) return '$' + (n / 1e3).toFixed(1) + ' K';
+  return '$' + n.toLocaleString('es-MX', { maximumFractionDigits: 0 });
+}
+
+function fmtMoneyFull(n) {
+  if (n == null) return '—';
+  return '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function processEstimaciones(rows, src) {
+  if (rows.length <= src.headerRows) throw new Error('Hoja sin filas');
+  const data = [];
+  for (let i = src.headerRows; i < rows.length; i++) {
+    const r = rows[i];
+    const contrato = (r[src.cols.contrato] || '').trim();
+    if (!contrato) continue;
+    if (/^TOTALES?\s*$/i.test(contrato)) continue;
+    data.push({
+      contrato,
+      proy: (r[src.cols.proy] || '').trim() || 'Sin proyecto',
+      tramo: (r[src.cols.tramo] || '').trim(),
+      montoPendiente: parseMoney(r[src.cols.montoPendiente]),
+      montoPagado: parseMoney(r[src.cols.montoPagado]),
+      montoTotal: parseMoney(r[src.cols.montoTotal]),
+    });
+  }
+  return data;
+}
+
+function groupByProject(data) {
+  const groups = new Map();
+  for (const r of data) {
+    const key = r.proy;
+    if (!groups.has(key)) groups.set(key, { proj: key, contracts: [], totalPend: 0, totalPaid: 0, totalEst: 0 });
+    const g = groups.get(key);
+    g.contracts.push(r);
+    g.totalPend += r.montoPendiente || 0;
+    g.totalPaid += r.montoPagado || 0;
+    g.totalEst += r.montoTotal || 0;
+  }
+  return [...groups.values()].sort((a, b) => b.totalPend - a.totalPend);
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER ESTIMACIONES — resumen compacto
+// ══════════════════════════════════════════════════════════════
+function renderEstimacionesSummary() {
+  const groups = groupByProject(eData);
+  const totalPend = groups.reduce((s, g) => s + g.totalPend, 0);
+
+  document.getElementById('eTotalPend').textContent = fmtMoney(totalPend);
+  document.getElementById('eContractCount').textContent = eData.length.toLocaleString('es-MX');
+  document.getElementById('eProjectCount').textContent = groups.length;
+
+  const list = document.getElementById('eProjectList');
+  if (!groups.length) {
+    list.innerHTML = `<div style="text-align:center;color:var(--text3);font-size:.8rem;padding:1rem">Sin datos</div>`;
+    document.getElementById('eFootNote').textContent = '—';
+    return;
+  }
+
+  list.innerHTML = groups.map(g => {
+    const baseColor = getProjectColor(g.proj);
+    const segments = g.contracts
+      .filter(c => c.montoPendiente && c.montoPendiente > 0)
+      .map(c => `<div class="proj-seg" style="flex:${c.montoPendiente};background:${baseColor}" title="${esc(c.contrato)} — ${esc(fmtMoneyFull(c.montoPendiente))}"></div>`)
+      .join('');
+    return `
+      <div class="proj-row">
+        <span class="proj-tag" style="background:${baseColor}">${esc(g.proj)}</span>
+        <div class="proj-bar">${segments || '<div style="flex:1;background:var(--surface2)"></div>'}</div>
+        <span class="proj-amount">${esc(fmtMoney(g.totalPend))}</span>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('eFootNote').textContent =
+    `${eData.length} contratos · ${groups.length} proyectos`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER ESTIMACIONES — detalle completo
+// ══════════════════════════════════════════════════════════════
+function renderEstimacionesDetail() {
+  const groups = groupByProject(eData);
+  const totalPend = groups.reduce((s, g) => s + g.totalPend, 0);
+  const totalPaid = groups.reduce((s, g) => s + g.totalPaid, 0);
+  const totalEst  = groups.reduce((s, g) => s + g.totalEst, 0);
+
+  document.getElementById('eKContracts').textContent = eData.length.toLocaleString('es-MX');
+  document.getElementById('eKPend').textContent = fmtMoney(totalPend);
+  document.getElementById('eKPaid').textContent = fmtMoney(totalPaid);
+  document.getElementById('eKTotal').textContent = fmtMoney(totalEst);
+  document.getElementById('eKProjects').textContent = groups.length;
+
+  // Barras grandes por proyecto
+  const proj = document.getElementById('eDetailProjects');
+  proj.innerHTML = groups.map(g => {
+    const baseColor = getProjectColor(g.proj);
+    const segments = g.contracts
+      .filter(c => c.montoPendiente && c.montoPendiente > 0)
+      .map(c => {
+        const pct = totalPend > 0 ? (c.montoPendiente / totalPend * 100).toFixed(2) : '0';
+        return `<div class="proj-seg" style="flex:${c.montoPendiente};background:${baseColor}" title="${esc(c.contrato)} (${esc([c.proy, c.tramo].filter(Boolean).join(' '))}) — ${esc(fmtMoneyFull(c.montoPendiente))} · ${pct}%"></div>`;
+      })
+      .join('');
+    const pct = totalPend > 0 ? (g.totalPend / totalPend * 100).toFixed(1) : '0';
+    const meta = `${g.contracts.length} contrato${g.contracts.length === 1 ? '' : 's'} · ${pct}% del total pendiente · ${g.contracts.filter(c => c.montoPendiente && c.montoPendiente > 0).length} con monto`;
+    return `
+      <div class="proj-row-lg">
+        <span class="proj-tag" style="background:${baseColor}">${esc(g.proj)}</span>
+        <div class="proj-bar">${segments || '<div style="flex:1;background:var(--surface2)"></div>'}</div>
+        <span class="proj-amount">${esc(fmtMoney(g.totalPend))}</span>
+        <div class="proj-meta">${esc(meta)}</div>
+      </div>
+    `;
+  }).join('') || `<div style="text-align:center;color:var(--text3);padding:2rem">Sin datos</div>`;
+
+  // Listado de contratos con búsqueda
+  renderContractList();
+}
+
+function renderContractList() {
+  const q = (document.getElementById('eSearch')?.value || '').toLowerCase().trim();
+  const rows = eData.filter(c => {
+    if (!q) return true;
+    return c.contrato.toLowerCase().includes(q) ||
+           c.proy.toLowerCase().includes(q) ||
+           (c.tramo || '').toLowerCase().includes(q);
+  });
+
+  document.getElementById('eListCount').textContent =
+    `${rows.length.toLocaleString('es-MX')} contrato${rows.length === 1 ? '' : 's'}${q ? ' (filtrados)' : ''}`;
+
+  const list = document.getElementById('eContractList');
+  if (!rows.length) {
+    list.innerHTML = `<div style="text-align:center;color:var(--text3);padding:2rem">Sin resultados</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map(c => {
+    const proyTramo = [c.proy, c.tramo].filter(Boolean).join(' ');
+    const baseColor = getProjectColor(c.proy);
+    const hasMonto = c.montoPendiente != null && c.montoPendiente > 0;
+    const monto = hasMonto ? fmtMoneyFull(c.montoPendiente) : 'sin monto pendiente';
+    return `
+      <div class="contract-item">
+        <div class="contract-text">
+          <span class="c-id">${esc(c.contrato)}</span>
+          <span class="c-pipe">|</span>
+          <span class="c-proj" style="color:${baseColor}">${esc(proyTramo)}</span>
+          <span class="c-pipe">|</span>
+          <span class="c-monto ${hasMonto ? '' : 'empty'}">${esc(monto)}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -978,13 +1308,11 @@ function renderBDetail() {
 }
 
 // ══════════════════════════════════════════════════════════════
-// MASTER FETCH
+// MASTER FETCH — ambas hojas en paralelo
 // ══════════════════════════════════════════════════════════════
-async function fetchAll() {
-  const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spinning');
-  document.getElementById('errorBox').style.display = 'none';
+let _errors = [];
 
+async function fetchBitacoras() {
   try {
     const rows = await fetchCSV(SOURCES.bitacoras);
     bData = processBitacoras(rows, SOURCES.bitacoras);
@@ -996,25 +1324,61 @@ async function fetchAll() {
     renderBitacoras();
     renderBDetail();
   } catch (e) {
-    console.error(e);
-    document.getElementById('errorBox').innerHTML = `<div class="error-card">
-      <div>⚠️</div>
-      <div>
-        <strong>No se pudo cargar la hoja de Bitácoras</strong>
-        Verifica que esté publicada en la web (Archivo → Compartir → Publicar en la web).
-        <code>${esc(e.message || 'Error desconocido')}</code>
-      </div>
-    </div>`;
-    document.getElementById('errorBox').style.display = 'block';
+    console.error('[bitacoras]', e);
+    _errors.push({ name: 'Bitácoras', msg: e.message || 'Error desconocido' });
     if (!bData.length) {
       document.getElementById('bLoading').innerHTML =
         `<div class="card-empty"><p>📋</p><p>Sin datos</p></div>`;
-    } else {
-      showToast('No se pudo actualizar. Reintentando en 60 s.', 'error');
     }
-  } finally {
-    btn.classList.remove('spinning');
   }
+}
+
+async function fetchEstimaciones() {
+  try {
+    const rows = await fetchCSV(SOURCES.estimaciones);
+    eData = processEstimaciones(rows, SOURCES.estimaciones);
+    document.getElementById('eLoading').style.display = 'none';
+    const cont = document.getElementById('eContent');
+    cont.style.display = 'flex';
+    cont.style.flexDirection = 'column';
+    cont.style.flex = '1';
+    renderEstimacionesSummary();
+    renderEstimacionesDetail();
+  } catch (e) {
+    console.error('[estimaciones]', e);
+    _errors.push({ name: 'Estimaciones', msg: e.message || 'Error desconocido' });
+    if (!eData.length) {
+      document.getElementById('eLoading').innerHTML =
+        `<div class="card-empty"><p>💰</p><p>Sin datos</p></div>`;
+    }
+  }
+}
+
+async function fetchAll() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  document.getElementById('errorBox').style.display = 'none';
+  _errors = [];
+
+  await Promise.allSettled([fetchBitacoras(), fetchEstimaciones()]);
+
+  if (_errors.length) {
+    const box = document.getElementById('errorBox');
+    box.innerHTML = `<div class="error-card">
+      <div>⚠️</div>
+      <div>
+        <strong>No se pudo cargar ${_errors.length === 1 ? 'una hoja' : _errors.length + ' hojas'}</strong>
+        Verifica que esté${_errors.length === 1 ? '' : 'n'} publicada${_errors.length === 1 ? '' : 's'} en la web.
+        ${_errors.map(er => `<code>${esc(er.name)}: ${esc(er.msg)}</code>`).join('')}
+      </div>
+    </div>`;
+    box.style.display = 'block';
+    if (bData.length || eData.length) {
+      showToast('Algunas fuentes fallaron. Reintentando en 60 s.', 'error');
+    }
+  }
+
+  btn.classList.remove('spinning');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1043,7 +1407,15 @@ document.querySelectorAll('.tab').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'bitacoras' && bData.length) renderBDetail();
+    if (btn.dataset.tab === 'estimaciones' && eData.length) renderEstimacionesDetail();
   });
+});
+
+// SEARCH (lista de contratos en Estimaciones)
+let eSearchTimer;
+document.getElementById('eSearch').addEventListener('input', () => {
+  clearTimeout(eSearchTimer);
+  eSearchTimer = setTimeout(renderContractList, 200);
 });
 
 // ══════════════════════════════════════════════════════════════
