@@ -339,72 +339,71 @@ body{
 }
 .sort-select:focus{border-color:var(--gov-dark);box-shadow:0 0 0 3px var(--gov-pale)}
 
-/* VERTICAL BARS — pildoras por proyecto (Resumen)
-   Barra angosta a la izquierda + lista legible a la derecha */
+/* VERTICAL BARS — pildoras por proyecto (Resumen) — compactas */
 .vert-bars{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:.7rem;
 }
 .vert-bar-wrap{
   display:flex;flex-direction:column;
-  border:1px solid var(--border);border-radius:8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:6px;background:var(--surface);
   overflow:hidden;box-shadow:var(--shadow-sm);
 }
 .vert-bar-head{
-  padding:.55rem .85rem;color:#fff;font-weight:800;font-size:.78rem;
+  padding:.35rem .65rem;color:#fff;font-weight:800;font-size:.7rem;
   letter-spacing:.06em;text-align:center;
 }
 .vert-bar-body{
-  display:grid;grid-template-columns:22px 1fr;gap:.75rem;
-  padding:.7rem .85rem;flex:1;min-height:140px;
+  display:grid;grid-template-columns:14px 1fr;gap:.5rem;
+  padding:.4rem .55rem;flex:1;min-height:90px;
 }
 .vert-bar{
   display:flex;flex-direction:column;
-  width:22px;
-  border:1px solid var(--border);border-radius:4px;
+  width:14px;
+  border:1px solid var(--border);border-radius:3px;
   overflow:hidden;background:var(--surface2);
 }
 .vert-seg{
-  border-bottom:1.5px solid #fff;transition:filter .15s;cursor:default;min-height:2px;
+  border-bottom:1px solid #fff;transition:filter .15s;cursor:default;min-height:2px;
 }
 .vert-seg:last-child{border-bottom:none}
 .vert-seg:hover{filter:brightness(1.15)}
 
 .vert-list{display:flex;flex-direction:column;gap:0;flex:1;min-width:0}
 .vert-list-item{
-  display:grid;grid-template-columns:1fr auto auto;gap:.55rem;align-items:center;
-  font-size:.72rem;padding:.32rem 0;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:1fr auto auto;gap:.4rem;align-items:center;
+  font-size:.66rem;padding:.18rem 0;border-bottom:1px solid var(--border);
 }
 .vert-list-item:last-child{border-bottom:none}
 .vli-id{
-  font-family:ui-monospace,Consolas,monospace;font-size:.7rem;
-  color:var(--text);font-weight:600;
+  font-family:ui-monospace,Consolas,monospace;font-size:.64rem;
+  color:var(--text);font-weight:600;line-height:1.25;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;
 }
 .vli-amt{
   font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;
-  font-size:.72rem;white-space:nowrap;
+  font-size:.66rem;white-space:nowrap;
 }
 .vli-pct{
   font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;
-  font-size:.7rem;white-space:nowrap;text-align:right;min-width:48px;
+  font-size:.62rem;white-space:nowrap;text-align:right;min-width:40px;
 }
 
 .vert-foot{
-  display:grid;grid-template-columns:1fr auto auto;gap:.55rem;align-items:center;
-  padding:.55rem .85rem;background:var(--surface2);
-  border-top:1.5px solid var(--border2);
+  display:grid;grid-template-columns:1fr auto auto;gap:.4rem;align-items:center;
+  padding:.35rem .65rem;background:var(--surface2);
+  border-top:1px solid var(--border2);
 }
 .v-total-lbl{
-  font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;
+  font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;
   color:var(--text2);font-weight:800;
 }
 .v-total-amt,.v-total-pct{
-  color:var(--gov-dark);font-weight:800;font-size:.8rem;
+  color:var(--gov-dark);font-weight:800;font-size:.72rem;
   font-variant-numeric:tabular-nums;
 }
-.v-total-pct{text-align:right;min-width:48px}
+.v-total-pct{text-align:right;min-width:42px}
 
 .vert-empty{
   padding:1.5rem 1rem;text-align:center;color:var(--text3);
