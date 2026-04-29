@@ -1082,7 +1082,7 @@ body{
       <div class="cnstl-net-card">
         <div class="cnstl-net-head">
           <h3>Estimaciones pendientes · Distribución por proyecto</h3>
-          <div class="cnstl-net-legend">
+          <div class="cnstl-net-legend" id="r2NetLegend">
             <span><span class="ld" style="background:linear-gradient(135deg,#a85568,#6b2035)"></span>Proyecto Ferroviario</span>
             <span><span class="ld pulse-mini"></span>Crítico (bitácora)</span>
           </div>
@@ -1621,6 +1621,17 @@ function renderNetwork() {
   })).sort((a, b) => b.total - a.total);
 
   const criticalSet = new Set(bData.filter(b => b.status === 'bad').map(b => b.contract));
+
+  // Leyenda dinámica con cada proyecto y su color
+  const legendEl = document.getElementById('r2NetLegend');
+  if (legendEl) {
+    let legHtml = `<span><span class="ld" style="background:linear-gradient(135deg,#a85568,#6b2035)"></span>Proyecto Ferroviario</span>`;
+    projects.forEach(p => {
+      legHtml += `<span><span class="ld" style="background:${getProjectColor(p.proj)}"></span>${esc(p.proj)}</span>`;
+    });
+    legHtml += `<span><span class="ld pulse-mini"></span>Crítico (bitácora)</span>`;
+    legendEl.innerHTML = legHtml;
+  }
 
   // Layout tipo árbol adaptable al ancho del contenedor (sin scroll horizontal)
   const containerW = container.clientWidth;
