@@ -2347,11 +2347,10 @@ function renderReportResumen2() {
   const now = new Date();
   const dateStr = now.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
 
-  const totalContracts = eData.length;
+  const PROJ_LABEL_MAP = { 'QI': 'Querétaro - Irapuato', 'SN': 'Saltillo - Nuevo Laredo' };
+  const projLabel = (p) => PROJ_LABEL_MAP[p] || p;
+
   const totalPend = eData.reduce((s, c) => s + (c.montoPendiente || 0), 0);
-  const totalBitacoras = bData.length;
-  const projects = new Set(eData.map(c => c.proy)).size;
-  const critCount = bData.filter(b => b.status === 'bad').length;
 
   // Estimaciones agrupadas por proyecto (estructura idéntica al SPAC network)
   const byProj = new Map();
@@ -2381,24 +2380,13 @@ function renderReportResumen2() {
     </div>
 
     <section class="report-section">
-      <h2>1 · Indicadores clave</h2>
-      <div class="report-kpis" style="grid-template-columns:repeat(5,1fr)">
-        <div><span class="rk-num">${totalContracts.toLocaleString('es-MX')}</span><span class="rk-lbl">Contratos</span></div>
-        <div><span class="rk-num" style="color:var(--bad)">${esc(fmtMoney(totalPend))}</span><span class="rk-lbl">Pendiente de pago</span></div>
-        <div><span class="rk-num" style="color:var(--teal)">${totalBitacoras.toLocaleString('es-MX')}</span><span class="rk-lbl">Bitácoras</span></div>
-        <div><span class="rk-num" style="color:var(--gold)">${projects.toLocaleString('es-MX')}</span><span class="rk-lbl">Proyectos</span></div>
-        <div><span class="rk-num" style="color:var(--warn)">${critCount.toLocaleString('es-MX')}</span><span class="rk-lbl">Críticos</span></div>
-      </div>
-    </section>
-
-    <section class="report-section">
-      <h2>2 · Red SPAC — Proyectos y contratos</h2>
+      <h2>1 · Estimaciones pendientes — Distribución por proyecto</h2>
       <p class="report-sub">Cada proyecto agrupa sus contratos con monto pendiente de pago. La columna "Bitácora" señala los contratos con más de 120 días sin registrar notas.</p>
       ${groupedEst.length ? groupedEst.map(g => {
         const pct = totalPend > 0 ? (g.total / totalPend * 100).toFixed(2) : '0';
         return `
           <h3 class="report-proj-h">
-            <span class="rt-badge" style="background:${getProjectColor(g.proj)}">${esc(g.proj)}</span>
+            <span class="rt-badge" style="background:${getProjectColor(g.proj)}">${esc(projLabel(g.proj))}</span>
             ${esc(fmtMoneyFull(g.total))} · ${pct}% del pendiente · ${g.contracts.length} contratos
           </h3>
           <table class="report-tbl">
@@ -2427,7 +2415,7 @@ function renderReportResumen2() {
     </section>
 
     <section class="report-section">
-      <h2>3 · Alertas — Bitácoras por estatus</h2>
+      <h2>2 · Alertas — Bitácoras por estatus</h2>
       <p class="report-sub">Distribución de bitácoras según días sin registrar notas. Umbrales acordados: menos de 60 d (al corriente), 60 a 120 d (en atención), más de 120 d (crítico).</p>
 
       ${byStatus.bad.length ? `
