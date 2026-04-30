@@ -839,6 +839,21 @@ body{
 .rt-badge.rt-ok{background:var(--ok)}
 .rt-badge.rt-na{background:var(--neutral)}
 
+.report-net-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;
+}
+.report-net-legend{
+  display:flex;flex-wrap:wrap;gap:.85rem;font-size:.66rem;
+  color:var(--text2);font-weight:600;margin-bottom:.6rem;
+}
+.report-net-legend span{display:inline-flex;align-items:center;gap:.4rem}
+.report-net-legend .ld{width:11px;height:11px;border-radius:50%;display:inline-block}
+.report-net-canvas{
+  background:#fff;border-radius:6px;padding:.4rem;
+  display:flex;justify-content:center;
+}
+.report-net-canvas svg{display:block;max-width:100%;height:auto}
 .report-na-list{
   display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem .7rem;
   font-family:ui-monospace,Consolas,monospace;font-size:.74rem;
@@ -1569,14 +1584,10 @@ function renderResumen2() {
   renderAlertsNetwork();
 }
 
-function renderNetwork() {
-  const container = document.getElementById('r2Network');
-  if (!container) return;
-
+function buildNetworkSVG(W, idPrefix = 'r2') {
   const pending = eData.filter(c => c.montoPendiente != null && c.montoPendiente > 0);
   if (!pending.length) {
-    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:440px;color:var(--text3)">Sin datos para visualizar</div>`;
-    return;
+    return `<div style="display:flex;align-items:center;justify-content:center;min-height:240px;color:#8a7f73">Sin datos para visualizar</div>`;
   }
 
   const byProj = new Map();
@@ -1592,21 +1603,6 @@ function renderNetwork() {
 
   const criticalSet = new Set(bData.filter(b => b.status === 'bad').map(b => b.contract));
 
-  // Leyenda dinámica con cada proyecto y su color
-  const legendEl = document.getElementById('r2NetLegend');
-  if (legendEl) {
-    const projLabelMap = { 'QI': 'Querétaro - Irapuato', 'SN': 'Saltillo - Nuevo Laredo' };
-    let legHtml = '';
-    projects.forEach(p => {
-      const label = projLabelMap[p.proj] || p.proj;
-      legHtml += `<span><span class="ld" style="background:${getProjectColor(p.proj)}"></span>${esc(label)}</span>`;
-    });
-    legendEl.innerHTML = legHtml;
-  }
-
-  // Layout tipo árbol adaptable al ancho del contenedor (sin scroll horizontal)
-  const containerW = container.clientWidth;
-  const W = Math.max(540, (containerW || 700) - 4);
   const projCenterDist = W / (projects.length + 1);
   const cardW = Math.min(220, Math.max(140, projCenterDist - 18));
   const cardH = 40, cardGap = 7;
@@ -1617,31 +1613,30 @@ function renderNetwork() {
   const H = contractStartY + maxContracts * (cardH + cardGap) + 30;
 
   const projectXs = projects.map((_, pi) => projCenterDist * (pi + 1));
+  const idHub = `${idPrefix}hub`, idGrid = `${idPrefix}grid`, idGlow = `${idPrefix}glow`;
 
-  let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">`;
   html += `<defs>
-    <radialGradient id="r2hub" cx="40%" cy="40%" r="60%">
+    <radialGradient id="${idHub}" cx="40%" cy="40%" r="60%">
       <stop offset="0%" stop-color="#a85568"/>
       <stop offset="100%" stop-color="#6b2035"/>
     </radialGradient>
-    <pattern id="r2grid" width="32" height="32" patternUnits="userSpaceOnUse">
+    <pattern id="${idGrid}" width="32" height="32" patternUnits="userSpaceOnUse">
       <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(107,32,53,0.05)" stroke-width="1"/>
     </pattern>
-    <filter id="r2glow" x="-50%" y="-50%" width="200%" height="200%">
+    <filter id="${idGlow}" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur stdDeviation="3" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>`;
-  html += `<rect width="${W}" height="${H}" fill="url(#r2grid)"/>`;
+  html += `<rect width="${W}" height="${H}" fill="url(#${idGrid})"/>`;
 
-  // Edges: hub -> proyectos
   projects.forEach((p, pi) => {
     const px = projectXs[pi];
     const pcolor = getProjectColor(p.proj);
     html += `<path d="M ${cx} ${hubY + hubR} C ${cx} ${(hubY + projectY) / 2}, ${px} ${(hubY + projectY) / 2}, ${px} ${projectY - projR}" stroke="${pcolor}" stroke-width="2" stroke-opacity="0.7" fill="none" stroke-linecap="round"/>`;
   });
 
-  // Línea vertical punteada por proyecto, recorriendo sus tarjetas
   projects.forEach((p, pi) => {
     const px = projectXs[pi];
     const pcolor = getProjectColor(p.proj);
@@ -1649,33 +1644,19 @@ function renderNetwork() {
     html += `<line x1="${px}" y1="${projectY + projR + 18}" x2="${px}" y2="${lineEnd}" stroke="${pcolor}" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3,4" stroke-linecap="round"/>`;
   });
 
-  // Pequeñas líneas horizontales que conectan cada tarjeta con la línea vertical
-  projects.forEach((p, pi) => {
-    const px = projectXs[pi];
-    const pcolor = getProjectColor(p.proj);
-    p.contracts.forEach((c, ci) => {
-      const cardLeftEdge = px - cardW / 2;
-      const cardCenterY = contractStartY + ci * (cardH + cardGap) + cardH / 2;
-      html += `<line x1="${px}" y1="${cardCenterY}" x2="${px}" y2="${cardCenterY}" stroke="${pcolor}" stroke-width="1.5" stroke-opacity="0.4"/>`;
-    });
-  });
-
-  // Hub
-  html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#r2hub)" stroke="#fff" stroke-width="3" filter="url(#r2glow)"/>`;
+  html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#${idHub})" stroke="#fff" stroke-width="3" filter="url(#${idGlow})"/>`;
   html += `<text x="${cx}" y="${hubY - 6}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9.5" font-weight="800">Proyecto</text>`;
   html += `<text x="${cx}" y="${hubY + 7}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9.5" font-weight="800">Ferroviario</text>`;
 
-  // Proyectos (con total y count)
   projects.forEach((p, pi) => {
     const px = projectXs[pi];
     const pcolor = getProjectColor(p.proj);
-    html += `<circle cx="${px}" cy="${projectY}" r="${projR}" fill="${pcolor}" stroke="#fff" stroke-width="2.5" filter="url(#r2glow)"/>`;
+    html += `<circle cx="${px}" cy="${projectY}" r="${projR}" fill="${pcolor}" stroke="#fff" stroke-width="2.5" filter="url(#${idGlow})"/>`;
     html += `<text x="${px}" y="${projectY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="12" font-weight="800">${esc(p.proj)}</text>`;
     html += `<text x="${px}" y="${projectY + projR + 14}" text-anchor="middle" fill="#1a1612" font-size="11" font-weight="800">${esc(fmtMoney(p.total))}</text>`;
     html += `<text x="${px}" y="${projectY + projR + 28}" text-anchor="middle" fill="#8a7f73" font-size="9" font-weight="600">${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'} · 100%</text>`;
   });
 
-  // Tarjetas de contratos (foreignObject con HTML)
   projects.forEach((p, pi) => {
     const px = projectXs[pi];
     const pcolor = getProjectColor(p.proj);
@@ -1698,14 +1679,40 @@ function renderNetwork() {
   });
 
   html += `</svg>`;
-  container.innerHTML = html;
+  return html;
 }
 
-function renderAlertsNetwork() {
-  const container = document.getElementById('r2AlertsNet');
+function buildNetworkLegendHTML() {
+  const pending = eData.filter(c => c.montoPendiente != null && c.montoPendiente > 0);
+  const byProj = new Map();
+  for (const c of pending) {
+    if (!byProj.has(c.proy)) byProj.set(c.proy, []);
+    byProj.get(c.proy).push(c);
+  }
+  const projects = [...byProj.entries()].map(([proj, contracts]) => ({
+    proj,
+    total: contracts.reduce((s, c) => s + c.montoPendiente, 0),
+  })).sort((a, b) => b.total - a.total);
+
+  const projLabelMap = { 'QI': 'Querétaro - Irapuato', 'SN': 'Saltillo - Nuevo Laredo' };
+  return projects.map(p => {
+    const label = projLabelMap[p.proj] || p.proj;
+    return `<span><span class="ld" style="background:${getProjectColor(p.proj)}"></span>${esc(label)}</span>`;
+  }).join('');
+}
+
+function renderNetwork() {
+  const container = document.getElementById('r2Network');
   if (!container) return;
 
-  // Siempre se muestran los 3 nodos con su número, pero solo Crítico expande tarjetas.
+  const legendEl = document.getElementById('r2NetLegend');
+  if (legendEl) legendEl.innerHTML = buildNetworkLegendHTML();
+
+  const W = Math.max(540, (container.clientWidth || 700) - 4);
+  container.innerHTML = buildNetworkSVG(W, 'r2');
+}
+
+function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}) {
   const groups = [
     { key: 'bad',  label: 'Crítico',      detail: '> 120 días',  color: '#c75b39',
       items: bData.filter(b => b.status === 'bad').slice().sort((a, b) => (b.days || 0) - (a.days || 0)) },
@@ -1716,13 +1723,9 @@ function renderAlertsNetwork() {
   ];
 
   if (!bData.length) {
-    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:440px;color:var(--text3)">Sin datos de bitácoras</div>`;
-    return;
+    return `<div style="display:flex;align-items:center;justify-content:center;min-height:240px;color:#8a7f73">Sin datos de bitácoras</div>`;
   }
 
-  // Hub arriba, 3 nodos en fila, tarjetas SOLO bajo Crítico
-  const containerW = container.clientWidth;
-  const W = Math.max(540, (containerW || 700) - 4);
   const groupCenterDist = W / (groups.length + 1);
   const groupXs = groups.map((_, gi) => groupCenterDist * (gi + 1));
 
@@ -1738,60 +1741,56 @@ function renderAlertsNetwork() {
   const critItems = groups[critIdx].items;
   const H = contractStartY + (critItems.length ? critItems.length * (cardH + cardGap) : 0) + 30;
 
-  let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  const idHub = `${idPrefix}hub`, idGrid = `${idPrefix}grid`, idGlow = `${idPrefix}glow`;
+
+  let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">`;
   html += `<defs>
-    <radialGradient id="r2alerthub" cx="40%" cy="40%" r="60%">
+    <radialGradient id="${idHub}" cx="40%" cy="40%" r="60%">
       <stop offset="0%" stop-color="#dc8866"/>
       <stop offset="100%" stop-color="#c75b39"/>
     </radialGradient>
-    <pattern id="r2alertgrid" width="32" height="32" patternUnits="userSpaceOnUse">
+    <pattern id="${idGrid}" width="32" height="32" patternUnits="userSpaceOnUse">
       <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(199,91,57,0.05)" stroke-width="1"/>
     </pattern>
-    <filter id="r2alertglow" x="-50%" y="-50%" width="200%" height="200%">
+    <filter id="${idGlow}" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur stdDeviation="3" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>`;
-  html += `<rect width="${W}" height="${H}" fill="url(#r2alertgrid)"/>`;
+  html += `<rect width="${W}" height="${H}" fill="url(#${idGrid})"/>`;
 
-  // Edges hub → status
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
     html += `<path d="M ${cx} ${hubY + hubR} C ${cx} ${(hubY + statusY) / 2}, ${sx} ${(hubY + statusY) / 2}, ${sx} ${statusY - statusR}" stroke="${g.color}" stroke-width="2" stroke-opacity="0.7" fill="none" stroke-linecap="round"/>`;
   });
 
-  // Línea vertical punteada SOLO bajo Crítico (única columna que expande tarjetas)
   if (critItems.length > 0) {
     const sx = groupXs[critIdx];
     const lineEnd = contractStartY + (critItems.length - 1) * (cardH + cardGap) + cardH / 2;
     html += `<line x1="${sx}" y1="${statusY + statusR + 28}" x2="${sx}" y2="${lineEnd}" stroke="#c75b39" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3,4" stroke-linecap="round"/>`;
   } else {
-    // Mensaje cuando no hay críticos
     html += `<text x="${cx}" y="${contractStartY + 14}" text-anchor="middle" fill="#1a6b5a" font-size="13" font-weight="700">✓ Sin contratos críticos</text>`;
   }
 
-  // Hub: ⚠ ALERTAS
-  const critTotal = (groups.find(g => g.key === 'bad') || { items: [] }).items.length;
-  if (critTotal > 0) {
+  const critTotal = critItems.length;
+  if (critTotal > 0 && animated) {
     html += `<circle cx="${cx}" cy="${hubY}" r="${hubR + 4}" fill="none" stroke="#c75b39" stroke-width="2" opacity="0.7">
       <animate attributeName="r" values="${hubR + 2};${hubR + 14};${hubR + 2}" dur="2s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite"/>
     </circle>`;
   }
-  html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#r2alerthub)" stroke="#fff" stroke-width="3" filter="url(#r2alertglow)"/>`;
+  html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#${idHub})" stroke="#fff" stroke-width="3" filter="url(#${idGlow})"/>`;
   html += `<text x="${cx}" y="${hubY - 4}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="13" font-weight="800">⚠</text>`;
   html += `<text x="${cx}" y="${hubY + 11}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9" font-weight="800" letter-spacing=".06em">ALERTAS</text>`;
 
-  // Status nodes (con count adentro y label/detalle abajo)
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
-    html += `<circle cx="${sx}" cy="${statusY}" r="${statusR}" fill="${g.color}" stroke="#fff" stroke-width="2.5" filter="url(#r2alertglow)"/>`;
+    html += `<circle cx="${sx}" cy="${statusY}" r="${statusR}" fill="${g.color}" stroke="#fff" stroke-width="2.5" filter="url(#${idGlow})"/>`;
     html += `<text x="${sx}" y="${statusY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="13" font-weight="800">${g.items.length}</text>`;
     html += `<text x="${sx}" y="${statusY + statusR + 14}" text-anchor="middle" fill="#1a1612" font-size="11" font-weight="800">${esc(g.label)}</text>`;
     html += `<text x="${sx}" y="${statusY + statusR + 28}" text-anchor="middle" fill="#8a7f73" font-size="9" font-weight="600">${esc(g.detail)}</text>`;
   });
 
-  // Tarjetas (foreignObject) — SOLO para Crítico
   if (critItems.length > 0) {
     const sx = groupXs[critIdx];
     const pcolor = '#c75b39';
@@ -1813,7 +1812,14 @@ function renderAlertsNetwork() {
   }
 
   html += '</svg>';
-  container.innerHTML = html;
+  return html;
+}
+
+function renderAlertsNetwork() {
+  const container = document.getElementById('r2AlertsNet');
+  if (!container) return;
+  const W = Math.max(540, (container.clientWidth || 700) - 4);
+  container.innerHTML = buildAlertsNetworkSVG(W, 'r2alert');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2372,6 +2378,12 @@ function renderReportResumen2() {
   };
   const criticalSet = new Set(byStatus.bad.map(b => b.contract));
 
+  // SVGs de las redes (mismo render que en la página)
+  const REPORT_SVG_W = 820;
+  const networkSVG = buildNetworkSVG(REPORT_SVG_W, 'rep1');
+  const alertsSVG  = buildAlertsNetworkSVG(REPORT_SVG_W, 'rep2alert', { animated: false });
+  const networkLegend = buildNetworkLegendHTML();
+
   let html = `
     <div class="report-header">
       <h1>Reporte de seguimiento integral</h1>
@@ -2381,7 +2393,11 @@ function renderReportResumen2() {
 
     <section class="report-section">
       <h2>1 · Estimaciones pendientes — Distribución por proyecto</h2>
-      <p class="report-sub">Cada proyecto agrupa sus contratos con monto pendiente de pago. La columna "Bitácora" señala los contratos con más de 120 días sin registrar notas.</p>
+      <p class="report-sub">Cada tarjeta es un contrato; el halo rojo identifica los contratos con bitácora crítica (&gt; 120 días).</p>
+      <div class="report-net-card">
+        ${networkLegend ? `<div class="report-net-legend">${networkLegend}</div>` : ''}
+        <div class="report-net-canvas">${networkSVG}</div>
+      </div>
       ${groupedEst.length ? groupedEst.map(g => {
         const pct = totalPend > 0 ? (g.total / totalPend * 100).toFixed(2) : '0';
         return `
@@ -2417,6 +2433,14 @@ function renderReportResumen2() {
     <section class="report-section">
       <h2>2 · Alertas — Bitácoras por estatus</h2>
       <p class="report-sub">Distribución de bitácoras según días sin registrar notas. Umbrales acordados: menos de 60 d (al corriente), 60 a 120 d (en atención), más de 120 d (crítico).</p>
+      <div class="report-net-card">
+        <div class="report-net-legend">
+          <span><span class="ld" style="background:#c75b39"></span>Crítico</span>
+          <span><span class="ld" style="background:#b8860b"></span>Atención</span>
+          <span><span class="ld" style="background:#8a7f73"></span>Sin reportar</span>
+        </div>
+        <div class="report-net-canvas">${alertsSVG}</div>
+      </div>
 
       ${byStatus.bad.length ? `
         <h3 class="report-proj-h">
