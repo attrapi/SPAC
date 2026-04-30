@@ -120,6 +120,16 @@ body{
 .btn-outline{background:var(--surface);border:1.5px solid var(--border2);color:var(--text2)}
 .btn-outline:hover{background:var(--surface2);border-color:var(--text3)}
 .btn-outline.spinning svg{animation:spin .7s linear infinite}
+.btn-primary{
+  background:linear-gradient(135deg,var(--gov-dark),var(--gov-mid));
+  color:#fff;border:1px solid var(--gov-dark);
+  box-shadow:0 2px 6px rgba(107,32,53,.25);
+}
+.btn-primary:hover{
+  background:linear-gradient(135deg,var(--gov-mid),var(--gov-dark));
+  box-shadow:0 4px 10px rgba(107,32,53,.35);
+  transform:translateY(-1px);
+}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* TABS */
@@ -1076,8 +1086,6 @@ body{
       </button>
     </div>
 
-    <div class="cnstl-kpi-strip" id="r2KpiOrbit"></div>
-
     <div class="cnstl-main">
       <div class="cnstl-net-card">
         <div class="cnstl-net-head">
@@ -1557,41 +1565,6 @@ function renderContractList() {
 // RENDER RESUMEN 2 — Constellation Dashboard (red SPAC)
 // ══════════════════════════════════════════════════════════════
 function renderResumen2() {
-  // KPI strip — 5 cards con accent color
-  const totalContracts = eData.length;
-  const totalPend = eData.reduce((s, c) => s + (c.montoPendiente || 0), 0);
-  const totalBitacoras = bData.length;
-  const projects = new Set(eData.map(c => c.proy)).size;
-  const criticalCount = bData.filter(b => b.status === 'bad').length;
-
-  document.getElementById('r2KpiOrbit').innerHTML = `
-    <div class="cnstl-kpi" style="--accent:var(--gov-dark)">
-      <div class="num">${totalContracts.toLocaleString('es-MX')}</div>
-      <div class="lbl">Contratos</div>
-      <div class="sub">en estimaciones</div>
-    </div>
-    <div class="cnstl-kpi" style="--accent:var(--bad)">
-      <div class="num">${esc(fmtMoney(totalPend))}</div>
-      <div class="lbl">Pendiente de pago</div>
-      <div class="sub">monto total</div>
-    </div>
-    <div class="cnstl-kpi" style="--accent:var(--teal)">
-      <div class="num">${totalBitacoras.toLocaleString('es-MX')}</div>
-      <div class="lbl">Bitácoras</div>
-      <div class="sub">contratos en seguimiento</div>
-    </div>
-    <div class="cnstl-kpi" style="--accent:var(--gold)">
-      <div class="num">${projects.toLocaleString('es-MX')}</div>
-      <div class="lbl">Proyectos</div>
-      <div class="sub">ferroviarios</div>
-    </div>
-    <div class="cnstl-kpi" style="--accent:var(--warn)">
-      <div class="num">${criticalCount.toLocaleString('es-MX')}</div>
-      <div class="lbl">Críticos</div>
-      <div class="sub">bitácora &gt; 120 d</div>
-    </div>
-  `;
-
   renderNetwork();
   renderAlertsNetwork();
 }
