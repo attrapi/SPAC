@@ -678,20 +678,25 @@ body{
 .contract-item{
   padding:.85rem 1.4rem;border-bottom:1px solid var(--border);
   font-size:.82rem;transition:background .15s;
-  display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;
+  display:flex;align-items:flex-start;gap:.7rem;flex-wrap:wrap;flex-direction:column;
 }
 .contract-item:hover{background:var(--surface2)}
 .contract-item:last-child{border-bottom:none}
+.contract-item.is-licitacion .c-id{color:#b8860b;font-style:italic}
 .contract-text{
   font-family:ui-monospace,Consolas,monospace;
   color:var(--text2);line-height:1.4;
-  display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;flex:1;min-width:0;
+  display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;flex:1;min-width:0;width:100%;
 }
 .contract-text .c-id{color:var(--text);font-weight:700;font-size:.85rem}
 .contract-text .c-pipe{color:var(--text4);font-weight:400;font-family:inherit}
 .contract-text .c-proj{font-weight:700}
 .contract-text .c-monto{color:var(--text);font-weight:700;font-size:.85rem}
 .contract-text .c-monto.empty{color:var(--text4);font-weight:500;font-style:italic}
+.contract-objeto{
+  font-size:.78rem;color:var(--text3);line-height:1.45;
+  padding-left:.1rem;font-weight:500;width:100%;
+}
 
 /* ERROR */
 .error-box{max-width:1600px;margin:1rem auto;padding:0 2.5rem}
@@ -4483,7 +4488,7 @@ const SOURCES = {
     sheetKey: '2PACX-1vQsmPUjJmeQBHSNZyizKuWXo4PjYJU1d7gw89ZK1v1uOt9rEeQkSyv1M5XVULOW3Q',
     gid: '1129467386',
     headerRows: 2,
-    cols: { proy: 1, tramo: 2, contrato: 4, montoPagado: 30, montoPendiente: 31, montoTotal: 32 },
+    cols: { proy: 1, tramo: 2, objeto: 3, contrato: 4, montoPagado: 30, montoPendiente: 31, montoTotal: 32 },
   }
 };
 const REFRESH_MS = 60000;
@@ -4618,6 +4623,7 @@ function processEstimaciones(rows, src) {
       contrato,
       proy: (r[src.cols.proy] || '').trim() || 'Sin proyecto',
       tramo: (r[src.cols.tramo] || '').trim(),
+      objeto: (r[src.cols.objeto] || '').trim(),
       montoPendiente: parseMoney(r[src.cols.montoPendiente]),
       montoPagado: parseMoney(r[src.cols.montoPagado]),
       montoTotal: parseMoney(r[src.cols.montoTotal]),
@@ -4757,11 +4763,19 @@ function renderContractList() {
     if (!q) return true;
     return c.contrato.toLowerCase().includes(q) ||
            c.proy.toLowerCase().includes(q) ||
-           (c.tramo || '').toLowerCase().includes(q);
+           (c.tramo || '').toLowerCase().includes(q) ||
+           (c.objeto || '').toLowerCase().includes(q);
   });
 
+  const enLicCount = rows.filter(c => /^en\s+licitaci/i.test(c.contrato)).length;
+  const conMontoCount = rows.filter(c => c.montoPendiente != null && c.montoPendiente > 0).length;
+  const countParts = [
+    `${rows.length.toLocaleString('es-MX')} contrato${rows.length === 1 ? '' : 's'}`,
+    `${conMontoCount} con monto pendiente`,
+  ];
+  if (enLicCount) countParts.push(`${enLicCount} en licitación`);
   document.getElementById('eListCount').textContent =
-    `${rows.length.toLocaleString('es-MX')} contrato${rows.length === 1 ? '' : 's'}${q ? ' (filtrados)' : ''}`;
+    `${countParts.join(' · ')}${q ? ' (filtrados)' : ''}`;
 
   const list = document.getElementById('eContractList');
   if (!rows.length) {
@@ -4774,8 +4788,10 @@ function renderContractList() {
     const baseColor = getProjectColor(c.proy);
     const hasMonto = c.montoPendiente != null && c.montoPendiente > 0;
     const monto = hasMonto ? fmtMoneyFull(c.montoPendiente) : 'sin monto pendiente';
+    const isEnLic = /^en\s+licitaci/i.test(c.contrato);
+    const objeto = c.objeto || '';
     return `
-      <div class="contract-item">
+      <div class="contract-item${isEnLic ? ' is-licitacion' : ''}">
         <div class="contract-text">
           <span class="c-id">${esc(c.contrato)}</span>
           <span class="c-pipe">|</span>
@@ -4783,6 +4799,7 @@ function renderContractList() {
           <span class="c-pipe">|</span>
           <span class="c-monto ${hasMonto ? '' : 'empty'}">${esc(monto)}</span>
         </div>
+        ${objeto ? `<div class="contract-objeto" title="${esc(objeto)}">${esc(objeto)}</div>` : ''}
       </div>
     `;
   }).join('');
