@@ -1477,6 +1477,16 @@ body{
       text-transform: uppercase;
       letter-spacing: .25px;
       margin-bottom: 9px;
+      /* Limitamos a 3 líneas con ellipsis para que los títulos largos
+         (servicios/supervisión/construcción con todos los descriptores)
+         no rompan el alto de la tarjeta ni rebasen la columna Estatus.
+         El texto completo queda en title= para tooltip nativo en hover. */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .dicco-scope .proc-id-row{
@@ -6063,7 +6073,7 @@ setInterval(fetchAll, REFRESH_MS);
 
         card.innerHTML = `
           <div class="proc-card-main">
-            <div class="proc-title">${item.title}</div>
+            <div class="proc-title" title="${String(item.title).replace(/"/g,'&quot;')}">${item.title}</div>
             <div class="proc-id-row">
               <svg class="proc-id-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -7410,7 +7420,7 @@ setInterval(fetchAll, REFRESH_MS);
     ].filter(Boolean).join('');
 
     return `<div class="proc-card">
-      <div class="proc-title">${esc(titulo)}</div>
+      <div class="proc-title" title="${esc(titulo)}">${esc(titulo)}</div>
       <div class="proc-id-row">${ICON_LINK}${idHtml}</div>
       ${metas}
     </div>`;
