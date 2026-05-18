@@ -5221,7 +5221,8 @@ setInterval(fetchAll, REFRESH_MS);
         const rows = card.querySelectorAll('.proc-meta-row');
         for (const row of rows) {
           const txt = row.querySelector('.proc-meta')?.textContent.trim() || '';
-          const m = txt.match(/^(.+?):\s*(.+)$/);
+          // [\s\S] para que el valor pueda incluir '\n' (multi-fechas).
+          const m = txt.match(/^(.+?):\s*([\s\S]+)$/);
           if (!m) continue;
           if (!/fallo/i.test(m[1])) continue;
           const f = parseFalloDate(m[2].trim());
@@ -5235,7 +5236,7 @@ setInterval(fetchAll, REFRESH_MS);
         const rows = card.querySelectorAll('.proc-meta-row');
         for (const row of rows) {
           const txt = row.querySelector('.proc-meta')?.textContent.trim() || '';
-          const m = txt.match(/^(.+?):\s*(.+)$/);
+          const m = txt.match(/^(.+?):\s*([\s\S]+)$/);
           if (!m) continue;
           if (!/^estatus$/i.test(m[1].trim())) continue;
           return m[2].trim();
@@ -5336,7 +5337,7 @@ setInterval(fetchAll, REFRESH_MS);
       const todayMs = today.getTime();
       document.querySelectorAll('.proc-meta-row').forEach(row => {
         const txt = row.querySelector('.proc-meta')?.textContent.trim() || '';
-        const m = txt.match(/^(.+?):\s*(.+)$/);
+        const m = txt.match(/^(.+?):\s*([\s\S]+)$/);
         const labelMatchesHito = m && HITO_KEYWORDS.test(m[1]);
         let isToday = false;
         let hitoStage = null;
@@ -5582,7 +5583,10 @@ setInterval(fetchAll, REFRESH_MS);
         // Apertura de proposiciones, Fallo…) o el estatus textual.
         const metaRows = Array.from(card.querySelectorAll('.proc-meta-row')).map(row => {
           const txt = row.querySelector('.proc-meta')?.textContent.trim() || '';
-          const m = txt.match(/^(.+?):\s*(.+)$/);
+          // El flag /s hace que "." matchee también '\n', necesario para
+          // celdas multi-fecha como "Junta: 1. 22/12/2025\n2. 30/12/2025".
+          // Sin /s, la regex fallaba y devolvía value='' (modal vacío).
+          const m = txt.match(/^(.+?):\s*([\s\S]+)$/);
           return { label: (m ? m[1] : txt).trim(), value: (m ? m[2] : '').trim() };
         });
 
