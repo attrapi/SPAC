@@ -7622,9 +7622,7 @@ setInterval(fetchAll, REFRESH_MS);
     tip.className = 'dicco-multi-tip';
     tip.style.cssText = [
       'position:fixed','z-index:99999','pointer-events:none',
-      'opacity:0','visibility:hidden',
-      'transition:opacity .12s ease, transform .12s ease, visibility .12s',
-      'transform:translateY(-4px)',
+      'display:none',
       'min-width:160px','max-width:320px',
       'padding:9px 11px',
       'background:rgba(20,14,24,0.97)',
@@ -7633,40 +7631,39 @@ setInterval(fetchAll, REFRESH_MS);
       'border:1px solid rgba(253,224,71,.4)',
       'border-radius:7px',
       'box-shadow:0 12px 30px rgba(0,0,0,.6), 0 2px 6px rgba(0,0,0,.4)',
-      'font-family:inherit','white-space:normal','text-align:left'
+      'font-family:inherit','white-space:normal','text-align:left',
+      'top:0','left:0'
     ].join(';');
     document.body.appendChild(tip);
 
     function show(target){
       const full = target.getAttribute('data-full') || '';
       const label = target.getAttribute('data-full-label') || '';
-      if (!full) return;
+      console.info('[multi-tip] show() llamado. full chars:', full.length, 'label:', label);
+      if (!full) { console.warn('[multi-tip] sin data-full → abortando'); return; }
       const lines = full.split('\n').map(l => l.trim()).filter(Boolean);
       const sanitize = s => String(s).replace(/[<>&]/g, c => c==='<'?'&lt;':c==='>'?'&gt;':'&amp;');
       const labelHtml = label
         ? `<div style="font-weight:800;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(253,224,71,.85);margin-bottom:5px">${sanitize(label)}</div>`
         : '';
       tip.innerHTML = labelHtml + lines.map(sanitize).join('<br>');
-      // Mostrar primero para medir tamaño, luego posicionar
+      // Render duro: nada de transiciones, display block, todo a la vista.
+      tip.style.display = 'block';
       tip.style.visibility = 'visible';
-      tip.style.opacity = '0';
+      tip.style.opacity = '1';
+      tip.style.transform = 'none';
       const rect = target.getBoundingClientRect();
       const tw = tip.offsetWidth, th = tip.offsetHeight;
       let left = rect.left + rect.width/2 - tw/2;
       left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
       let top = rect.top - th - 10;
-      if (top < 8) top = rect.bottom + 10; // si no cabe arriba, va abajo
+      if (top < 8) top = rect.bottom + 10;
       tip.style.left = left + 'px';
       tip.style.top  = top + 'px';
-      // Forzar reflow para que la transición arranque desde opacity:0
-      void tip.offsetWidth;
-      tip.style.opacity = '1';
-      tip.style.transform = 'translateY(0)';
+      console.info('[multi-tip] posicionado en', { left, top, tw, th, targetRect: { top: rect.top, left: rect.left, w: rect.width, h: rect.height } });
     }
     function hide(){
-      tip.style.opacity = '0';
-      tip.style.transform = 'translateY(-4px)';
-      tip.style.visibility = 'hidden';
+      tip.style.display = 'none';
     }
 
     document.addEventListener('mouseover', e => {
