@@ -3295,7 +3295,10 @@ body{
   box-shadow: 0 4px 18px rgba(26,22,18,.10);
   /* No es página completa: queda contenido dentro de la sección */
   min-height: auto;
-  display: block;
+  /* OJO: NO ponemos display: block aquí. Eso ganaba la cascada al
+     .section { display: none } global y hacía que la sección DICCO
+     apareciera en TODAS las pestañas al fondo. La visibilidad la
+     controla .section.active de toda la vida. */
   position: relative;
   overflow: hidden;
 }
