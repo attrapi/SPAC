@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SPAC — Subdirección de Procesos Administrativos de Obra</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236b2035'/%3E%3Cstop offset='1' stop-color='%238b3a50'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='12' fill='url(%23g)'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Plus Jakarta Sans,Arial,sans-serif' font-weight='800' font-size='24' fill='%23d4a84b'%3ESPAC%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
@@ -1117,14 +1117,18 @@ body{
       margin-bottom: 4px;
     }
     .dicco-scope .acc-name{
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.2;
+      font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      font-size: 17px;
+      font-weight: 600;
+      font-style: italic;
+      line-height: 1.25;
+      letter-spacing: .15px;
+      color: #f6efe1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    @media (max-width: 400px){ .dicco-scope .acc-name{ font-size: 13px; white-space: normal; } }
+    @media (max-width: 400px){ .dicco-scope .acc-name{ font-size: 15px; white-space: normal; } }
 
     /* chevron */
     .dicco-scope .acc-chevron{
