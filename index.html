@@ -3000,7 +3000,7 @@ body{
         font-size: 8.5pt;
       }
 
-      /* Tira de las 6 etapas (Preconvocatoria → Fallo) por licitación,
+      /* Tira de las 5 etapas (Convocatoria → Fallo) por licitación,
          segunda fila del .pr-item. Compacta para imprimirse limpio. */
       .dicco-scope #print-report .pr-item{
         grid-template-rows: auto auto;
@@ -5336,9 +5336,8 @@ setInterval(fetchAll, REFRESH_MS);
        canario + chip "Hoy es {hito}". Idempotente. Se invoca al
        cargar y después de cada sync.
        ══════════════════════════════════════════════════════════ */
-    const HITO_KEYWORDS = /preconvocatoria|convocatoria|publicaci[oó]n|visita|junta.*aclaracion|apertura|presentaci[oó]n.*proposicion|fallo/i;
+    const HITO_KEYWORDS = /convocatoria|publicaci[oó]n|visita|junta.*aclaracion|apertura|presentaci[oó]n.*proposicion|fallo/i;
     const HITO_HOY_LABEL = {
-      'Preconvocatoria': 'Hoy es la Preconvocatoria',
       'Convocatoria': 'Hoy es la Convocatoria',
       'Visita al sitio': 'Hoy es la Visita al sitio',
       'Junta de aclaraciones': 'Hoy es la Junta de Aclaraciones',
@@ -5497,9 +5496,8 @@ setInterval(fetchAll, REFRESH_MS);
     const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     const MESES_CORTOS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
-    // Etapas del proceso de licitación (solo Fallo tiene fecha por ahora)
+    // Etapas del proceso de licitación
     const STAGES = [
-      'Preconvocatoria',
       'Convocatoria',
       'Visita al sitio',
       'Junta de aclaraciones',
@@ -5508,7 +5506,6 @@ setInterval(fetchAll, REFRESH_MS);
     ];
     // Etiqueta corta de cada etapa (pastillas del timeline y resúmenes)
     const STAGE_SHORT_LABEL = {
-      'Preconvocatoria': 'Precon',
       'Convocatoria': 'Conv',
       'Visita al sitio': 'Visita',
       'Junta de aclaraciones': 'Junta',
@@ -5575,7 +5572,6 @@ setInterval(fetchAll, REFRESH_MS);
     // Tolera las redacciones típicas en ComprasMX/LOPSRM.
     function resolveStage(label) {
       if (/fallo/i.test(label)) return 'Fallo';
-      if (/preconvocatoria/i.test(label)) return 'Preconvocatoria';
       if (/convocatoria|publicaci[oó]n/i.test(label)) return 'Convocatoria';
       if (/visita/i.test(label)) return 'Visita al sitio';
       if (/junta.*aclaracion/i.test(label)) return 'Junta de aclaraciones';
@@ -6326,7 +6322,6 @@ setInterval(fetchAll, REFRESH_MS);
       // la matriz publicada (Drive). Se usa como texto de la pastilla en
       // el timeline.
       const STAGE_FULL = {
-        'Preconvocatoria': 'PRECONVOCATORIA',
         'Convocatoria': 'CONVOCATORIA',
         'Visita al sitio': 'VISITA AL SITIO',
         'Junta de aclaraciones': 'JUNTA DE ACLARACIONES',
@@ -6396,7 +6391,7 @@ setInterval(fetchAll, REFRESH_MS);
         if (!groupsByLaneX.has(key)) groupsByLaneX.set(key, []);
         groupsByLaneX.get(key).push(m);
       });
-      const STAGE_ORDER = ['Preconvocatoria','Convocatoria','Visita al sitio','Junta de aclaraciones','Apertura de proposiciones','Fallo'];
+      const STAGE_ORDER = ['Convocatoria','Visita al sitio','Junta de aclaraciones','Apertura de proposiciones','Fallo'];
       groupsByLaneX.forEach(group => {
         if (group.length <= 1) return;
         // La primera (orden cronológico de etapas) se queda en el carril
@@ -7140,7 +7135,6 @@ setInterval(fetchAll, REFRESH_MS);
 
     // Etiqueta de fila para cada etapa (igual que la usamos en el HTML)
     const STAGE_META_LABEL = {
-      'Preconvocatoria': 'Preconvocatoria',
       'Convocatoria': 'Convocatoria',
       'Visita al sitio': 'Visita al sitio',
       'Junta de aclaraciones': 'Junta de aclaraciones',
