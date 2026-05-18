@@ -1379,6 +1379,28 @@ body{
       white-space: nowrap;
     }
 
+    /* Chip "+N" para multi-fechas: cuando una celda trae varias fechas,
+       se muestra solo la primera y este chip indica cuántas más hay.
+       El hover (title nativo) revela el listado completo. */
+    .dicco-scope .proc-meta-row.has-more{ cursor: help; }
+    .dicco-scope .proc-meta-more{
+      display: inline-block;
+      margin-left: 4px;
+      padding: 1px 6px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .dicco-scope .proc-meta-row.has-more:hover .proc-meta-more{
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.3);
+    }
+
     /* placeholder */
     .dicco-scope .proc-empty{
       font-size: 11px;
@@ -1734,6 +1756,20 @@ body{
     .dicco-scope .stage-item.has-value .stage-value{
       color: var(--card-color);
     }
+    /* Chip "+N" para multi-fechas en el stage-value del modal. */
+    .dicco-scope .stage-value-more{
+      display: inline-block;
+      margin-left: 3px;
+      padding: 0 4px;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: rgba(255,255,255,.75);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 8px;
+      vertical-align: 1px;
+    }
+    .dicco-scope .stage-item[title]{ cursor: help; }
 
     /* Tarjeta del modal cuando ALGÚN hito (Convocatoria, Visita, Junta,
        Apertura o Fallo) cae HOY: borde palpitante canario en la tarjeta,
@@ -5954,18 +5990,27 @@ setInterval(fetchAll, REFRESH_MS);
         item.todayStage = todayStage;
 
         const stagesHtml = STAGES.map(name => {
-          const value = hitosByStage[name]?.rawValue || '';
-          const hasValue = !!value;
+          const rawVal = hitosByStage[name]?.rawValue || '';
+          const hasValue = !!rawVal;
+          // Para multi-fechas mostramos solo la primera línea + chip "+N";
+          // el listado completo va al atributo title (tooltip nativo).
+          const linesArr = rawVal.split('\n').map(l => l.trim()).filter(Boolean);
+          const firstVal = linesArr[0] || '';
+          const moreCount = Math.max(0, linesArr.length - 1);
+          const valueHtml = moreCount > 0
+            ? `${firstVal} <span class="stage-value-more">+${moreCount}</span>`
+            : firstVal;
+          const titleAttr = moreCount > 0 ? ` title="${linesArr.join('\n').replace(/"/g, '&quot;')}"` : '';
           const isStageToday = name === todayStage;
           // "Actual" no se duplica con "Hoy": si HOY también es la etapa
           // actual, prevalece la palpitación canaria.
           const isStageCurrent = name === currentStage && !isStageToday;
           return `
-            <div class="stage-item${hasValue ? ' has-value' : ''}${isStageToday ? ' is-today' : ''}${isStageCurrent ? ' is-current' : ''}">
+            <div class="stage-item${hasValue ? ' has-value' : ''}${isStageToday ? ' is-today' : ''}${isStageCurrent ? ' is-current' : ''}"${titleAttr}>
               ${isStageToday ? '<div class="stage-today-tag">Hoy</div>' : ''}
               ${isStageCurrent ? '<div class="stage-current-tag">Actual</div>' : ''}
               <div class="stage-label">${name}</div>
-              ${hasValue ? `<div class="stage-value">${value}</div>` : ''}
+              ${hasValue ? `<div class="stage-value">${valueHtml}</div>` : ''}
             </div>
           `;
         }).join('');
@@ -7307,10 +7352,11 @@ setInterval(fetchAll, REFRESH_MS);
   const ICON_CHK  = API.META_ICON_CHECK || `<svg class="proc-meta-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M8 12.5l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
   // Construye un .proc-meta-row con icono apropiado según el valor.
-  // Si el valor trae varias líneas (multi-fechas), las separa con <br>
-  // PARA EL CSS y además incluye un '\n' literal para que textContent
-  // también preserve el separador (lo lee el modal/timeline). Si no
-  // mantuviéramos el \n, el modal pegaría "20251.30/12/2025".
+  // Si el valor trae varias líneas (multi-fechas), se muestra SOLO la
+  // primera + un chip "+N" indicando cuántas más hay. El texto completo
+  // queda en el atributo title como tooltip nativo (hover). Además el
+  // valor entero queda en data-full para que el modal/timeline o el
+  // reporte puedan leerlo sin perder información.
   function metaRow(label, value){
     const v = String(value || '').trim();
     if (!v) return '';
@@ -7319,10 +7365,15 @@ setInterval(fetchAll, REFRESH_MS);
     else if (/^n\/?a$/i.test(v)) icon = ICON_INFO;
     else if (/^s[ií]$|^no$/i.test(v)) icon = ICON_CHK;
     else icon = ICON_INFO;
-    const valueHtml = v.includes('\n')
-      ? v.split('\n').map(line => esc(line.trim())).filter(Boolean).join('<br>\n')
-      : esc(v);
-    return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${valueHtml}</span></div>`;
+    const lines = v.split('\n').map(l => l.trim()).filter(Boolean);
+    const first = lines[0] || '';
+    const more  = lines.length - 1;
+    const dataFull = ` data-full="${esc(lines.join('\n'))}"`;
+    if (more > 0) {
+      const titleAttr = ` title="${esc(lines.join('\n'))}"`;
+      return `<div class="proc-meta-row has-more"${titleAttr}>${icon}<span class="proc-meta"${dataFull}><strong>${esc(label)}:</strong> ${esc(first)} <span class="proc-meta-more" aria-label="${more} fechas más">+${more}</span></span></div>`;
+    }
+    return `<div class="proc-meta-row">${icon}<span class="proc-meta"${dataFull}><strong>${esc(label)}:</strong> ${esc(v)}</span></div>`;
   }
 
   // Construye el HTML de una tarjeta. Tanto las "en proceso" como las
