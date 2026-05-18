@@ -6080,29 +6080,28 @@ setInterval(fetchAll, REFRESH_MS);
         const stagesHtml = STAGES.map(name => {
           const rawVal = hitosByStage[name]?.rawValue || '';
           const hasValue = !!rawVal;
-          // Multi-fechas: solo la primera + chip "+N"; listado completo
-          // en un tooltip CSS-only que aparece al pasar el cursor.
+          // Multi-fechas: solo la primera + chip "+N"; el listado completo
+          // lo dibuja un overlay global en <body> al hacer hover (data-full).
           const linesArr = rawVal.split('\n').map(l => l.trim()).filter(Boolean);
           const firstVal = linesArr[0] || '';
           const moreCount = Math.max(0, linesArr.length - 1);
           const valueHtml = moreCount > 0
             ? `${firstVal} <span class="stage-value-more">+${moreCount}</span>`
             : firstVal;
-          const tooltipHtml = moreCount > 0
-            ? `<div class="stage-tooltip" role="tooltip"><div class="stage-tooltip-label">${name}</div>${linesArr.map(l => l.replace(/[<>]/g, c => c==='<'?'&lt;':'&gt;')).join('<br>')}</div>`
-            : '';
           const hasMoreCls = moreCount > 0 ? ' has-more' : '';
+          const fullData = moreCount > 0
+            ? ` data-full="${linesArr.join('\n').replace(/"/g, '&quot;')}" data-full-label="${name.replace(/"/g, '&quot;')}"`
+            : '';
           const isStageToday = name === todayStage;
           // "Actual" no se duplica con "Hoy": si HOY también es la etapa
           // actual, prevalece la palpitación canaria.
           const isStageCurrent = name === currentStage && !isStageToday;
           return `
-            <div class="stage-item${hasValue ? ' has-value' : ''}${isStageToday ? ' is-today' : ''}${isStageCurrent ? ' is-current' : ''}${hasMoreCls}">
+            <div class="stage-item${hasValue ? ' has-value' : ''}${isStageToday ? ' is-today' : ''}${isStageCurrent ? ' is-current' : ''}${hasMoreCls}"${fullData}>
               ${isStageToday ? '<div class="stage-today-tag">Hoy</div>' : ''}
               ${isStageCurrent ? '<div class="stage-current-tag">Actual</div>' : ''}
               <div class="stage-label">${name}</div>
               ${hasValue ? `<div class="stage-value">${valueHtml}</div>` : ''}
-              ${tooltipHtml}
             </div>
           `;
         }).join('');
@@ -7460,15 +7459,14 @@ setInterval(fetchAll, REFRESH_MS);
     const lines = v.split('\n').map(l => l.trim()).filter(Boolean);
     const first = lines[0] || '';
     const more  = lines.length - 1;
-    const dataFull = ` data-full="${esc(lines.join('\n'))}"`;
     if (more > 0) {
-      // Tooltip CSS-only: visible al pasar el cursor sobre la fila.
-      // Más fiable que el atributo title (que muchos navegadores
-      // colapsan o muestran solo después de 1-2 s).
-      const tooltipBody = lines.map(l => esc(l)).join('<br>');
-      return `<div class="proc-meta-row has-more">${icon}<span class="proc-meta"${dataFull}><strong>${esc(label)}:</strong> ${esc(first)} <span class="proc-meta-more" aria-label="${more} fechas más">+${more}</span></span><div class="proc-meta-tooltip" role="tooltip"><div class="proc-meta-tooltip-label">${esc(label)}</div>${tooltipBody}</div></div>`;
+      // El tooltip lo dibuja un overlay global en <body> (ver setupMultiTooltip).
+      // Aquí solo dejamos los datos en data-* y la clase has-more como gatillo.
+      const dataFull = ` data-full="${esc(lines.join('\n'))}"`;
+      const dataLab  = ` data-full-label="${esc(label)}"`;
+      return `<div class="proc-meta-row has-more"${dataFull}${dataLab}>${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(first)} <span class="proc-meta-more" aria-label="${more} fechas más">+${more}</span></span></div>`;
     }
-    return `<div class="proc-meta-row">${icon}<span class="proc-meta"${dataFull}><strong>${esc(label)}:</strong> ${esc(v)}</span></div>`;
+    return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(v)}</span></div>`;
   }
 
   // Construye el HTML de una tarjeta. Tanto las "en proceso" como las
@@ -7613,6 +7611,80 @@ setInterval(fetchAll, REFRESH_MS);
   } else {
     console.info('[dicco-live] deshabilitado por ?nodicco');
   }
+
+  // ── Tooltip global para multi-fechas ──
+  // En lugar de un tooltip absolute dentro de cada tarjeta (que se
+  // recortaba por overflow:hidden, stacking contexts, etc.) usamos un
+  // ÚNICO overlay anclado a <body> con position:fixed y posicionado
+  // dinámicamente al hacer hover sobre cualquier .has-more con data-full.
+  (function setupMultiTooltip(){
+    const tip = document.createElement('div');
+    tip.className = 'dicco-multi-tip';
+    tip.style.cssText = [
+      'position:fixed','z-index:99999','pointer-events:none',
+      'opacity:0','visibility:hidden',
+      'transition:opacity .12s ease, transform .12s ease, visibility .12s',
+      'transform:translateY(-4px)',
+      'min-width:160px','max-width:320px',
+      'padding:9px 11px',
+      'background:rgba(20,14,24,0.97)',
+      'color:rgba(255,255,255,.92)',
+      'font-size:10.5px','line-height:1.55',
+      'border:1px solid rgba(253,224,71,.4)',
+      'border-radius:7px',
+      'box-shadow:0 12px 30px rgba(0,0,0,.6), 0 2px 6px rgba(0,0,0,.4)',
+      'font-family:inherit','white-space:normal','text-align:left'
+    ].join(';');
+    document.body.appendChild(tip);
+
+    function show(target){
+      const full = target.getAttribute('data-full') || '';
+      const label = target.getAttribute('data-full-label') || '';
+      if (!full) return;
+      const lines = full.split('\n').map(l => l.trim()).filter(Boolean);
+      const sanitize = s => String(s).replace(/[<>&]/g, c => c==='<'?'&lt;':c==='>'?'&gt;':'&amp;');
+      const labelHtml = label
+        ? `<div style="font-weight:800;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(253,224,71,.85);margin-bottom:5px">${sanitize(label)}</div>`
+        : '';
+      tip.innerHTML = labelHtml + lines.map(sanitize).join('<br>');
+      // Mostrar primero para medir tamaño, luego posicionar
+      tip.style.visibility = 'visible';
+      tip.style.opacity = '0';
+      const rect = target.getBoundingClientRect();
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      let left = rect.left + rect.width/2 - tw/2;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      let top = rect.top - th - 10;
+      if (top < 8) top = rect.bottom + 10; // si no cabe arriba, va abajo
+      tip.style.left = left + 'px';
+      tip.style.top  = top + 'px';
+      // Forzar reflow para que la transición arranque desde opacity:0
+      void tip.offsetWidth;
+      tip.style.opacity = '1';
+      tip.style.transform = 'translateY(0)';
+    }
+    function hide(){
+      tip.style.opacity = '0';
+      tip.style.transform = 'translateY(-4px)';
+      tip.style.visibility = 'hidden';
+    }
+
+    document.addEventListener('mouseover', e => {
+      const t = e.target.closest('.has-more[data-full]');
+      if (t) show(t);
+    });
+    document.addEventListener('mouseout', e => {
+      const t = e.target.closest('.has-more[data-full]');
+      if (!t) return;
+      // Solo ocultar si el cursor salió del elemento (no si entró a un hijo)
+      const to = e.relatedTarget;
+      if (to && t.contains(to)) return;
+      hide();
+    });
+    // En scroll dentro de la página, esconder para que el tooltip no
+    // quede flotando lejos del elemento que lo disparó.
+    window.addEventListener('scroll', hide, true);
+  })();
 })();
 </script>
 </body>
