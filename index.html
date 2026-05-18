@@ -7272,20 +7272,17 @@ setInterval(fetchAll, REFRESH_MS);
   }
 
   // Normaliza fechas tipo "9/3/2026" → "09/03/2026". Si la celda trae
-  // varias fechas ("1. 09/03/2026\n2. 17/03/2026") devuelve el listado
-  // tal cual (sin tocar) — el render lo presenta como bullet en una sola
-  // línea y la lógica de migración del IIFE extrae la primera coincidencia.
+  // varias fechas ("1. 09/03/2026\n2. 17/03/2026") las devuelve unidas con
+  // "\n" para que metaRow las pinte en líneas separadas como una lista.
   function normalizeDateCell(raw){
     const v = String(raw || '').trim();
     if (!v) return '';
     if (/^n\/?a$/i.test(v)) return 'N/A';
-    // Multi-valor (varios saltos de línea o varias fechas con prefijo "1.")
     if (/\n/.test(v) || /\b\d+\.\s/.test(v)) {
-      // Pasamos los saltos a separadores legibles y normalizamos cada fecha.
       return v.split(/\n+/).map(s => s.trim()).filter(Boolean).map(line => {
         return line.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/g,
           (_, d, m, y) => `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${y}`);
-      }).join(' · ');
+      }).join('\n');
     }
     return v.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/,
       (_, d, m, y) => `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${y}`);
@@ -7314,19 +7311,26 @@ setInterval(fetchAll, REFRESH_MS);
   const ICON_CHK  = API.META_ICON_CHECK || `<svg class="proc-meta-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M8 12.5l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
   // Construye un .proc-meta-row con icono apropiado según el valor.
+  // Si el valor trae varias líneas (multi-fechas), las separa con <br>
+  // para que se vean como lista vertical en la tarjeta.
   function metaRow(label, value){
     const v = String(value || '').trim();
     if (!v) return '';
     let icon;
-    if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(v) || /\d{1,2}\/\d{1,2}\/\d{4}/.test(v)) icon = ICON_CAL;
+    if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(v)) icon = ICON_CAL;
+    else if (/^n\/?a$/i.test(v)) icon = ICON_INFO;
     else if (/^s[ií]$|^no$/i.test(v)) icon = ICON_CHK;
     else icon = ICON_INFO;
-    return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(v)}</span></div>`;
+    const valueHtml = v.includes('\n')
+      ? v.split('\n').map(line => esc(line.trim())).filter(Boolean).join('<br>')
+      : esc(v);
+    return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${valueHtml}</span></div>`;
   }
 
-  // Construye el HTML de una tarjeta. El layout depende del bucket:
-  //   • formalizado → solo título + ID (como en attrapi.github.io/SPAC)
-  //   • en proceso  → título + ID + meta-rows con las fechas disponibles
+  // Construye el HTML de una tarjeta. Tanto las "en proceso" como las
+  // "formalizadas" muestran las mismas filas de fechas (Convocatoria,
+  // Visita, Junta, Apertura, Fallo) más el Estatus si lo hay, para que
+  // la información del CSV sea visible en cualquier estado.
   function buildCard(row, bucket){
     const titulo = toSentenceCase(row[COL.OBJETO]);
     const num    = String(row[COL.NUM] || '').trim();
@@ -7335,13 +7339,6 @@ setInterval(fetchAll, REFRESH_MS);
     const idHtml = liga
       ? `<a class="proc-id" href="${esc(liga)}" target="_blank" rel="noopener noreferrer">${esc(num)}</a>`
       : `<span class="proc-id">${esc(num)}</span>`;
-
-    if (bucket === 'formalizado') {
-      return `<div class="proc-card">
-        <div class="proc-title">${esc(titulo)}</div>
-        <div class="proc-id-row">${ICON_LINK}${idHtml}</div>
-      </div>`;
-    }
 
     const estatus = String(row[COL.ESTATUS] || '').trim();
     const metas = [
