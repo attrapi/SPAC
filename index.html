@@ -1379,17 +1379,18 @@ body{
       white-space: nowrap;
     }
 
-    /* Chip "+N" para multi-fechas: cuando una celda trae varias fechas,
-       se muestra solo la primera y este chip indica cuántas más hay.
-       El tooltip CSS revela el listado completo al pasar el cursor. */
-    .dicco-scope .proc-meta-row.has-more{
-      position: relative;
-      cursor: help;
+    /* Multi-fechas: <details> nativo. Click en "+N" despliega las
+       fechas restantes inline. Sin JS, sin tooltips frágiles. */
+    .dicco-scope .dates-toggle{
+      display: inline-block;
+      vertical-align: middle;
     }
-    .dicco-scope .proc-meta-more{
+    .dicco-scope .dates-toggle > summary.dates-summary{
+      list-style: none;
+      cursor: pointer;
       display: inline-block;
       margin-left: 4px;
-      padding: 1px 6px;
+      padding: 1px 7px;
       font-size: 9px;
       font-weight: 700;
       letter-spacing: .3px;
@@ -1398,47 +1399,32 @@ body{
       border: 1px solid rgba(253,224,71,.32);
       border-radius: 10px;
       white-space: nowrap;
+      user-select: none;
+      transition: background .14s, border-color .14s, color .14s;
     }
-    .dicco-scope .proc-meta-row.has-more:hover .proc-meta-more{
-      background: rgba(253,224,71,.18);
-      border-color: rgba(253,224,71,.55);
+    .dicco-scope .dates-toggle > summary.dates-summary::-webkit-details-marker{ display: none; }
+    .dicco-scope .dates-toggle > summary.dates-summary::marker{ content: ''; }
+    .dicco-scope .dates-toggle > summary.dates-summary:hover{
+      background: rgba(253,224,71,.20);
+      border-color: rgba(253,224,71,.60);
     }
-
-    /* Tooltip que aparece al pasar el cursor sobre una meta-row con +N */
-    .dicco-scope .proc-meta-tooltip{
-      position: absolute;
-      z-index: 100;
-      left: 22px;
-      top: calc(100% + 4px);
-      min-width: 160px;
-      max-width: 280px;
-      padding: 8px 10px;
-      background: rgba(20, 14, 24, 0.97);
-      color: rgba(255, 255, 255, 0.92);
-      font-size: 10.5px;
+    .dicco-scope .dates-toggle[open] > summary.dates-summary{
+      background: rgba(253,224,71,.22);
+      border-color: rgba(253,224,71,.75);
+      color: #fef9c3;
+    }
+    .dicco-scope .dates-list{
+      display: block;
+      margin: 5px 0 2px 0;
+      padding: 6px 9px;
+      background: rgba(0,0,0,.40);
+      border-left: 2px solid rgba(253,224,71,.55);
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,.78);
       line-height: 1.55;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 6px;
-      box-shadow: 0 10px 28px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-4px);
-      transition: opacity .14s ease, transform .14s ease, visibility .14s;
-      pointer-events: none;
+      border-radius: 4px;
       white-space: normal;
-    }
-    .dicco-scope .proc-meta-tooltip-label{
-      font-weight: 800;
-      font-size: 9px;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: rgba(253,224,71,.85);
-      margin-bottom: 4px;
-    }
-    .dicco-scope .proc-meta-row.has-more:hover .proc-meta-tooltip{
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
     }
 
     /* placeholder */
@@ -1800,63 +1786,15 @@ body{
     .dicco-scope .stage-item.has-value .stage-value{
       color: var(--card-color);
     }
-    /* Chip "+N" para multi-fechas en el stage-value del modal. */
-    .dicco-scope .stage-value-more{
-      display: inline-block;
-      margin-left: 3px;
-      padding: 0 4px;
-      font-size: 8.5px;
-      font-weight: 700;
-      color: #fde047;
-      background: rgba(253,224,71,.10);
-      border: 1px solid rgba(253,224,71,.32);
-      border-radius: 8px;
-      vertical-align: 1px;
-    }
-    .dicco-scope .stage-item.has-more{
-      position: relative;
-      cursor: help;
-    }
-    .dicco-scope .stage-item.has-more:hover .stage-value-more{
-      background: rgba(253,224,71,.20);
-      border-color: rgba(253,224,71,.55);
-    }
-    /* Tooltip CSS-only para multi-fechas en el modal. */
-    .dicco-scope .stage-tooltip{
-      position: absolute;
-      z-index: 200;
-      left: 50%;
-      bottom: calc(100% + 8px);
-      transform: translate(-50%, -4px);
-      min-width: 160px;
-      max-width: 280px;
-      padding: 8px 10px;
-      background: rgba(20, 14, 24, 0.97);
-      color: rgba(255, 255, 255, 0.92);
-      font-size: 10.5px;
-      line-height: 1.55;
-      border: 1px solid rgba(255, 255, 255, 0.20);
-      border-radius: 6px;
-      box-shadow: 0 10px 28px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .14s ease, transform .14s ease, visibility .14s;
-      pointer-events: none;
-      white-space: normal;
+    /* En el modal, dejamos que .dates-toggle / .dates-summary / .dates-list
+       (definidos arriba) manejen el click-toggle también. La .stage-value
+       contiene un <details> cuando hay multi-fechas. */
+    .dicco-scope .stage-value{ overflow: visible; }
+    .dicco-scope .stage-item.has-value{ overflow: visible; }
+    .dicco-scope .stage-value .dates-list{
       text-align: left;
-    }
-    .dicco-scope .stage-tooltip-label{
-      font-weight: 800;
-      font-size: 9px;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: rgba(253,224,71,.85);
-      margin-bottom: 4px;
-    }
-    .dicco-scope .stage-item.has-more:hover .stage-tooltip{
-      opacity: 1;
-      visibility: visible;
-      transform: translate(-50%, 0);
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      letter-spacing: .15px;
     }
 
     /* Tarjeta del modal cuando ALGÚN hito (Convocatoria, Visita, Junta,
@@ -6080,24 +6018,25 @@ setInterval(fetchAll, REFRESH_MS);
         const stagesHtml = STAGES.map(name => {
           const rawVal = hitosByStage[name]?.rawValue || '';
           const hasValue = !!rawVal;
-          // Multi-fechas: solo la primera + chip "+N"; el listado completo
-          // lo dibuja un overlay global en <body> al hacer hover (data-full).
+          // Multi-fechas: primera fecha visible + <details> nativo HTML
+          // que despliega el resto inline al hacer clic. Sin JS.
+          const sanitize = s => String(s).replace(/[<>&]/g, c => c==='<'?'&lt;':c==='>'?'&gt;':'&amp;');
           const linesArr = rawVal.split('\n').map(l => l.trim()).filter(Boolean);
           const firstVal = linesArr[0] || '';
           const moreCount = Math.max(0, linesArr.length - 1);
-          const valueHtml = moreCount > 0
-            ? `${firstVal} <span class="stage-value-more">+${moreCount}</span>`
-            : firstVal;
-          const hasMoreCls = moreCount > 0 ? ' has-more' : '';
-          const fullData = moreCount > 0
-            ? ` data-full="${linesArr.join('\n').replace(/"/g, '&quot;')}" data-full-label="${name.replace(/"/g, '&quot;')}"`
-            : '';
+          let valueHtml;
+          if (moreCount > 0) {
+            const restHtml = linesArr.slice(1).map(sanitize).join('<br>');
+            valueHtml = `${sanitize(firstVal)} <details class="dates-toggle"><summary class="dates-summary">+${moreCount}</summary><div class="dates-list">${restHtml}</div></details>`;
+          } else {
+            valueHtml = sanitize(firstVal);
+          }
           const isStageToday = name === todayStage;
           // "Actual" no se duplica con "Hoy": si HOY también es la etapa
           // actual, prevalece la palpitación canaria.
           const isStageCurrent = name === currentStage && !isStageToday;
           return `
-            <div class="stage-item${hasValue ? ' has-value' : ''}${isStageToday ? ' is-today' : ''}${isStageCurrent ? ' is-current' : ''}${hasMoreCls}"${fullData}>
+            <div class="stage-item${hasValue ? ' has-value' : ''}${isStageToday ? ' is-today' : ''}${isStageCurrent ? ' is-current' : ''}">
               ${isStageToday ? '<div class="stage-today-tag">Hoy</div>' : ''}
               ${isStageCurrent ? '<div class="stage-current-tag">Actual</div>' : ''}
               <div class="stage-label">${name}</div>
@@ -7460,11 +7399,11 @@ setInterval(fetchAll, REFRESH_MS);
     const first = lines[0] || '';
     const more  = lines.length - 1;
     if (more > 0) {
-      // El tooltip lo dibuja un overlay global en <body> (ver setupMultiTooltip).
-      // Aquí solo dejamos los datos en data-* y la clase has-more como gatillo.
-      const dataFull = ` data-full="${esc(lines.join('\n'))}"`;
-      const dataLab  = ` data-full-label="${esc(label)}"`;
-      return `<div class="proc-meta-row has-more"${dataFull}${dataLab}>${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(first)} <span class="proc-meta-more" aria-label="${more} fechas más">+${more}</span></span></div>`;
+      // Uso <details> NATIVO de HTML para el toggle: el clic en "+N"
+      // abre el listado debajo, sin JS, sin tooltips, sin event handlers
+      // que se rompan. Funciona en cualquier navegador moderno.
+      const restHtml = lines.slice(1).map(l => esc(l)).join('<br>');
+      return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(first)} <details class="dates-toggle"><summary class="dates-summary">+${more}</summary><div class="dates-list">${restHtml}</div></details></span></div>`;
     }
     return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(v)}</span></div>`;
   }
@@ -7612,95 +7551,7 @@ setInterval(fetchAll, REFRESH_MS);
     console.info('[dicco-live] deshabilitado por ?nodicco');
   }
 
-  // ── Tooltip global para multi-fechas ──
-  // En lugar de un tooltip absolute dentro de cada tarjeta (que se
-  // recortaba por overflow:hidden, stacking contexts, etc.) usamos un
-  // ÚNICO overlay anclado a <body> con position:fixed y posicionado
-  // dinámicamente al hacer hover sobre cualquier .has-more con data-full.
-  (function setupMultiTooltip(){
-    const tip = document.createElement('div');
-    tip.className = 'dicco-multi-tip';
-    tip.style.cssText = [
-      'position:fixed','z-index:99999','pointer-events:none',
-      'display:none',
-      'min-width:160px','max-width:320px',
-      'padding:9px 11px',
-      'background:rgba(20,14,24,0.97)',
-      'color:rgba(255,255,255,.92)',
-      'font-size:10.5px','line-height:1.55',
-      'border:1px solid rgba(253,224,71,.4)',
-      'border-radius:7px',
-      'box-shadow:0 12px 30px rgba(0,0,0,.6), 0 2px 6px rgba(0,0,0,.4)',
-      'font-family:inherit','white-space:normal','text-align:left',
-      'top:0','left:0'
-    ].join(';');
-    document.body.appendChild(tip);
-
-    function show(target){
-      const full = target.getAttribute('data-full') || '';
-      const label = target.getAttribute('data-full-label') || '';
-      console.info('[multi-tip] show() llamado. full chars:', full.length, 'label:', label);
-      if (!full) { console.warn('[multi-tip] sin data-full → abortando'); return; }
-      const lines = full.split('\n').map(l => l.trim()).filter(Boolean);
-      const sanitize = s => String(s).replace(/[<>&]/g, c => c==='<'?'&lt;':c==='>'?'&gt;':'&amp;');
-      const labelHtml = label
-        ? `<div style="font-weight:800;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(253,224,71,.85);margin-bottom:5px">${sanitize(label)}</div>`
-        : '';
-      tip.innerHTML = labelHtml + lines.map(sanitize).join('<br>');
-      // Render duro: nada de transiciones, display block, todo a la vista.
-      tip.style.display = 'block';
-      tip.style.visibility = 'visible';
-      tip.style.opacity = '1';
-      tip.style.transform = 'none';
-      const rect = target.getBoundingClientRect();
-      const tw = tip.offsetWidth, th = tip.offsetHeight;
-      let left = rect.left + rect.width/2 - tw/2;
-      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
-      let top = rect.top - th - 10;
-      if (top < 8) top = rect.bottom + 10;
-      tip.style.left = left + 'px';
-      tip.style.top  = top + 'px';
-      console.info('[multi-tip] posicionado en', { left, top, tw, th, targetRect: { top: rect.top, left: rect.left, w: rect.width, h: rect.height } });
-    }
-    function hide(){
-      tip.style.display = 'none';
-    }
-
-    // En scroll dentro de la página, esconder para que el tooltip no
-    // quede flotando lejos del elemento que lo disparó.
-    window.addEventListener('scroll', hide, true);
-
-    // Binding DIRECTO sobre cada .has-more[data-full]. La delegación en
-    // 'document' parecía no estar funcionando en este caso (quizá por
-    // algún listener que detiene la propagación arriba). Acá nos
-    // aseguramos: encontramos los elementos AHORA y nuevos via observer.
-    function bind(el) {
-      if (el.dataset.tipBound) return;
-      el.dataset.tipBound = '1';
-      el.style.outline = '1px dashed rgba(253,224,71,.45)';
-      el.style.outlineOffset = '-2px';
-      el.addEventListener('mouseenter', () => {
-        console.log('[multi-tip] mouseenter ENVIADO', el.tagName, el.className);
-        show(el);
-      });
-      el.addEventListener('mouseleave', hide);
-      el.addEventListener('click', e => {
-        e.stopPropagation();
-        console.log('[multi-tip] CLICK', el.tagName, el.className);
-        show(el);
-        setTimeout(hide, 4500);
-      });
-    }
-    function rebindAll(){
-      const all = document.querySelectorAll('.has-more[data-full]');
-      console.log('[multi-tip] rebindAll: encontrados', all.length, 'elementos');
-      all.forEach(bind);
-    }
-    rebindAll();
-    const observer = new MutationObserver(() => rebindAll());
-    observer.observe(document.body, { childList: true, subtree: true });
-    console.log('[multi-tip] overlay listo. Borde amarillo punteado = chip bindeado. Hover/click debe mostrar tooltip.');
-  })();
+  // Multi-fechas: <details> nativo de HTML maneja el toggle inline.
 })();
 </script>
 </body>
