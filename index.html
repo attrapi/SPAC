@@ -3701,24 +3701,17 @@ body.modal-open{ overflow:hidden }
               <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
           </button>
-          <div class="acc-panel" id="panel-c" role="region">
+          <div class="acc-panel" id="panel-c" role="region" data-dicco-source="csv" data-dicco-filter="RAUL">
             <div class="acc-panel-inner">
               <div class="acc-body">
-
                 <div class="facet">
                   <div class="facet-label"><span class="facet-badge proceso">En proceso</span></div>
-                  <div class="facet-items">
-                    <div class="proc-empty">Sin procesos registrados</div>
-                  </div>
+                  <div class="facet-items"><div class="proc-empty">Cargando datos…</div></div>
                 </div>
-
                 <div class="facet">
                   <div class="facet-label"><span class="facet-badge formalizado"><span>Formalizado</span></span></div>
-                  <div class="facet-items">
-                    <div class="proc-empty">Sin procesos registrados</div>
-                  </div>
+                  <div class="facet-items"></div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -3735,24 +3728,17 @@ body.modal-open{ overflow:hidden }
               <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
           </button>
-          <div class="acc-panel" id="panel-d" role="region">
+          <div class="acc-panel" id="panel-d" role="region" data-dicco-source="csv" data-dicco-filter="MARIO">
             <div class="acc-panel-inner">
               <div class="acc-body">
-
                 <div class="facet">
                   <div class="facet-label"><span class="facet-badge proceso">En proceso</span></div>
-                  <div class="facet-items">
-                    <div class="proc-empty">Sin procesos registrados</div>
-                  </div>
+                  <div class="facet-items"><div class="proc-empty">Cargando datos…</div></div>
                 </div>
-
                 <div class="facet">
                   <div class="facet-label"><span class="facet-badge formalizado"><span>Formalizado</span></span></div>
-                  <div class="facet-items">
-                    <div class="proc-empty">Sin procesos registrados</div>
-                  </div>
+                  <div class="facet-items"></div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -6920,11 +6906,10 @@ setInterval(fetchAll, REFRESH_MS);
     }
 
     async function generateReport() {
-      // Refrescamos primero desde la matriz publicada para que el PDF
-      // siempre refleje el estado más reciente (un hito que pasó de
-      // Apertura a Fallo, una nueva licitación añadida, etc.). Si la
-      // red falla seguimos con los datos que ya estaban en memoria.
-      try { await syncFromMatrix(); } catch (e) { /* fallback silencioso */ }
+      // Antes refrescábamos desde la matriz publicada, pero esa fuente
+      // se eliminó: ahora la única fuente de verdad es la hoja DICCO
+      // que carga el segundo IIFE. Si quieres datos fresquísimos antes
+      // de imprimir, recarga la página — el DICCO loader trae todo.
       // Re-extraer items del DOM ya actualizado por el sync, y re-render
       // del modal para mantener todo coherente con lo que va al reporte.
       if (procState.acc && procState.facetClass) {
@@ -7196,12 +7181,10 @@ setInterval(fetchAll, REFRESH_MS);
     // Primer fetch al cargar la página, luego refresh periódico.
     // Para depurar, se puede abrir la página con ?nosync en la URL y así
     // la app se queda con los datos hardcoded (sin llamar a Google Sheets).
-    if (!/[?&]nosync\b/.test(location.search)) {
-      syncFromMatrix();
-      setInterval(syncFromMatrix, LIVE_REFRESH_MS);
-    } else {
-      console.info('[matriz] sync deshabilitado por ?nosync');
-    }
+    // syncFromMatrix queda deshabilitado: la única fuente de verdad
+    // para DICCO es ahora la hoja del segundo IIFE (loader DICCO live).
+    // El código de syncFromMatrix, parseEstatusActual, etc. se conserva
+    // por si en algún momento queremos un fallback, pero NO se invoca.
 
     // Exponemos helpers para que el cargador de DICCO live (siguiente
     // <script>) pueda reusarlos en lugar de redefinirlos.
@@ -7216,11 +7199,9 @@ setInterval(fetchAll, REFRESH_MS);
 </script>
 
 <!-- ════════ DICCO · carga en vivo desde Google Sheets ════════
-     Sustituye el HTML hardcodeado en los acc-panel marcados con
-     data-dicco-source="csv". Actualmente: panel-a (Roberto) y
-     panel-b (Ernesto). El layout de las tarjetas se construye en
-     buildCard para que coincida con la versión hospedada en
-     attrapi.github.io/SPAC (formalizado = solo título + ID). ══ -->
+     Única fuente de verdad para DICCO. Cubre los 4 paneles (Roberto,
+     Ernesto, Raúl, Mario) filtrando por el atributo data-dicco-filter.
+     El syncFromMatrix anterior (otra hoja) está deshabilitado. ══ -->
 <script>
 (function(){
   const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRTyQFYY13FRboFKQri2ZLxyjL-5DiW1ljDbUziSjnpXB7L5ikD8HNG6zOyWUBThQ/pub?gid=21256475&single=true&output=csv';
@@ -7422,12 +7403,13 @@ setInterval(fetchAll, REFRESH_MS);
       const rows = parseCsv(text);
       if (rows.length < 2) throw new Error('CSV vacío');
 
+      // Normaliza acentos para que "RAUL" matchee "RAÚL" en el CSV.
+      const stripAccents = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
       panels.forEach(panel => {
-        const filter = (panel.dataset.diccoFilter || '').toUpperCase();
+        const filter = stripAccents(panel.dataset.diccoFilter || '');
         const matching = rows.slice(1).filter(r => {
           if (!r[COL.SUBDIR]) return false;
-          const sub = r[COL.SUBDIR].toUpperCase();
-          return filter ? sub.includes(filter) : true;
+          return filter ? stripAccents(r[COL.SUBDIR]).includes(filter) : true;
         });
         console.info(`[dicco-live] ${panel.id}: ${matching.length} filas tras filtro "${filter}"`);
         renderPanel(panel, matching);
