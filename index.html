@@ -1456,7 +1456,11 @@ body{
       border: 1px solid rgba(255,255,255,.11);
       background: rgba(255,255,255,.04);
       padding: 11px 13px 11px 17px;
-      overflow: hidden;
+      /* overflow visible para que los tooltips de las multi-fechas
+         (proc-meta-tooltip / stage-tooltip) puedan salirse de la tarjeta;
+         antes era 'hidden' y los recortaba al borde. La barra dorada/verde
+         del costado (::before) usa border-radius propio y no se ve afectada. */
+      overflow: visible;
       transition: background .16s, border-color .16s, transform .16s;
     }
     .dicco-scope .proc-card::before{
