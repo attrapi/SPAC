@@ -1477,16 +1477,31 @@ body{
       text-transform: uppercase;
       letter-spacing: .25px;
       margin-bottom: 9px;
-      /* Limitamos a 3 líneas con ellipsis para que los títulos largos
-         (servicios/supervisión/construcción con todos los descriptores)
-         no rompan el alto de la tarjeta ni rebasen la columna Estatus.
-         El texto completo queda en title= para tooltip nativo en hover. */
+      /* Doble constraint para que el título no invada otras columnas:
+         (1) max-width: 95% del card para dejar una franja de respiro;
+         (2) line-clamp 2 para no hacer crecer la tarjeta más allá de
+             dos líneas — lo que sobre se trunca con "…" al final.
+         El texto completo queda en title= como tooltip nativo. */
+      max-width: 100%;
+      width: 100%;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       overflow-wrap: anywhere;
       word-break: break-word;
+      hyphens: auto;
+    }
+    /* En el modal específicamente, además limitamos por ancho de
+       caracteres para forzar el wrap antes (evita líneas larguísimas
+       en pantallas anchas). 70ch ≈ 440px a 11.5px de fuente. */
+    .dicco-scope .modal-list .proc-title{
+      max-width: 70ch;
+    }
+    /* En las tarjetas inline (acordeón expandido) usamos un ch
+       ligeramente más amplio porque la tarjeta es más ancha. */
+    .dicco-scope .facet-items .proc-title{
+      max-width: 80ch;
     }
 
     .dicco-scope .proc-id-row{
