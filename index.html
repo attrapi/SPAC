@@ -1477,19 +1477,21 @@ body{
       text-transform: uppercase;
       letter-spacing: .25px;
       margin-bottom: 9px;
-      /* El ancho real lo da el contenedor (en el modal: 5/6 del card,
-         dejando la 6ta columna libre para alinear con el stage-item de
-         Estatus). El line-clamp evita que titulos muy largos hagan
-         crecer demasiado la tarjeta. */
+      /* El ancho real lo da el contenedor (en el modal: 5/6 del card).
+         Justificamos para que el borde derecho quede parejo y NO usamos
+         hyphens:auto ni overflow-wrap:anywhere — las palabras siempre
+         brincan completas a la siguiente línea, sin guiones ni cortes
+         mid-word. */
       max-width: 100%;
       width: 100%;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      hyphens: auto;
+      overflow-wrap: break-word;
+      hyphens: none;
+      text-align: justify;
+      text-justify: inter-word;
     }
 
     .dicco-scope .proc-id-row{
