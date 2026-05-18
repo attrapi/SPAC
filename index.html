@@ -1477,31 +1477,19 @@ body{
       text-transform: uppercase;
       letter-spacing: .25px;
       margin-bottom: 9px;
-      /* Doble constraint para que el título no invada otras columnas:
-         (1) max-width: 95% del card para dejar una franja de respiro;
-         (2) line-clamp 2 para no hacer crecer la tarjeta más allá de
-             dos líneas — lo que sobre se trunca con "…" al final.
-         El texto completo queda en title= como tooltip nativo. */
+      /* El ancho real lo da el contenedor (en el modal: 5/6 del card,
+         dejando la 6ta columna libre para alinear con el stage-item de
+         Estatus). El line-clamp evita que titulos muy largos hagan
+         crecer demasiado la tarjeta. */
       max-width: 100%;
       width: 100%;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
       overflow-wrap: anywhere;
       word-break: break-word;
       hyphens: auto;
-    }
-    /* En el modal específicamente, además limitamos por ancho de
-       caracteres para forzar el wrap antes (evita líneas larguísimas
-       en pantallas anchas). 70ch ≈ 440px a 11.5px de fuente. */
-    .dicco-scope .modal-list .proc-title{
-      max-width: 70ch;
-    }
-    /* En las tarjetas inline (acordeón expandido) usamos un ch
-       ligeramente más amplio porque la tarjeta es más ancha. */
-    .dicco-scope .facet-items .proc-title{
-      max-width: 80ch;
     }
 
     .dicco-scope .proc-id-row{
@@ -1736,13 +1724,22 @@ body{
       cursor: pointer;
       --card-color: #fb923c;
       display: grid;
-      grid-template-columns: 1fr;
+      /* Mismo 6-col grid que la fila de stages: así el título ocupa
+         las primeras 5 columnas y la 6 (donde queda el stage-item de
+         Estatus debajo) se mantiene libre arriba — el título nunca
+         "invade" visualmente la columna Estatus. */
+      grid-template-columns: repeat(6, 1fr);
       grid-template-rows: auto auto;
+      column-gap: 6px;
       row-gap: 12px;
       align-items: center;
       transition: background .16s, border-color .16s, transform .16s, box-shadow .16s;
     }
-    .dicco-scope .modal-list .proc-card-main{ grid-row: 1; grid-column: 1; min-width: 0; }
+    .dicco-scope .modal-list .proc-card-main{
+      grid-row: 1;
+      grid-column: 1 / 6;
+      min-width: 0;
+    }
     /* (proc-card-status fue removido — el Estatus vive ahora dentro de
        .proc-card-stages como un stage-item más, al final de la fila.) */
 
