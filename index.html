@@ -7666,31 +7666,40 @@ setInterval(fetchAll, REFRESH_MS);
       tip.style.display = 'none';
     }
 
-    document.addEventListener('mouseover', e => {
-      const t = e.target.closest('.has-more[data-full]');
-      if (t) {
-        console.info('[multi-tip] hover →', t.tagName, t.className, 'data-full chars:', (t.getAttribute('data-full')||'').length);
-        show(t);
-      }
-    });
-    document.addEventListener('mouseout', e => {
-      const t = e.target.closest('.has-more[data-full]');
-      if (!t) return;
-      const to = e.relatedTarget;
-      if (to && t.contains(to)) return;
-      hide();
-    });
-    // También responder a CLICK como fallback por si el hover no se
-    // dispara por algún motivo del navegador/touch device.
-    document.addEventListener('click', e => {
-      const t = e.target.closest('.has-more[data-full]');
-      if (t) { e.preventDefault(); e.stopPropagation(); show(t); setTimeout(hide, 4000); }
-    });
     // En scroll dentro de la página, esconder para que el tooltip no
     // quede flotando lejos del elemento que lo disparó.
     window.addEventListener('scroll', hide, true);
-    // Anuncio en consola para verificar que el setup corrió.
-    console.info('[multi-tip] overlay listo en <body>. Hover/click sobre cualquier .has-more con data-full lo muestra.');
+
+    // Binding DIRECTO sobre cada .has-more[data-full]. La delegación en
+    // 'document' parecía no estar funcionando en este caso (quizá por
+    // algún listener que detiene la propagación arriba). Acá nos
+    // aseguramos: encontramos los elementos AHORA y nuevos via observer.
+    function bind(el) {
+      if (el.dataset.tipBound) return;
+      el.dataset.tipBound = '1';
+      el.style.outline = '1px dashed rgba(253,224,71,.45)';
+      el.style.outlineOffset = '-2px';
+      el.addEventListener('mouseenter', () => {
+        console.log('[multi-tip] mouseenter ENVIADO', el.tagName, el.className);
+        show(el);
+      });
+      el.addEventListener('mouseleave', hide);
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        console.log('[multi-tip] CLICK', el.tagName, el.className);
+        show(el);
+        setTimeout(hide, 4500);
+      });
+    }
+    function rebindAll(){
+      const all = document.querySelectorAll('.has-more[data-full]');
+      console.log('[multi-tip] rebindAll: encontrados', all.length, 'elementos');
+      all.forEach(bind);
+    }
+    rebindAll();
+    const observer = new MutationObserver(() => rebindAll());
+    observer.observe(document.body, { childList: true, subtree: true });
+    console.log('[multi-tip] overlay listo. Borde amarillo punteado = chip bindeado. Hover/click debe mostrar tooltip.');
   })();
 })();
 </script>
