@@ -3641,7 +3641,7 @@ body.modal-open{ overflow:hidden }
           <button class="acc-trigger" type="button" aria-expanded="false" aria-controls="panel-a">
             <div class="acc-info">
               <div class="acc-role">Subdirección de Concursos y Costos A</div>
-              <div class="acc-name">José Roberto García</div>
+              <div class="acc-name">José Roberto Hernández Gracia</div>
             </div>
             <span class="acc-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -3668,7 +3668,7 @@ body.modal-open{ overflow:hidden }
           <button class="acc-trigger" type="button" aria-expanded="false" aria-controls="panel-b">
             <div class="acc-info">
               <div class="acc-role">Subdirección de Concursos y Costos B</div>
-              <div class="acc-name">Ernesto A. Hernández Hernández</div>
+              <div class="acc-name">Ernesto Anastasio Hernández Hernández</div>
             </div>
             <span class="acc-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -7246,6 +7246,16 @@ setInterval(fetchAll, REFRESH_MS);
     return lower.charAt(0).toUpperCase() + lower.slice(1);
   }
 
+  // "ING. JOSÉ ROBERTO HERNÁNDEZ GRACIA" → "José Roberto Hernández Gracia"
+  // Quita el prefijo "ING." y pasa cada palabra a Title Case.
+  function toProperCaseName(s){
+    let t = String(s || '').trim().replace(/^ING\.\s*/i, '');
+    if (!t) return '';
+    return t.toLowerCase().split(/\s+/).map(w =>
+      w ? w.charAt(0).toUpperCase() + w.slice(1) : ''
+    ).join(' ');
+  }
+
   // Normaliza fechas tipo "9/3/2026" → "09/03/2026". Si la celda trae
   // varias fechas ("1. 09/03/2026\n2. 17/03/2026") las devuelve unidas con
   // "\n" para que metaRow las pinte en líneas separadas como una lista.
@@ -7358,6 +7368,17 @@ setInterval(fetchAll, REFRESH_MS);
     // Limpiamos contenido previo (loading o render anterior).
     procItems.innerHTML = '';
     formItems.innerHTML = '';
+
+    // Sincroniza el nombre del subdirector desde la columna SUBDIRECTOR
+    // DICCO del CSV: si la hoja cambia, el header del acordeón sigue.
+    if (rows.length) {
+      const acc = panel.closest('.acc');
+      const nameEl = acc?.querySelector('.acc-name');
+      const nuevo  = toProperCaseName(rows[0][COL.SUBDIR]);
+      if (nameEl && nuevo && nameEl.textContent.trim() !== nuevo) {
+        nameEl.textContent = nuevo;
+      }
+    }
 
     rows.forEach(row => {
       const bucket = bucketFor(row);
