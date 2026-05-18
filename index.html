@@ -6038,32 +6038,14 @@ setInterval(fetchAll, REFRESH_MS);
           `;
         }).join('');
 
-        // Panel de estatus: muestra la etapa ACTUAL (no siempre "Fallo").
-        // Si la etapa actual no tiene fecha registrada, se incluye una
-        // línea "Próx." con el siguiente hito conocido para conservar
-        // el contexto temporal.
+        // Panel de estatus: refleja LITERAL la columna ESTATUS ACTUAL del
+        // CSV. Si la celda está vacía, mostramos "Sin datos".
+        // Si trae multi-líneas (raro pero posible), conservamos solo la
+        // primera línea — coherente con cómo manejamos las multi-fechas.
         let statusLabel = '';
-        let statusValue = '';
-        let statusHint = '';
-        if (currentStage) {
-          statusLabel = currentStage;
-          const ownVal = hitosByStage[currentStage]?.rawValue;
-          if (ownVal) {
-            statusValue = ownVal;
-          } else {
-            const nextUp = STAGES.find(s => {
-              const v = hitosByStage[s]?.rawValue;
-              const dm = v ? String(v).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) : null;
-              return dm && new Date(+dm[3], +dm[2] - 1, +dm[1]).getTime() > todayMs;
-            });
-            if (nextUp) {
-              statusHint = `Próx. ${STAGE_SHORT_LABEL[nextUp] || nextUp} ${hitosByStage[nextUp].rawValue}`;
-            }
-          }
-        } else if (item.fechaStr) {
-          statusLabel = 'Fallo';
-          statusValue = item.fechaStr;
-        }
+        let statusHint  = '';
+        let statusValue = (item.estatusStr || '').split('\n')[0].trim();
+        if (!statusValue) statusValue = 'Sin datos';
 
         card.innerHTML = `
           <div class="proc-card-main">
