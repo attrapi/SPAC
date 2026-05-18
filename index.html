@@ -7256,14 +7256,21 @@ setInterval(fetchAll, REFRESH_MS);
     ).join(' ');
   }
 
-  // Normaliza fechas tipo "9/3/2026" → "09/03/2026". Si la celda trae
-  // varias fechas ("1. 09/03/2026\n2. 17/03/2026") las devuelve unidas con
-  // "\n" para que metaRow las pinte en líneas separadas como una lista.
+  // Normaliza fechas. Si la celda trae varias ("1. 09/03/2026 2. 17/03/2026"
+  // o "1. 09/03/2026\n2. 17/03/2026") las devuelve unidas con "\n" para que
+  // metaRow las pinte en líneas separadas. También cubre el caso en que
+  // Google Sheets nos entregue las multi-fechas SIN salto de línea: si
+  // detectamos un patrón "<fecha>NN." sin espacio claro, insertamos el
+  // salto antes del prefijo "N." para que la división posterior sea robusta.
   function normalizeDateCell(raw){
-    const v = String(raw || '').trim();
+    let v = String(raw || '').trim();
     if (!v) return '';
     if (/^n\/?a$/i.test(v)) return 'N/A';
-    if (/\n/.test(v) || /\b\d+\.\s/.test(v)) {
+    const hasMulti = /\n/.test(v) || /\b\d+\.\s*\d{1,2}\/\d{1,2}\/\d{4}/.test(v);
+    if (hasMulti) {
+      // Inserta \n antes de cada "N." que venga pegado al final de una fecha
+      // anterior. Anclamos al año (4 dígitos) para NO partir un año en dos.
+      v = v.replace(/(\d{4})\s*(\d+\.\s*\d{1,2}\/)/g, '$1\n$2');
       return v.split(/\n+/).map(s => s.trim()).filter(Boolean).map(line => {
         return line.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/g,
           (_, d, m, y) => `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${y}`);
@@ -7297,7 +7304,9 @@ setInterval(fetchAll, REFRESH_MS);
 
   // Construye un .proc-meta-row con icono apropiado según el valor.
   // Si el valor trae varias líneas (multi-fechas), las separa con <br>
-  // para que se vean como lista vertical en la tarjeta.
+  // PARA EL CSS y además incluye un '\n' literal para que textContent
+  // también preserve el separador (lo lee el modal/timeline). Si no
+  // mantuviéramos el \n, el modal pegaría "20251.30/12/2025".
   function metaRow(label, value){
     const v = String(value || '').trim();
     if (!v) return '';
@@ -7307,7 +7316,7 @@ setInterval(fetchAll, REFRESH_MS);
     else if (/^s[ií]$|^no$/i.test(v)) icon = ICON_CHK;
     else icon = ICON_INFO;
     const valueHtml = v.includes('\n')
-      ? v.split('\n').map(line => esc(line.trim())).filter(Boolean).join('<br>')
+      ? v.split('\n').map(line => esc(line.trim())).filter(Boolean).join('<br>\n')
       : esc(v);
     return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${valueHtml}</span></div>`;
   }
