@@ -5205,6 +5205,19 @@ document.querySelectorAll('.tab').forEach(btn => {
     if (btn.dataset.tab === 'bitacoras' && bData.length) renderBDetail();
     if (btn.dataset.tab === 'estimaciones' && eData.length) renderEstimacionesDetail();
     if (btn.dataset.tab === 'resumen2' && (bData.length || eData.length)) renderResumen2();
+    // Cuando DICCO se activa, recalcular max-height de los acordeones
+    // abiertos: en la carga inicial la sección estaba display:none, así
+    // que scrollHeight midió 0 y el max-height quedó congelado en 0
+    // (los acordeones se veían vacíos al entrar a DICCO).
+    if (btn.dataset.tab === 'dicco') {
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#sec-dicco .acc.is-open').forEach(acc => {
+          const panel = acc.querySelector('.acc-panel');
+          const inner = acc.querySelector('.acc-panel-inner');
+          if (panel && inner) panel.style.maxHeight = inner.scrollHeight + 'px';
+        });
+      });
+    }
   });
 });
 
