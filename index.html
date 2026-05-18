@@ -7671,19 +7671,29 @@ setInterval(fetchAll, REFRESH_MS);
 
     document.addEventListener('mouseover', e => {
       const t = e.target.closest('.has-more[data-full]');
-      if (t) show(t);
+      if (t) {
+        console.info('[multi-tip] hover →', t.tagName, t.className, 'data-full chars:', (t.getAttribute('data-full')||'').length);
+        show(t);
+      }
     });
     document.addEventListener('mouseout', e => {
       const t = e.target.closest('.has-more[data-full]');
       if (!t) return;
-      // Solo ocultar si el cursor salió del elemento (no si entró a un hijo)
       const to = e.relatedTarget;
       if (to && t.contains(to)) return;
       hide();
     });
+    // También responder a CLICK como fallback por si el hover no se
+    // dispara por algún motivo del navegador/touch device.
+    document.addEventListener('click', e => {
+      const t = e.target.closest('.has-more[data-full]');
+      if (t) { e.preventDefault(); e.stopPropagation(); show(t); setTimeout(hide, 4000); }
+    });
     // En scroll dentro de la página, esconder para que el tooltip no
     // quede flotando lejos del elemento que lo disparó.
     window.addEventListener('scroll', hide, true);
+    // Anuncio en consola para verificar que el setup corrió.
+    console.info('[multi-tip] overlay listo en <body>. Hover/click sobre cualquier .has-more con data-full lo muestra.');
   })();
 })();
 </script>
