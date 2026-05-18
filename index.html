@@ -6018,19 +6018,12 @@ setInterval(fetchAll, REFRESH_MS);
         const stagesHtml = STAGES.map(name => {
           const rawVal = hitosByStage[name]?.rawValue || '';
           const hasValue = !!rawVal;
-          // Multi-fechas: primera fecha visible + <details> nativo HTML
-          // que despliega el resto inline al hacer clic. Sin JS.
+          // Si la etapa trae varias fechas, mostramos SOLO la primera
+          // (sin el prefijo "1. " que perdería sentido sin las otras).
           const sanitize = s => String(s).replace(/[<>&]/g, c => c==='<'?'&lt;':c==='>'?'&gt;':'&amp;');
           const linesArr = rawVal.split('\n').map(l => l.trim()).filter(Boolean);
-          const firstVal = linesArr[0] || '';
-          const moreCount = Math.max(0, linesArr.length - 1);
-          let valueHtml;
-          if (moreCount > 0) {
-            const restHtml = linesArr.slice(1).map(sanitize).join('<br>');
-            valueHtml = `${sanitize(firstVal)} <details class="dates-toggle"><summary class="dates-summary">+${moreCount}</summary><div class="dates-list">${restHtml}</div></details>`;
-          } else {
-            valueHtml = sanitize(firstVal);
-          }
+          const firstVal = (linesArr[0] || '').replace(/^\d+\.\s*/, '');
+          const valueHtml = sanitize(firstVal);
           const isStageToday = name === todayStage;
           // "Actual" no se duplica con "Hoy": si HOY también es la etapa
           // actual, prevalece la palpitación canaria.
@@ -7395,17 +7388,11 @@ setInterval(fetchAll, REFRESH_MS);
     else if (/^n\/?a$/i.test(v)) icon = ICON_INFO;
     else if (/^s[ií]$|^no$/i.test(v)) icon = ICON_CHK;
     else icon = ICON_INFO;
-    const lines = v.split('\n').map(l => l.trim()).filter(Boolean);
-    const first = lines[0] || '';
-    const more  = lines.length - 1;
-    if (more > 0) {
-      // Uso <details> NATIVO de HTML para el toggle: el clic en "+N"
-      // abre el listado debajo, sin JS, sin tooltips, sin event handlers
-      // que se rompan. Funciona en cualquier navegador moderno.
-      const restHtml = lines.slice(1).map(l => esc(l)).join('<br>');
-      return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(first)} <details class="dates-toggle"><summary class="dates-summary">+${more}</summary><div class="dates-list">${restHtml}</div></details></span></div>`;
-    }
-    return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(v)}</span></div>`;
+    // Si la celda trae varias fechas, mostramos SOLO la primera. El resto
+    // se conserva en el CSV pero no se renderiza. Y como ya no hay "2.",
+    // quitamos también el prefijo "1. " para no dejar numeración colgada.
+    let first = (v.split('\n').map(l => l.trim()).filter(Boolean)[0] || v).replace(/^\d+\.\s*/, '');
+    return `<div class="proc-meta-row">${icon}<span class="proc-meta"><strong>${esc(label)}:</strong> ${esc(first)}</span></div>`;
   }
 
   // Construye el HTML de una tarjeta. Tanto las "en proceso" como las
