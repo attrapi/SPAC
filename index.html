@@ -1711,27 +1711,17 @@ body{
       cursor: pointer;
       --card-color: #fb923c;
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr;
       grid-template-rows: auto auto;
-      column-gap: 22px;
       row-gap: 12px;
       align-items: center;
       transition: background .16s, border-color .16s, transform .16s, box-shadow .16s;
     }
     .dicco-scope .modal-list .proc-card-main{ grid-row: 1; grid-column: 1; min-width: 0; }
-    .dicco-scope .modal-list .proc-card-status{
-      grid-row: 1;
-      grid-column: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-      padding-left: 22px;
-      border-left: 1px solid rgba(255,255,255,.14);
-      min-width: 160px;
-    }
+    /* (proc-card-status fue removido — el Estatus vive ahora dentro de
+       .proc-card-stages como un stage-item más, al final de la fila.) */
 
-    /* Tira horizontal con las 6 etapas de la licitación */
+    /* Tira horizontal: 5 etapas + Estatus = 6 columnas */
     .dicco-scope .modal-list .proc-card-stages{
       grid-row: 2;
       grid-column: 1 / -1;
@@ -1740,6 +1730,27 @@ body{
       gap: 6px;
       padding-top: 10px;
       border-top: 1px dashed rgba(255,255,255,.11);
+    }
+    /* stage-item dedicado al Estatus: mismo molde que las etapas, pero
+       con un acento ligeramente distinto para separarlo visualmente. */
+    .dicco-scope .stage-item--estatus{
+      background: rgba(247,217,139,.06);
+      border: 1px solid rgba(247,217,139,.28);
+    }
+    .dicco-scope .stage-item--estatus.has-value{
+      background: rgba(247,217,139,.10);
+      border: 1px solid rgba(247,217,139,.45);
+    }
+    .dicco-scope .stage-item--estatus .stage-label{
+      color: rgba(247,217,139,.95);
+    }
+    .dicco-scope .stage-item--estatus .stage-value{
+      color: #fef3c7;
+      font-family: inherit;
+      font-weight: 700;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+      font-size: 9px;
     }
     .dicco-scope .stage-item{
       position: relative;
@@ -6015,12 +6026,12 @@ setInterval(fetchAll, REFRESH_MS);
         item.currentStage = currentStage;
         item.todayStage = todayStage;
 
+        const sanitize = s => String(s).replace(/[<>&]/g, c => c==='<'?'&lt;':c==='>'?'&gt;':'&amp;');
         const stagesHtml = STAGES.map(name => {
           const rawVal = hitosByStage[name]?.rawValue || '';
           const hasValue = !!rawVal;
           // Si la etapa trae varias fechas, mostramos SOLO la primera
           // (sin el prefijo "1. " que perdería sentido sin las otras).
-          const sanitize = s => String(s).replace(/[<>&]/g, c => c==='<'?'&lt;':c==='>'?'&gt;':'&amp;');
           const linesArr = rawVal.split('\n').map(l => l.trim()).filter(Boolean);
           const firstVal = (linesArr[0] || '').replace(/^\d+\.\s*/, '');
           const valueHtml = sanitize(firstVal);
@@ -6038,14 +6049,17 @@ setInterval(fetchAll, REFRESH_MS);
           `;
         }).join('');
 
-        // Panel de estatus: refleja LITERAL la columna ESTATUS ACTUAL del
-        // CSV. Si la celda está vacía, mostramos "Sin datos".
-        // Si trae multi-líneas (raro pero posible), conservamos solo la
-        // primera línea — coherente con cómo manejamos las multi-fechas.
-        let statusLabel = '';
-        let statusHint  = '';
-        let statusValue = (item.estatusStr || '').split('\n')[0].trim();
-        if (!statusValue) statusValue = 'Sin datos';
+        // Columna Estatus: misma estética que un stage-item, pero al final
+        // de la fila de etapas. Refleja literal la columna ESTATUS ACTUAL
+        // del CSV; si la celda está vacía mostramos "Sin datos".
+        const estatusRaw = (item.estatusStr || '').split('\n')[0].trim();
+        const estatusHas = !!estatusRaw;
+        const estatusHtml = `
+          <div class="stage-item stage-item--estatus${estatusHas ? ' has-value' : ''}">
+            <div class="stage-label">Estatus</div>
+            <div class="stage-value">${estatusHas ? sanitize(estatusRaw) : 'Sin datos'}</div>
+          </div>
+        `;
 
         card.innerHTML = `
           <div class="proc-card-main">
@@ -6058,12 +6072,7 @@ setInterval(fetchAll, REFRESH_MS);
               <a class="proc-id" href="${item.href}" target="_blank" rel="noopener noreferrer">${item.id}</a>
             </div>
           </div>
-          <div class="proc-card-status">
-            ${statusLabel ? `<div class="proc-card-status-fallo">${statusLabel}</div>` : ''}
-            <div class="proc-card-status-value">${statusValue}</div>
-            ${statusHint ? `<div class="proc-card-status-hint">${statusHint}</div>` : ''}
-          </div>
-          <div class="proc-card-stages">${stagesHtml}</div>
+          <div class="proc-card-stages">${stagesHtml}${estatusHtml}</div>
         `;
         card.addEventListener('mouseenter', () => setActive(item.idx));
         card.addEventListener('click', (e) => {
