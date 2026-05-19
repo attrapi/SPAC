@@ -2984,6 +2984,9 @@ body{
         display: flex;
         align-items: center;
         gap: 8px;
+        /* No dejar el título huérfano arriba del corte de página. */
+        page-break-after: avoid;
+        break-after: avoid;
       }
       .dicco-scope #print-report .pr-section-title::before{
         content: '';
@@ -2993,11 +2996,13 @@ body{
         border-radius: 2px;
       }
 
-      /* Lista de licitaciones apiladas (estilo tarjeta compacta) */
+      /* Lista de licitaciones apiladas (estilo tarjeta compacta).
+         OJO: NO usar display:flex aquí — flex-children no respetan
+         bien page-break-inside:avoid en Chrome/Edge, las licitaciones
+         del corte de página se cortaban o desaparecían. Con bloque
+         normal + margin-bottom el paginado es fiable. */
       .dicco-scope #print-report .pr-list{
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
+        display: block;
       }
       .dicco-scope #print-report .pr-item{
         display: grid;
@@ -3006,9 +3011,15 @@ body{
         border: 1px solid #d8d8d8;
         border-radius: 4px;
         overflow: hidden;
+        /* Doble propiedad: legacy + estándar moderno. Chromium 100+
+           prefiere break-inside; navegadores viejos siguen leyendo
+           page-break-inside. */
         page-break-inside: avoid;
+        break-inside: avoid;
         background: #fafafa;
+        margin-bottom: 4px;
       }
+      .dicco-scope #print-report .pr-item:last-child{ margin-bottom: 0; }
       .dicco-scope #print-report .pr-item-color{
         background: var(--row-color, #c9922a);
       }
