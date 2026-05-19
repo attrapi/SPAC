@@ -2820,14 +2820,17 @@ body{
 
     /* ── Estilos de impresión ────────────────────────────────────── */
     @media print{
-      /* @page margin: 20mm arriba/lados, 120mm abajo — el margen
-         inferior reserva el espacio donde se pinta el pie con
-         `position: fixed; bottom: 0` para que se pegue literalmente
-         al borde inferior del papel en TODAS las hojas (estilo Word).
+      /* @page margin: 20mm arriba/lados, 8mm abajo. El espacio donde se
+         pinta el pie físico (position:fixed bottom:0 height:112mm) lo
+         reserva exclusivamente el <tfoot> con .pr-footer-spacer (115mm).
+         Antes este margen era 120mm y se duplicaba con el tfoot, dejando
+         solo ~12mm de cuerpo útil por hoja → cualquier reporte saltaba
+         a 3+ hojas y la última quedaba en blanco. Ahora el cuerpo tiene
+         ~127mm útiles por hoja y la mayoría de reportes caben en 1–2.
          El <thead> repite el encabezado vía table-header-group y el
-         <tfoot> queda como espaciador invisible para que el cuerpo
-         no se meta sobre el pie físico. */
-      @page{ size: A4; margin: 20mm 20mm 120mm 20mm; }
+         <tfoot> repite el espaciador invisible para que el cuerpo nunca
+         se meta sobre el pie físico (incluso en "Márgenes: Ninguno"). */
+      @page{ size: A4; margin: 20mm 20mm 8mm 20mm; }
 
       .dicco-scope{
         background: #fff !important;
