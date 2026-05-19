@@ -2835,9 +2835,11 @@ body{
       }
       .dicco-scope::before{ display: none !important; }
 
-      /* Oculta TODO en pantalla salvo el contenedor de impresión */
-      .dicco-scope.is-printing > *:not(#print-report){ display: none !important; }
-      .dicco-scope.is-printing #print-report{ display: block !important; }
+      /* Oculta TODO dentro del scope DICCO salvo el contenedor de impresión.
+         OJO: la clase `is-printing` la añade el JS a <body>, NO a .dicco-scope,
+         por eso el selector debe partir de body.is-printing. */
+      body.is-printing .dicco-scope > *:not(#print-report){ display: none !important; }
+      body.is-printing .dicco-scope #print-report{ display: block !important; }
 
       /* Tipografía y layout del reporte */
       .dicco-scope #print-report{
@@ -3349,15 +3351,42 @@ body.modal-open{ overflow:hidden }
 
 /* Modo impresión accionado desde DICCO: oculta todo el chrome de SPAC y
    solo deja visible el reporte. El reporte vive dentro de .dicco-scope
-   (#print-report). */
+   (#print-report).
+   ──────────────────────────────────────────────────────────────────
+   IMPORTANTE: hay que neutralizar todo lo que recorte/desplace al reporte:
+   - padding/max-width/margin de #sec-dicco (constriñe el ancho del A4)
+   - overflow:hidden y border-radius de .dicco-scope (clippea esquinas)
+   - .modal-overlay (que sigue abierto cuando se dispara la impresión)
+   - .modal-toast (position:fixed, sale en cada hoja)                  */
 @media print{
+  /* Capa 1 — body: oculta cualquier hermano de #sec-dicco (header SPAC,
+     tabs, otras secciones, footer, etc.). */
   body.is-printing > *:not(#sec-dicco){ display:none !important }
-  body.is-printing #sec-dicco{ display:block !important; background:transparent !important; border:0 !important; box-shadow:none !important }
-  body.is-printing #sec-dicco .dicco-scope{ background:transparent !important; border:0 !important; box-shadow:none !important; padding:0 !important }
-  body.is-printing #sec-dicco .dicco-scope > .page,
-  body.is-printing #sec-dicco .dicco-scope > .page > .wrap > *:not(#print-report){
-    display:none !important;
+
+  /* Capa 2 — #sec-dicco: anula las constraints visuales para que el
+     reporte llegue al borde físico del papel. */
+  body.is-printing #sec-dicco{
+    display:block !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:0 !important;
   }
+
+  /* Capa 3 — .dicco-scope: quita degradado vino, vignette, sombra,
+     border-radius y overflow:hidden para que el reporte no quede
+     recortado por las esquinas redondeadas del contenedor. */
+  body.is-printing #sec-dicco.dicco-scope{
+    background:transparent !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+  body.is-printing #sec-dicco.dicco-scope::before{ display:none !important }
 }
 
 /* Si la sección DICCO no es la activa pero el modal estaba abierto, lo
