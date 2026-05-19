@@ -3262,7 +3262,10 @@ body{
         position: absolute;
         /* Centro vertical = padding + (carril + 0.5) * alto-de-carril */
         top: calc(var(--pad) + (var(--lane, 0) + 0.5) * var(--lane-h));
-        transform: translate(-50%, -50%);
+        /* --tx lo asigna el JS por pastilla: -50% (centrada),
+           0 (anclada al borde izquierdo) o -100% (borde derecho).
+           Evita que pastillas de día 1 o día 30/31 se salgan del strip. */
+        transform: translate(var(--tx, -50%), -50%);
         background: var(--row-color, #c9922a);
         color: #fff;
         border-radius: 3px;
@@ -6864,12 +6867,24 @@ setInterval(fetchAll, REFRESH_MS);
       })();
       const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
+      // Mitad del ancho aproximado de pastilla (mismo PILL_W_PCT usado
+      // arriba para asignar carriles). Si el centro de la pastilla queda
+      // a menos de halfW del borde, la anclamos al borde en vez de
+      // centrarla, para que no se salga del strip.
+      const halfW = 13 / 2;
       const rowsHtml = rows.map(r => {
         const tagsHtml = r.hitos.map(h => {
           const isToday = `${h.year}-${h.month}-${h.day}` === todayKey;
           const label = STAGE_SHORT_LABEL[h.stage] || h.stage;
           const dayStr = String(h.day).padStart(2, '0');
-          return `<div class="pr-mtl-tag${isToday ? ' is-today' : ''}" style="left:${h.pct.toFixed(2)}%; --lane:${h.lane}" title="${escapeHtml(shortId(r.item.id))} · ${escapeHtml(h.stage)} · ${escapeHtml(h.rawValue)}">${dayStr} ${escapeHtml(label.toUpperCase())}</div>`;
+          // tx: desplazamiento horizontal del transform.
+          //   -50%  → centrada en h.pct (caso normal)
+          //    0    → borde izquierdo de la pastilla en h.pct (días 1–2)
+          //   -100% → borde derecho   de la pastilla en h.pct (días 30/31)
+          let tx = '-50%';
+          if (h.pct < halfW) tx = '0';
+          else if (h.pct > 100 - halfW) tx = '-100%';
+          return `<div class="pr-mtl-tag${isToday ? ' is-today' : ''}" style="left:${h.pct.toFixed(2)}%; --lane:${h.lane}; --tx:${tx}" title="${escapeHtml(shortId(r.item.id))} · ${escapeHtml(h.stage)} · ${escapeHtml(h.rawValue)}">${dayStr} ${escapeHtml(label.toUpperCase())}</div>`;
         }).join('');
         const fullShortId = shortId(r.item.id);
         const objLabel = shortObjectLabel(r.item.title);
