@@ -4665,19 +4665,26 @@ async function fetchBitacoras() {
   try {
     const rows = await fetchCSV(SOURCES.bitacoras);
     bData = processBitacoras(rows, SOURCES.bitacoras);
-    document.getElementById('bLoading').style.display = 'none';
-    const cont = document.getElementById('bContent');
-    cont.style.display = 'flex';
-    cont.style.flexDirection = 'column';
-    cont.style.flex = '1';
-    renderBitacoras();
+    // Los nodos bLoading/bContent vivían en la sección "Resumen" que se
+    // eliminó. Si ya no existen, simplemente actualizamos data y dejamos
+    // que el resto de las vistas (Resumen unificado, Bitácoras detalle)
+    // se rendericen con su propia lógica.
+    const bLoad = document.getElementById('bLoading');
+    const bCont = document.getElementById('bContent');
+    if (bLoad) bLoad.style.display = 'none';
+    if (bCont) {
+      bCont.style.display = 'flex';
+      bCont.style.flexDirection = 'column';
+      bCont.style.flex = '1';
+    }
+    if (typeof renderBitacoras === 'function' && bCont) renderBitacoras();
     renderBDetail();
   } catch (e) {
     console.error('[bitacoras]', e);
     _errors.push({ name: 'Bitácoras', msg: e.message || 'Error desconocido' });
-    if (!bData.length) {
-      document.getElementById('bLoading').innerHTML =
-        `<div class="card-empty"><p>📋</p><p>Sin datos</p></div>`;
+    const bLoad = document.getElementById('bLoading');
+    if (!bData.length && bLoad) {
+      bLoad.innerHTML = `<div class="card-empty"><p>📋</p><p>Sin datos</p></div>`;
     }
   }
 }
@@ -4686,19 +4693,22 @@ async function fetchEstimaciones() {
   try {
     const rows = await fetchCSV(SOURCES.estimaciones);
     eData = processEstimaciones(rows, SOURCES.estimaciones);
-    document.getElementById('eLoading').style.display = 'none';
-    const cont = document.getElementById('eContent');
-    cont.style.display = 'flex';
-    cont.style.flexDirection = 'column';
-    cont.style.flex = '1';
-    renderEstimacionesSummary();
+    const eLoad = document.getElementById('eLoading');
+    const eCont = document.getElementById('eContent');
+    if (eLoad) eLoad.style.display = 'none';
+    if (eCont) {
+      eCont.style.display = 'flex';
+      eCont.style.flexDirection = 'column';
+      eCont.style.flex = '1';
+    }
+    if (typeof renderEstimacionesSummary === 'function' && eCont) renderEstimacionesSummary();
     renderEstimacionesDetail();
   } catch (e) {
     console.error('[estimaciones]', e);
     _errors.push({ name: 'Estimaciones', msg: e.message || 'Error desconocido' });
-    if (!eData.length) {
-      document.getElementById('eLoading').innerHTML =
-        `<div class="card-empty"><p>💰</p><p>Sin datos</p></div>`;
+    const eLoad = document.getElementById('eLoading');
+    if (!eData.length && eLoad) {
+      eLoad.innerHTML = `<div class="card-empty"><p>💰</p><p>Sin datos</p></div>`;
     }
   }
 }
