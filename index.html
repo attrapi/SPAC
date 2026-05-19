@@ -2820,16 +2820,15 @@ body{
 
     /* ── Estilos de impresión ────────────────────────────────────── */
     @media print{
-      /* @page margin: 20mm arriba/lados, 8mm abajo. El espacio donde se
-         pinta el pie físico (position:fixed bottom:0 height:112mm) lo
-         reserva exclusivamente el <tfoot> con .pr-footer-spacer (115mm).
-         Antes este margen era 120mm y se duplicaba con el tfoot, dejando
-         solo ~12mm de cuerpo útil por hoja → cualquier reporte saltaba
-         a 3+ hojas y la última quedaba en blanco. Ahora el cuerpo tiene
-         ~127mm útiles por hoja y la mayoría de reportes caben en 1–2.
-         El <thead> repite el encabezado vía table-header-group y el
-         <tfoot> repite el espaciador invisible para que el cuerpo nunca
-         se meta sobre el pie físico (incluso en "Márgenes: Ninguno"). */
+      /* @page margin: 20mm arriba/lados, 8mm abajo. La reserva real
+         para el pie físico la hace el <tfoot> con .pr-footer-spacer.
+         Dimensiones reales: piedepágina2026.png es 1851×262 px, así
+         que renderizado a ancho ~170mm queda ~24mm de alto. Antes
+         reservábamos 112mm para una imagen de 24mm — los 88mm
+         sobrantes (fondo blanco, z-index:10) tapaban contenido real
+         del cuerpo (la 2da línea de algunos items y todo lo que les
+         seguía). Ahora el contenedor del pie es 30mm (24mm imagen +
+         6mm aire) y el tfoot reserva 33mm. */
       @page{ size: A4; margin: 20mm 20mm 8mm 20mm; }
 
       .dicco-scope{
@@ -2881,23 +2880,26 @@ body{
         margin-bottom: 8px;
       }
       /* tfoot espaciador: reserva alto al final del área de contenido
-         de cada hoja, así el cuerpo no se mete sobre el pie físico. */
+         de cada hoja, así el cuerpo no se mete sobre el pie físico.
+         33mm = 30mm de contenedor del pie + 3mm de aire de seguridad. */
       .dicco-scope #print-report .pr-footer-spacer{
-        height: 115mm;
+        height: 33mm;
       }
       /* Pie físico: position: fixed con bottom: 0 lo pega literalmente
          al borde inferior del papel y lo repite en TODAS las hojas
          (Chrome/Edge/Firefox lo soportan en print). El espaciador del
          tfoot reserva alto en el flujo del cuerpo para que el contenido
          no se traslape con la imagen. flex con align-items: flex-end
-         pega la imagen al borde inferior del contenedor (sin esto, si
-         la imagen es más baja que 112mm queda flotando al centro). */
+         pega la imagen al borde inferior del contenedor. Alto del
+         contenedor = 30mm para que coincida con el alto real de la
+         imagen (~24mm) y no haya 88mm de fondo blanco tapando contenido
+         que sí debería verse en el cuerpo del reporte. */
       .dicco-scope #print-report .pr-page-footer{
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 112mm;
+        height: 30mm;
         background: #fff;
         z-index: 10;
         display: flex;
@@ -2907,7 +2909,7 @@ body{
       .dicco-scope #print-report .pr-footer-logo{
         display: block;
         max-width: 100%;
-        max-height: 112mm;
+        max-height: 28mm;
         height: auto;
         width: auto;
         object-fit: contain;
