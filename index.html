@@ -3244,19 +3244,18 @@ body{
            --lanes por strip y --lane por pastilla. */
         height: calc(var(--lanes, 1) * var(--lane-h) + var(--pad) * 2);
         min-height: 18px;
-        background: #fafafa;
+        /* Fondo + divisores verticales entre meses. JS asigna --months
+           por strip (2 para "en proceso", N para "formalizado"). El
+           gradiente repite una línea de 1px al final de cada tile de
+           ancho 100%/--months, generando --months-1 divisores internos
+           (el último cae sobre el borde derecho y no se nota). */
+        background-color: #fafafa;
+        background-image: linear-gradient(to right, transparent calc(100% - 1px), #d0d0d0 calc(100% - 1px));
+        background-size: calc(100% / var(--months, 2)) 100%;
+        background-position: 0 0;
+        background-repeat: repeat-x;
         border: 1px solid #e5e5e5;
         border-radius: 2px;
-      }
-      .dicco-scope #print-report .pr-mtl-strip::before{
-        /* divisor entre los dos meses */
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 0; bottom: 0;
-        width: 1px;
-        background: #d0d0d0;
-        z-index: 0;
       }
       .dicco-scope #print-report .pr-mtl-tag{
         position: absolute;
@@ -6733,11 +6732,14 @@ setInterval(fetchAll, REFRESH_MS);
 
       const listHtml = `<div class="pr-list">${itemsHtml}</div>`;
 
-      // ─── Mini-línea del tiempo de dos meses (mes anterior + vigente) ───
-      // Una fila por licitación con un strip horizontal compacto cuya
-      // escala cubre [mes anterior, mes vigente]. Los hitos se ubican
-      // a la posición real del día sobre la tira (no equidistantes).
-      const calendarHtml = buildTwoMonthMiniTimeline(items, today);
+      // ─── Mini-línea del tiempo ───
+      // En modo "en proceso" la ventana es [mes anterior, mes vigente]
+      // para resaltar lo que viene/acaba de pasar. En modo "formalizado"
+      // los items son históricos y sus fechas pueden estar dispersas en
+      // varios meses pasados — la ventana se expande automáticamente
+      // para abarcar TODOS los items (de otra forma se filtraban y solo
+      // aparecían los que casualmente cayeran en los últimos 2 meses).
+      const calendarHtml = buildMiniTimeline(items, today, procState.mode);
 
       // Estructura tipo "letterhead": tabla con <thead>, <tfoot> y <tbody>
       // + un .pr-page-footer fuera de la tabla con position: fixed.
@@ -6795,22 +6797,73 @@ setInterval(fetchAll, REFRESH_MS);
       `;
     }
 
-    /* Construye la mini línea del tiempo de dos meses (mes anterior +
-       mes vigente). Una fila por licitación con un strip horizontal
-       cuya escala = [mes anterior, mes vigente]. Cada hito se posiciona
-       sobre el strip por su día real (left: % calculado), no
-       equidistante. Los hitos fuera del rango se descartan (siguen
-       visibles en la sección "Procedimientos"). */
-    function buildTwoMonthMiniTimeline(items, today) {
-      const cur  = new Date(today.getFullYear(), today.getMonth(), 1);
-      const prev = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-      const prevDays = new Date(prev.getFullYear(), prev.getMonth() + 1, 0).getDate();
-      const curDays  = new Date(cur.getFullYear(),  cur.getMonth() + 1,  0).getDate();
-      const rangeStart = prev.getTime();
-      const rangeEnd   = new Date(cur.getFullYear(), cur.getMonth() + 1, 1).getTime();
+    /* Construye la mini línea del tiempo del reporte.
+       - mode "en proceso" (o default): ventana fija de 2 meses
+         [mes anterior, mes vigente] para resaltar lo inmediato.
+       - mode "formalizado": la ventana se expande para abarcar TODOS
+         los items (de min a max fecha, snap a límites de mes), porque
+         las formalizaciones suelen estar dispersas en meses pasados
+         y filtrar a 2 meses dejaba fuera la mayoría.
+       Cada hito se posiciona sobre el strip por su día real
+       (left: % calculado), no equidistante. */
+    function buildMiniTimeline(items, today, mode) {
+      // ── Paso 1: lista de meses que abarca el strip ──
+      // [{ year, month, days }, ...], en orden cronológico.
+      let monthsInRange;
+      if (mode === 'formalizado') {
+        // Recolectar TODAS las fechas válidas para deducir el rango.
+        const allTimes = [];
+        items.forEach(it => {
+          const hitos = (it.hitos || []).slice();
+          if (it.fechaStr && !hitos.find(h => h.stage === 'Fallo')) {
+            hitos.push({ stage: 'Fallo', rawValue: it.fechaStr });
+          }
+          hitos.forEach(h => {
+            const dm = String(h.rawValue).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (!dm) return;
+            allTimes.push(new Date(+dm[3], +dm[2] - 1, +dm[1]).getTime());
+          });
+        });
+        if (!allTimes.length) {
+          return `<div class="pr-mtl-empty">Sin fechas registradas</div>`;
+        }
+        const minD = new Date(Math.min.apply(null, allTimes));
+        const maxD = new Date(Math.max.apply(null, allTimes));
+        monthsInRange = [];
+        const cursor = new Date(minD.getFullYear(), minD.getMonth(), 1);
+        const endC   = new Date(maxD.getFullYear(), maxD.getMonth() + 1, 1);
+        while (cursor.getTime() < endC.getTime()) {
+          monthsInRange.push({
+            year:  cursor.getFullYear(),
+            month: cursor.getMonth(),
+            days:  new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate(),
+          });
+          cursor.setMonth(cursor.getMonth() + 1);
+        }
+      } else {
+        // "en proceso": [mes anterior, mes vigente]
+        const cur  = new Date(today.getFullYear(), today.getMonth(), 1);
+        const prev = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        monthsInRange = [
+          { year: prev.getFullYear(), month: prev.getMonth(),
+            days: new Date(prev.getFullYear(), prev.getMonth() + 1, 0).getDate() },
+          { year: cur.getFullYear(),  month: cur.getMonth(),
+            days: new Date(cur.getFullYear(),  cur.getMonth()  + 1, 0).getDate() },
+        ];
+      }
+      const totalMonths = monthsInRange.length;
+      const slot = 100 / totalMonths; // % por mes
 
-      // Para cada licitación, recolectar hitos dentro de la ventana y
-      // calcular su posición horizontal (%) sobre el strip de 2 meses.
+      // Helper: convierte (año, mes, día) → pct sobre el strip, o null
+      // si el mes no está en el rango.
+      function pctOf(y, m, d) {
+        const idx = monthsInRange.findIndex(mm => mm.year === y && mm.month === m);
+        if (idx === -1) return null;
+        const days = monthsInRange[idx].days;
+        return idx * slot + ((d - 0.5) / days) * slot;
+      }
+
+      // ── Paso 2: para cada licitación, hitos dentro del rango ──
       const rows = items.map(it => {
         const hitos = (it.hitos || []).slice();
         if (it.fechaStr && !hitos.find(h => h.stage === 'Fallo')) {
@@ -6820,27 +6873,18 @@ setInterval(fetchAll, REFRESH_MS);
         hitos.forEach(h => {
           const dm = String(h.rawValue).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
           if (!dm) return;
-          const [, d, mo, y] = dm;
-          const t = new Date(+y, +mo - 1, +d).getTime();
-          if (t < rangeStart || t >= rangeEnd) return;
-          const isPrev = (+mo - 1) === prev.getMonth() && (+y) === prev.getFullYear();
-          const totalDays = isPrev ? prevDays : curDays;
-          const sectionStart = isPrev ? 0 : 50;
-          // Centra el día en su "celda" virtual: ((d - 0.5) / totalDays) * 50%.
-          const pct = sectionStart + ((+d - 0.5) / totalDays) * 50;
-          inRange.push({ stage: h.stage, day: +d, month: +mo - 1, year: +y, pct, rawValue: h.rawValue });
+          const d  = +dm[1], mo = +dm[2] - 1, y = +dm[3];
+          const pct = pctOf(y, mo, d);
+          if (pct === null) return;
+          inRange.push({ stage: h.stage, day: d, month: mo, year: y, pct, rawValue: h.rawValue });
         });
-        // Orden cronológico para que las pastillas queden en orden.
         inRange.sort((a, b) => (a.year - b.year) || (a.month - b.month) || (a.day - b.day));
 
         // Asignación greedy de carriles: si dos pastillas caen a menos
-        // de PILL_W_PCT% de distancia (ancho aproximado de una pastilla
-        // sobre el strip) chocarían visualmente, así que la segunda se
-        // baja al siguiente carril libre. La altura del strip crece
-        // automáticamente con el número de carriles vía CSS var.
-        // Pastilla más ancha esperada: "27 PRECON" ≈ 12% del strip.
+        // de PILL_W_PCT% de distancia chocarían visualmente, así que
+        // la segunda se baja al siguiente carril libre.
         const PILL_W_PCT = 13;
-        const laneEnds = []; // pct hasta donde llega la última pastilla colocada en cada carril
+        const laneEnds = [];
         inRange.forEach(h => {
           const left  = h.pct - PILL_W_PCT / 2;
           const right = h.pct + PILL_W_PCT / 2;
@@ -6854,33 +6898,24 @@ setInterval(fetchAll, REFRESH_MS);
       }).filter(r => r.hitos.length > 0);
 
       if (!rows.length) {
-        return `<div class="pr-mtl-empty">Sin fechas registradas en ${MESES[prev.getMonth()]}–${MESES[cur.getMonth()]} ${cur.getFullYear()}</div>`;
+        const first = monthsInRange[0], last = monthsInRange[totalMonths - 1];
+        const rangeLbl = totalMonths === 1
+          ? `${MESES[first.month]} ${first.year}`
+          : `${MESES[first.month]} ${first.year}–${MESES[last.month]} ${last.year}`;
+        return `<div class="pr-mtl-empty">Sin fechas registradas en ${rangeLbl}</div>`;
       }
 
-      // Marker vertical de "HOY" sobre cada strip (si HOY cae en la
-      // ventana de 2 meses, lo cual es siempre cierto en este reporte).
-      const todayPct = (() => {
-        const isPrev = today.getMonth() === prev.getMonth() && today.getFullYear() === prev.getFullYear();
-        const totalDays = isPrev ? prevDays : curDays;
-        const sectionStart = isPrev ? 0 : 50;
-        return sectionStart + ((today.getDate() - 0.5) / totalDays) * 50;
-      })();
+      // Marker vertical de HOY (solo si cae en el rango).
+      const todayPct = pctOf(today.getFullYear(), today.getMonth(), today.getDate());
       const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
-      // Mitad del ancho aproximado de pastilla (mismo PILL_W_PCT usado
-      // arriba para asignar carriles). Si el centro de la pastilla queda
-      // a menos de halfW del borde, la anclamos al borde en vez de
-      // centrarla, para que no se salga del strip.
+      // Anclaje de pastillas cerca de bordes (ver commit 5426286).
       const halfW = 13 / 2;
       const rowsHtml = rows.map(r => {
         const tagsHtml = r.hitos.map(h => {
           const isToday = `${h.year}-${h.month}-${h.day}` === todayKey;
           const label = STAGE_SHORT_LABEL[h.stage] || h.stage;
           const dayStr = String(h.day).padStart(2, '0');
-          // tx: desplazamiento horizontal del transform.
-          //   -50%  → centrada en h.pct (caso normal)
-          //    0    → borde izquierdo de la pastilla en h.pct (días 1–2)
-          //   -100% → borde derecho   de la pastilla en h.pct (días 30/31)
           let tx = '-50%';
           if (h.pct < halfW) tx = '0';
           else if (h.pct > 100 - halfW) tx = '-100%';
@@ -6888,6 +6923,9 @@ setInterval(fetchAll, REFRESH_MS);
         }).join('');
         const fullShortId = shortId(r.item.id);
         const objLabel = shortObjectLabel(r.item.title);
+        const todayMarker = todayPct !== null
+          ? `<div class="pr-mtl-today-marker" style="left:${todayPct.toFixed(2)}%"></div>`
+          : '';
         return `
           <div class="pr-mtl-id" style="--row-color:${r.item.color}">
             <span class="pr-mtl-id-text">
@@ -6895,19 +6933,24 @@ setInterval(fetchAll, REFRESH_MS);
               ${objLabel ? `<span class="pr-mtl-id-l2">${escapeHtml(objLabel)}</span>` : ''}
             </span>
           </div>
-          <div class="pr-mtl-strip" style="--row-color:${r.item.color}; --lanes:${r.lanes}">
-            <div class="pr-mtl-today-marker" style="left:${todayPct.toFixed(2)}%"></div>
+          <div class="pr-mtl-strip" style="--row-color:${r.item.color}; --lanes:${r.lanes}; --months:${totalMonths}">
+            ${todayMarker}
             ${tagsHtml}
           </div>
         `;
       }).join('');
 
+      // Encabezado de meses: una columna por mes (1fr cada una).
+      const monthLabelsHtml = monthsInRange.map(m => {
+        const isCurrent = m.year === today.getFullYear() && m.month === today.getMonth();
+        return `<div class="pr-mtl-month${isCurrent ? ' is-current' : ''}">${escapeHtml(MESES[m.month].toUpperCase())} ${m.year}</div>`;
+      }).join('');
+
       return `
         <div class="pr-mtl">
           <div></div>
-          <div class="pr-mtl-months">
-            <div class="pr-mtl-month">${escapeHtml(MESES[prev.getMonth()].toUpperCase())} ${prev.getFullYear()}</div>
-            <div class="pr-mtl-month is-current">${escapeHtml(MESES[cur.getMonth()].toUpperCase())} ${cur.getFullYear()}</div>
+          <div class="pr-mtl-months" style="grid-template-columns:repeat(${totalMonths},1fr)">
+            ${monthLabelsHtml}
           </div>
           ${rowsHtml}
         </div>
