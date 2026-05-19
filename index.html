@@ -3392,7 +3392,7 @@ body.modal-open{ overflow:hidden }
       <div class="header-icon">SPAC</div>
       <div class="header-text">
         <h1>Subdirección de Procesos Administrativos de Obra</h1>
-        <p>Resumen ejecutivo · 5 áreas temáticas</p>
+        <p>Dirección de procesos administrativos de obra</p>
       </div>
     </div>
     <div class="header-actions">
@@ -3406,8 +3406,7 @@ body.modal-open{ overflow:hidden }
 
 <!-- TABS -->
 <nav class="tabs" role="tablist">
-  <button class="tab active" data-tab="resumen" role="tab">Resumen</button>
-  <button class="tab" data-tab="resumen2" role="tab">Resumen 2</button>
+  <button class="tab active" data-tab="resumen2" role="tab">Resumen</button>
   <button class="tab" data-tab="bitacoras" role="tab">Bitácoras de obra</button>
   <button class="tab" data-tab="estimaciones" role="tab">Estimaciones</button>
   <button class="tab" data-tab="dicco" role="tab">DICCO</button>
@@ -3416,128 +3415,8 @@ body.modal-open{ overflow:hidden }
 <!-- ERROR -->
 <div class="error-box" id="errorBox" style="display:none"></div>
 
-<!-- ════════ RESUMEN ════════ -->
-<section class="section active" id="sec-resumen">
-  <div class="section-head">
-    <div>
-      <h2>Resumen ejecutivo</h2>
-      <p>Indicadores clave de las áreas temáticas de la subdirección · datos en vivo</p>
-    </div>
-    <button class="btn btn-primary" onclick="openReport('resumen')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      Generar reporte
-    </button>
-  </div>
-
-  <div class="summary-grid">
-
-    <!-- 1. BITÁCORAS DE OBRA -->
-    <div class="summary-card" id="card-bitacoras">
-      <div class="summary-head">
-        <div class="summary-title">
-          <span class="summary-num">1</span>
-          <h3>Bitácoras de obra</h3>
-        </div>
-        <p class="summary-meta">Días sin registrar notas · por contrato</p>
-      </div>
-
-      <div id="bLoading" class="card-loading">
-        <div class="loader"></div>
-        <div class="loading-text">Cargando datos...</div>
-      </div>
-
-      <div id="bContent" style="display:none;flex:1;flex-direction:column">
-        <div class="summary-stats">
-          <div class="stat-big">
-            <span class="num" id="bTotal">—</span>
-            <span class="lbl">Contratos</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-chips" id="bChips"></div>
-        </div>
-
-        <div class="summary-chart">
-          <div class="chart-wrap-mini"><canvas id="bChart"></canvas></div>
-        </div>
-
-        <div class="summary-foot">
-          <div class="legend-mini">
-            <span><span class="sw" style="background:#1a6b5a"></span>&lt; 60 d</span>
-            <span><span class="sw" style="background:#b8860b"></span>60–120 d</span>
-            <span><span class="sw" style="background:#c75b39"></span>&gt; 120 d</span>
-          </div>
-          <span id="bFootNote">—</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. ESTIMACIONES -->
-    <div class="summary-card" id="card-estimaciones">
-      <div class="summary-head">
-        <div class="summary-title">
-          <span class="summary-num">2</span>
-          <h3>Estimaciones</h3>
-        </div>
-        <p class="summary-meta">Pendiente de pago por proyecto</p>
-      </div>
-
-      <div id="eLoading" class="card-loading">
-        <div class="loader"></div>
-        <div class="loading-text">Cargando datos...</div>
-      </div>
-
-      <div id="eContent" style="display:none;flex:1;flex-direction:column">
-        <div class="summary-stats">
-          <div class="stat-big">
-            <span class="num" id="eTotalPend">—</span>
-            <span class="lbl">Pendiente de pago</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-chips">
-            <span class="chip neutral"><span class="d"></span><span id="eContractCount">—</span> contratos</span>
-            <span class="chip neutral"><span class="d"></span><span id="eProjectCount">—</span> proyectos</span>
-          </div>
-        </div>
-        <div style="padding:.8rem 1.1rem .9rem;flex:1">
-          <div class="sub-label">Distribución por proyecto</div>
-          <div id="eVertBars" class="vert-bars"></div>
-        </div>
-        <div class="summary-foot">
-          <span style="color:var(--text3);font-weight:500" id="eFootNote">—</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="summary-card">
-      <div class="summary-head">
-        <div class="summary-title"><span class="summary-num">3</span><h3>Tema 3</h3></div>
-        <p class="summary-meta">Pendiente de configurar</p>
-      </div>
-      <div class="placeholder-body">
-        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
-        <p>Espacio reservado para el siguiente Excel de la subdirección.</p>
-        <span class="hint">URL CSV + columnas</span>
-      </div>
-    </div>
-
-    <div class="summary-card">
-      <div class="summary-head">
-        <div class="summary-title"><span class="summary-num">4</span><h3>Tema 4</h3></div>
-        <p class="summary-meta">Pendiente de configurar</p>
-      </div>
-      <div class="placeholder-body">
-        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg></div>
-        <p>Espacio reservado para el cuarto Excel de la subdirección.</p>
-        <span class="hint">URL CSV + columnas</span>
-      </div>
-    </div>
-
-
-  </div>
-</section>
-
-<!-- ════════ RESUMEN 2 — Constellation Dashboard ════════ -->
-<section class="section" id="sec-resumen2">
+<!-- ════════ RESUMEN (Constellation Dashboard) ════════ -->
+<section class="section active" id="sec-resumen2">
   <div class="cnstl-frame">
 
     <div class="cnstl-hero">
@@ -4378,7 +4257,7 @@ function renderNetwork() {
 
 function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}) {
   const groups = [
-    { key: 'bad',  label: 'Crítico',      detail: '> 120 días',  color: '#c75b39',
+    { key: 'bad',  label: 'Crítico',      detail: '> 120 días',  color: '#e11d2e',
       items: bData.filter(b => b.status === 'bad').slice().sort((a, b) => (b.days || 0) - (a.days || 0)) },
     { key: 'warn', label: 'Atención',     detail: '60–120 días', color: '#b8860b',
       items: bData.filter(b => b.status === 'warn').slice().sort((a, b) => (b.days || 0) - (a.days || 0)) },
@@ -4410,8 +4289,8 @@ function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}
   let html = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">`;
   html += `<defs>
     <radialGradient id="${idHub}" cx="40%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#dc8866"/>
-      <stop offset="100%" stop-color="#c75b39"/>
+      <stop offset="0%" stop-color="#f24858"/>
+      <stop offset="100%" stop-color="#e11d2e"/>
     </radialGradient>
     <pattern id="${idGrid}" width="32" height="32" patternUnits="userSpaceOnUse">
       <path d="M 32 0 L 0 0 0 32" fill="none" stroke="rgba(199,91,57,0.05)" stroke-width="1"/>
@@ -4431,21 +4310,21 @@ function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}
   if (critItems.length > 0) {
     const sx = groupXs[critIdx];
     const lineEnd = contractStartY + (critItems.length - 1) * (cardH + cardGap) + cardH / 2;
-    html += `<line x1="${sx}" y1="${statusY + statusR + 28}" x2="${sx}" y2="${lineEnd}" stroke="#c75b39" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3,4" stroke-linecap="round"/>`;
+    html += `<line x1="${sx}" y1="${statusY + statusR + 28}" x2="${sx}" y2="${lineEnd}" stroke="#e11d2e" stroke-width="1.5" stroke-opacity="0.35" stroke-dasharray="3,4" stroke-linecap="round"/>`;
   } else {
     html += `<text x="${cx}" y="${contractStartY + 14}" text-anchor="middle" fill="#1a6b5a" font-size="13" font-weight="700">✓ Sin contratos críticos</text>`;
   }
 
   const critTotal = critItems.length;
   if (critTotal > 0 && animated) {
-    html += `<circle cx="${cx}" cy="${hubY}" r="${hubR + 4}" fill="none" stroke="#c75b39" stroke-width="2" opacity="0.7">
+    html += `<circle cx="${cx}" cy="${hubY}" r="${hubR + 4}" fill="none" stroke="#e11d2e" stroke-width="2" opacity="0.7">
       <animate attributeName="r" values="${hubR + 2};${hubR + 14};${hubR + 2}" dur="2s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite"/>
     </circle>`;
   }
   html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#${idHub})" stroke="#fff" stroke-width="3" filter="url(#${idGlow})"/>`;
   html += `<text x="${cx}" y="${hubY - 4}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="13" font-weight="800">⚠</text>`;
-  html += `<text x="${cx}" y="${hubY + 11}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9" font-weight="800" letter-spacing=".06em">ALERTAS</text>`;
+  html += `<text x="${cx}" y="${hubY + 11}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9" font-weight="800" letter-spacing=".06em">CRÍTICO</text>`;
 
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
@@ -4457,7 +4336,7 @@ function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}
 
   if (critItems.length > 0) {
     const sx = groupXs[critIdx];
-    const pcolor = '#c75b39';
+    const pcolor = '#e11d2e';
     critItems.forEach((b, bi) => {
       const cardX = sx - cardW / 2;
       const cardY = contractStartY + bi * (cardH + cardGap);
