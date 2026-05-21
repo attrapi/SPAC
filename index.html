@@ -14,14 +14,16 @@
 :root{
   --bg:#faf6f3;
   --bg2:#f2ebe4;
-  --surface:#ffffff;
-  --surface2:#f7f2ee;
-  --border:#e4dcd2;
-  --border2:#d4c9bd;
-  --text:#1a1210;
-  --text2:#5a4f47;
-  --text3:#8a7d72;
-  --text4:#b0a597;
+  /* Champaña cálida análoga al vino — DNA rosé sin caer en marrón */
+  --surface:#f4ebde;
+  --surface2:#ecdfcd;
+  --surface3:#e3d3bd;
+  --border:#d8c8b1;
+  --border2:#c4b193;
+  --text:#2a1d18;
+  --text2:#5a4439;
+  --text3:#8a6f5e;
+  --text4:#b09680;
 
   /* Paleta institucional vino — anclada en #691c32 (oficial) */
   --gov-deep:#2c0814;
@@ -281,7 +283,7 @@ body{
 
 .summary-head{
   padding:1rem 1.2rem .85rem;border-bottom:1px solid var(--border);
-  background:linear-gradient(180deg,rgba(105,28,50,.025) 0%,transparent 100%);
+  background:linear-gradient(180deg,rgba(105,28,50,.07) 0%,transparent 100%);
 }
 .summary-title{display:flex;align-items:center;gap:.55rem}
 .summary-num{
@@ -377,7 +379,7 @@ body{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;
 }
 .kpi{
-  background:linear-gradient(180deg,#fff 0%,#fbf8f5 100%);
+  background:linear-gradient(180deg,var(--surface) 0%,var(--surface2) 100%);
   border:1px solid rgba(255,255,255,.10);
   border-radius:var(--radius);padding:1rem 1.2rem;
   box-shadow:
@@ -596,8 +598,8 @@ body{
 
 .cnstl-hero{
   background:
-    radial-gradient(ellipse 60% 100% at 100% 0%, rgba(105,28,50,.08) 0%, transparent 70%),
-    linear-gradient(135deg,#fff 0%,#faf6f1 100%);
+    radial-gradient(ellipse 60% 100% at 100% 0%, rgba(105,28,50,.10) 0%, transparent 70%),
+    linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
   border:1px solid rgba(255,255,255,.14);
   border-radius:12px;
   padding:1.6rem 1.9rem;
@@ -641,7 +643,7 @@ body{
 /* KPI strip */
 .cnstl-kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem}
 .cnstl-kpi{
-  background:linear-gradient(180deg,#fff 0%,#fbf8f5 100%);
+  background:linear-gradient(180deg,var(--surface) 0%,var(--surface2) 100%);
   border:1px solid rgba(255,255,255,.10);
   border-radius:10px;padding:.95rem 1.1rem;position:relative;overflow:hidden;
   box-shadow:0 8px 22px rgba(0,0,0,.24), 0 2px 4px rgba(0,0,0,.14);
@@ -682,8 +684,8 @@ body{
   padding:.9rem 1.2rem;border-bottom:1px solid var(--border);
   display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;
   background:
-    linear-gradient(180deg, rgba(105,28,50,.045) 0%, rgba(105,28,50,0) 100%),
-    linear-gradient(135deg,#fcfaf6,#f5efe6);
+    linear-gradient(180deg, rgba(105,28,50,.06) 0%, rgba(105,28,50,0) 100%),
+    linear-gradient(135deg,var(--surface),var(--surface2));
   position:relative;
 }
 .cnstl-net-head::before{
@@ -708,8 +710,8 @@ body{
 .cnstl-net-canvas{
   flex:1;
   background:
-    radial-gradient(ellipse at 50% 30%,rgba(105,28,50,.06),transparent 60%),
-    linear-gradient(135deg,#fafaf8,#f3eee7);
+    radial-gradient(ellipse at 50% 30%,rgba(105,28,50,.10),transparent 65%),
+    linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
   min-height:440px;position:relative;
   overflow-x:hidden;overflow-y:auto;  /* nunca scroll horizontal */
 }
@@ -730,8 +732,8 @@ body{
 .cnstl-alerts-net-head .cnstl-alert-icon{color:var(--bad);font-size:1rem;margin-right:.2rem}
 .cnstl-alerts-canvas{
   background:
-    radial-gradient(ellipse at 50% 30%,rgba(199,91,57,.06),transparent 60%),
-    linear-gradient(135deg,#fafaf8,#f3eee7)!important;
+    radial-gradient(ellipse at 50% 30%,rgba(199,91,57,.10),transparent 65%),
+    linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%)!important;
 }
 
 /* Alerts panel — legacy (no usado, conservado por si lo reaprovechamos) */
@@ -857,12 +859,13 @@ body{
 /* CONTRACT CARD inside SVG (Resumen 2 network) */
 .ccc{
   display:flex;flex-direction:column;justify-content:center;
-  width:100%;height:100%;background:#fff;
-  border:1.5px solid var(--proj-color, #d4cbbf);
+  width:100%;height:100%;
+  background:linear-gradient(180deg,#fbf4e8,#f1e6d2);
+  border:1.5px solid var(--proj-color, #c4b193);
   border-left:4px solid var(--proj-color, #691c32);
   border-radius:5px;padding:4px 8px;
   font-family:'Plus Jakarta Sans',sans-serif;
-  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  box-shadow:0 1px 3px rgba(0,0,0,.10);
   cursor:default;transition:transform .15s, box-shadow .15s;
   overflow:hidden;
 }
@@ -907,14 +910,14 @@ body{
 }
 .report-modal.active{display:flex}
 .report-content{
-  background:#fff;width:100%;max-width:920px;
-  border-radius:12px;box-shadow:var(--shadow-lg);
+  background:#fdf7eb;width:100%;max-width:920px;
+  border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.45);
   padding:1.5rem 2.4rem 2.5rem;
 }
 .report-actions{
   display:flex;gap:.6rem;justify-content:flex-end;margin-bottom:1.2rem;
   padding-bottom:.7rem;border-bottom:1px solid var(--border);
-  position:sticky;top:-1.5rem;background:#fff;z-index:5;padding-top:1rem;
+  position:sticky;top:-1.5rem;background:#fdf7eb;z-index:5;padding-top:1rem;
   margin:-1.5rem -2.4rem 1.2rem;padding-left:2.4rem;padding-right:2.4rem;
 }
 
@@ -1000,8 +1003,9 @@ body{
 .report-net-legend span{display:inline-flex;align-items:center;gap:.4rem}
 .report-net-legend .ld{width:11px;height:11px;border-radius:50%;display:inline-block}
 .report-net-canvas{
-  background:#fff;border-radius:6px;padding:.4rem;
+  background:#fbf3df;border-radius:6px;padding:.4rem;
   display:flex;justify-content:center;
+  border:1px solid var(--border);
 }
 .report-net-canvas svg{display:block;max-width:100%;height:auto}
 .report-na-list{
