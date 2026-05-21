@@ -707,7 +707,15 @@ body{
 }
 .cnstl-net-head h3{
   font-family:'Roboto',system-ui,sans-serif;
-  font-size:1.05rem;color:#f0a081;font-weight:700;letter-spacing:-.005em;
+  font-size:1.05rem;font-weight:700;letter-spacing:-.005em;
+  background:var(--gold-grad-text);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:#f0c050;
+}
+/* El ícono ⚠ de la card de alertas sí mantiene su tono coral */
+.cnstl-net-head h3 .cnstl-alert-icon{
+  -webkit-text-fill-color:#f0a081;color:#f0a081;
 }
 .cnstl-net-legend{display:flex;gap:.85rem;flex-wrap:wrap;font-size:.66rem;color:var(--text2);font-weight:600}
 .cnstl-net-legend:empty{display:none}
@@ -742,8 +750,7 @@ body{
 .cnstl-alerts-net-head{
   background:linear-gradient(135deg,rgba(217,122,94,.16),rgba(217,122,94,.04))!important;
 }
-.cnstl-alerts-net-head h3{color:#f0a081!important}
-.cnstl-alerts-net-head .cnstl-alert-icon{color:#f0a081;font-size:1rem;margin-right:.2rem}
+.cnstl-alerts-net-head .cnstl-alert-icon{font-size:1rem;margin-right:.2rem}
 .cnstl-alerts-canvas{
   background:
     radial-gradient(ellipse at 50% 30%,rgba(217,122,94,.10),transparent 65%),
@@ -1014,6 +1021,18 @@ body{
   background:#fdf7eb;width:100%;max-width:920px;
   border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.45);
   padding:1.5rem 2.4rem 2.5rem;
+  /* Redefine paleta DENTRO del reporte: el documento es papel parchment,
+     no glass oscuro como el resto del tablero. Esto evita texto blanco
+     invisible y filas oscuras feas sobre el cream. */
+  --surface:#fdf7eb;
+  --surface2:#f3e8d2;
+  --border:#e4d6b8;
+  --border2:#cdba94;
+  --text:#2a1d18;
+  --text2:#5a4439;
+  --text3:#8a7060;
+  --text4:#b09680;
+  color:var(--text);
 }
 .report-actions{
   display:flex;gap:.6rem;justify-content:flex-end;margin-bottom:1.2rem;
@@ -1048,6 +1067,9 @@ body{
 .report-kpis{
   display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;
   padding:1rem 1.2rem;background:var(--surface2);border-radius:8px;
+}
+@media (max-width: 720px){
+  .report-kpis{grid-template-columns:repeat(2,1fr)}
 }
 .report-kpis > div{display:flex;flex-direction:column;gap:.18rem}
 .report-kpis .rk-num{
@@ -5257,9 +5279,19 @@ function renderReportResumen2() {
   const PROJ_LABEL_MAP = { 'QI': 'Querétaro - Irapuato', 'SN': 'Saltillo - Nuevo Laredo' };
   const projLabel = (p) => PROJ_LABEL_MAP[p] || p;
 
+  // === MÉTRICAS GLOBALES =================================
+  const totalContracts = eData.length;
   const totalPend = eData.reduce((s, c) => s + (c.montoPendiente || 0), 0);
+  const totalPaid = eData.reduce((s, c) => s + (c.montoPagado || 0), 0);
+  const totalEst  = eData.reduce((s, c) => s + (c.montoTotal || 0), 0);
+  const projects  = new Set(eData.map(c => c.proy)).size;
 
-  // Estimaciones agrupadas por proyecto (estructura idéntica al SPAC network)
+  const critCount = bData.filter(b => b.status === 'bad').length;
+  const warnCount = bData.filter(b => b.status === 'warn').length;
+  const okCount   = bData.filter(b => b.status === 'ok').length;
+  const naCount   = bData.filter(b => b.status === 'na').length;
+
+  // === ESTIMACIONES AGRUPADAS POR PROYECTO ===============
   const byProj = new Map();
   for (const c of eData.filter(c => c.montoPendiente != null && c.montoPendiente > 0)) {
     if (!byProj.has(c.proy)) byProj.set(c.proy, []);
@@ -5271,58 +5303,86 @@ function renderReportResumen2() {
     total: contracts.reduce((s, c) => s + (c.montoPendiente || 0), 0)
   })).sort((a, b) => b.total - a.total);
 
-  // Bitácoras agrupadas por estatus (estructura idéntica al alerts network)
+  // === BITÁCORAS AGRUPADAS POR ESTATUS ===================
   const byStatus = {
     bad:  bData.filter(b => b.status === 'bad').sort((a, b) => (b.days || 0) - (a.days || 0)),
     warn: bData.filter(b => b.status === 'warn').sort((a, b) => (b.days || 0) - (a.days || 0)),
     na:   bData.filter(b => b.status === 'na'),
   };
-  const criticalSet = new Set(byStatus.bad.map(b => b.contract));
 
-  // SVGs de las redes (mismo render que en la página)
-  const REPORT_SVG_W = 820;
-  const networkSVG = buildNetworkSVG(REPORT_SVG_W, 'rep1');
-  const alertsSVG  = buildAlertsNetworkSVG(REPORT_SVG_W, 'rep2alert', { animated: false });
-  const networkLegend = buildNetworkLegendHTML();
+  // === DICCO: LICITACIONES ===============================
+  const dicco = window.__DICCO_DATA__;
+  let diccoProc = [], diccoForm = [];
+  if (dicco && Array.isArray(dicco.rows)) {
+    const { rows, cols, bucketFor, toSentenceCase } = dicco;
+    rows.forEach(r => {
+      const num = String(r[cols.NUM] || '').trim();
+      const obj = toSentenceCase(r[cols.OBJETO]);
+      if (!num && !obj) return;
+      const entry = {
+        num,
+        objeto: obj,
+        estatus: String(r[cols.ESTATUS] || '').trim(),
+        subdir: toSentenceCase(r[cols.SUBDIR] || ''),
+      };
+      if (bucketFor(r) === 'formalizado') diccoForm.push(entry);
+      else diccoProc.push(entry);
+    });
+  }
 
+  // === HTML DEL REPORTE ==================================
   let html = `
     <div class="report-header">
-      <h1>Reporte de seguimiento integral</h1>
+      <h1>Reporte ejecutivo de seguimiento</h1>
       <div class="report-org">SPAC · Subdirección de Procesos Administrativos de Obra</div>
       <div class="report-date">${esc(dateStr)}</div>
     </div>
 
+    <!-- 1 · Resumen ejecutivo -->
     <section class="report-section">
-      <h2>1 · Estimaciones pendientes — Distribución por proyecto</h2>
-      <p class="report-sub">Cada tarjeta es un contrato; el halo rojo identifica los contratos con bitácora crítica (&gt; 120 días).</p>
-      <div class="report-net-card">
-        ${networkLegend ? `<div class="report-net-legend">${networkLegend}</div>` : ''}
-        <div class="report-net-canvas">${networkSVG}</div>
+      <h2>1 · Resumen ejecutivo</h2>
+      <div class="report-kpis">
+        <div><span class="rk-num">${totalContracts.toLocaleString('es-MX')}</span><span class="rk-lbl">Contratos</span></div>
+        <div><span class="rk-num">${projects}</span><span class="rk-lbl">Proyectos</span></div>
+        <div><span class="rk-num" style="color:var(--bad)">${esc(fmtMoneyFull(totalPend))}</span><span class="rk-lbl">Pendiente de pago</span></div>
+        <div><span class="rk-num" style="color:var(--ok)">${esc(fmtMoneyFull(totalPaid))}</span><span class="rk-lbl">Pagado</span></div>
+        <div><span class="rk-num">${esc(fmtMoneyFull(totalEst))}</span><span class="rk-lbl">Total estimado</span></div>
+        <div><span class="rk-num" style="color:var(--bad)">${critCount}</span><span class="rk-lbl">Bitácoras críticas</span></div>
       </div>
+    </section>
+
+    <!-- 2 · Estimaciones por proyecto -->
+    <section class="report-section">
+      <h2>2 · Estimaciones pendientes por proyecto</h2>
+      <p class="report-sub">Monto pendiente de pago, agrupado por proyecto ferroviario y ordenado de mayor a menor exposición.</p>
       ${groupedEst.length ? groupedEst.map(g => {
-        const pct = totalPend > 0 ? (g.total / totalPend * 100).toFixed(2) : '0';
+        const pct = totalPend > 0 ? (g.total / totalPend * 100).toFixed(1) : '0';
         return `
           <h3 class="report-proj-h">
             <span class="rt-badge" style="background:${getProjectColor(g.proj)}">${esc(projLabel(g.proj))}</span>
-            ${esc(fmtMoneyFull(g.total))} · ${pct}% del pendiente · ${g.contracts.length} contratos
+            <span>${esc(fmtMoneyFull(g.total))}</span>
+            <span style="color:#5c5347;font-weight:500">· ${pct}% del pendiente · ${g.contracts.length} contratos</span>
           </h3>
           <table class="report-tbl">
             <thead>
-              <tr><th>Contrato</th><th>Tramo</th><th style="text-align:right">Monto pendiente</th><th style="text-align:right">% proyecto</th><th>Bitácora</th></tr>
+              <tr>
+                <th style="width:22%">Contrato</th>
+                <th>Tramo</th>
+                <th style="text-align:right;width:18%">Pendiente</th>
+                <th style="text-align:right;width:14%">% proyecto</th>
+              </tr>
             </thead>
             <tbody>
               ${g.contracts.map(c => {
                 const pctProj = (g.total > 0 && c.montoPendiente)
-                  ? (c.montoPendiente / g.total * 100).toFixed(2) + '%'
+                  ? (c.montoPendiente / g.total * 100).toFixed(1) + '%'
                   : '—';
                 const monto = c.montoPendiente != null ? fmtMoneyFull(c.montoPendiente) : '<em style="color:#8a7f73">sin monto</em>';
-                const isCrit = criticalSet.has(c.contrato);
                 return `<tr>
                   <td>${esc(c.contrato)}</td>
                   <td>${esc(c.tramo || '—')}</td>
                   <td class="num">${monto}</td>
                   <td class="num">${pctProj}</td>
-                  <td>${isCrit ? '<span class="rt-badge rt-bad">Crítico</span>' : '<span style="color:#8a7f73">—</span>'}</td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -5331,25 +5391,24 @@ function renderReportResumen2() {
       }).join('') : '<p style="color:#8a7f73;font-style:italic">Sin contratos con monto pendiente.</p>'}
     </section>
 
+    <!-- 3 · Bitácoras -->
     <section class="report-section">
-      <h2>2 · Alertas — Bitácoras por estatus</h2>
-      <p class="report-sub">Distribución de bitácoras según días sin registrar notas. Umbrales acordados: menos de 60 d (al corriente), 60 a 120 d (en atención), más de 120 d (crítico).</p>
-      <div class="report-net-card">
-        <div class="report-net-legend">
-          <span><span class="ld" style="background:#c75b39"></span>Crítico</span>
-          <span><span class="ld" style="background:#b8860b"></span>Atención</span>
-          <span><span class="ld" style="background:#8a7f73"></span>Sin reportar</span>
-        </div>
-        <div class="report-net-canvas">${alertsSVG}</div>
+      <h2>3 · Bitácoras de obra · Estatus de notas</h2>
+      <p class="report-sub">Días sin registrar notas — umbrales: menos de 60 d (al corriente), 60 a 120 d (en atención), más de 120 d (crítico).</p>
+      <div class="report-status-grid">
+        <div class="rs bad"><strong>${critCount}</strong> Crítico · más de 120 d</div>
+        <div class="rs warn"><strong>${warnCount}</strong> En atención · 60–120 d</div>
+        <div class="rs ok"><strong>${okCount}</strong> Al corriente · menos de 60 d</div>
+        <div class="rs na"><strong>${naCount}</strong> Sin datos</div>
       </div>
 
       ${byStatus.bad.length ? `
         <h3 class="report-proj-h">
           <span class="rt-badge rt-bad">Crítico</span>
-          Más de 120 días · ${byStatus.bad.length} contratos
+          <span>Más de 120 días · ${byStatus.bad.length} contratos</span>
         </h3>
         <table class="report-tbl">
-          <thead><tr><th>Contrato</th><th style="text-align:right">Días sin registrar</th></tr></thead>
+          <thead><tr><th>Contrato</th><th style="text-align:right;width:24%">Días sin registrar</th></tr></thead>
           <tbody>
             ${byStatus.bad.map(b => `<tr>
               <td>${esc(b.contract)}</td>
@@ -5362,10 +5421,10 @@ function renderReportResumen2() {
       ${byStatus.warn.length ? `
         <h3 class="report-proj-h">
           <span class="rt-badge rt-warn">En atención</span>
-          60 a 120 días · ${byStatus.warn.length} contratos
+          <span>60 a 120 días · ${byStatus.warn.length} contratos</span>
         </h3>
         <table class="report-tbl">
-          <thead><tr><th>Contrato</th><th style="text-align:right">Días sin registrar</th></tr></thead>
+          <thead><tr><th>Contrato</th><th style="text-align:right;width:24%">Días sin registrar</th></tr></thead>
           <tbody>
             ${byStatus.warn.map(b => `<tr>
               <td>${esc(b.contract)}</td>
@@ -5378,7 +5437,7 @@ function renderReportResumen2() {
       ${byStatus.na.length ? `
         <h3 class="report-proj-h">
           <span class="rt-badge rt-na">Sin reportar</span>
-          Sin datos · ${byStatus.na.length} contratos
+          <span>Sin datos · ${byStatus.na.length} contratos</span>
         </h3>
         <div class="report-na-list">
           ${byStatus.na.map(b => `<div>${esc(b.contract)}</div>`).join('')}
@@ -5388,6 +5447,71 @@ function renderReportResumen2() {
       ${(!byStatus.bad.length && !byStatus.warn.length && !byStatus.na.length)
         ? '<p style="color:var(--ok);font-weight:600">Todas las bitácoras al corriente.</p>'
         : ''}
+    </section>
+
+    <!-- 4 · DICCO -->
+    <section class="report-section">
+      <h2>4 · DICCO · Licitaciones</h2>
+      <p class="report-sub">Estatus de licitaciones desde la hoja DICCO ${dicco && dicco.at ? '· última actualización ' + esc(dicco.at.toLocaleString('es-MX', { dateStyle:'short', timeStyle:'short' })) : ''}.</p>
+
+      ${(!dicco || (!diccoProc.length && !diccoForm.length)) ? `
+        <p style="color:#8a7f73;font-style:italic">No hay datos DICCO disponibles. Abre la pestaña DICCO para que se carguen.</p>
+      ` : `
+        <div class="report-status-grid">
+          <div class="rs warn"><strong>${diccoProc.length}</strong> En proceso</div>
+          <div class="rs ok"><strong>${diccoForm.length}</strong> Formalizadas</div>
+        </div>
+
+        ${diccoProc.length ? `
+          <h3 class="report-proj-h">
+            <span class="rt-badge rt-warn">En proceso</span>
+            <span>${diccoProc.length} licitaciones</span>
+          </h3>
+          <table class="report-tbl">
+            <thead>
+              <tr>
+                <th style="width:16%">Número</th>
+                <th>Concepto</th>
+                <th style="width:22%">Subdirector</th>
+                <th style="width:14%">Estatus</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${diccoProc.map(d => `<tr>
+                <td>${esc(d.num || '—')}</td>
+                <td>${esc(d.objeto || '—')}</td>
+                <td>${esc(d.subdir || '—')}</td>
+                <td>${esc(d.estatus || '—')}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        ` : ''}
+
+        ${diccoForm.length ? `
+          <h3 class="report-proj-h">
+            <span class="rt-badge rt-ok">Formalizadas</span>
+            <span>${diccoForm.length} licitaciones</span>
+          </h3>
+          <table class="report-tbl">
+            <thead>
+              <tr>
+                <th style="width:16%">Número</th>
+                <th>Concepto</th>
+                <th style="width:22%">Subdirector</th>
+                <th style="width:14%">Estatus</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${diccoForm.map(d => `<tr>
+                <td>${esc(d.num || '—')}</td>
+                <td>${esc(d.objeto || '—')}</td>
+                <td>${esc(d.subdir || '—')}</td>
+                <td>${esc(d.estatus || '—')}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        ` : ''}
+      `}
     </section>
 
     <footer class="report-footer">
@@ -7851,6 +7975,15 @@ setInterval(fetchAll, REFRESH_MS);
 
       // Resumen DICCO en la pestaña Resumen
       renderResumenDicco(rows.slice(1));
+
+      // Expone datos DICCO para que el reporte los consuma
+      window.__DICCO_DATA__ = {
+        rows: rows.slice(1),
+        cols: COL,
+        bucketFor,
+        toSentenceCase,
+        at: new Date(),
+      };
     } catch (err) {
       console.warn('[dicco-live] fetch falló:', err);
       const msg = err && err.message === 'Failed to fetch'
