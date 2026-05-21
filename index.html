@@ -786,12 +786,22 @@ body{
 
 /* DICCO · resumen de licitaciones (Resumen tab) */
 #r2DiccoCard{grid-column:1 / -1}
+.dicco-card-title{
+  font-size:1.35rem !important;
+  letter-spacing:.01em;
+  display:inline-flex;align-items:center;gap:.6rem;
+}
 .dicco-count-pill{
-  margin-left:.5rem;display:inline-flex;align-items:center;justify-content:center;
-  min-width:26px;height:22px;padding:0 .5rem;border-radius:50px;
-  background:rgba(201,146,42,.18);color:#f0c050;
-  border:1px solid rgba(201,146,42,.40);
-  font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:42px;height:30px;padding:0 .85rem;border-radius:50px;
+  background:rgba(201,146,42,.18);
+  border:1px solid rgba(201,146,42,.45);
+  font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums;
+  /* El gold-grad-text del h3 padre podría sobreescribir el color del pill
+     por la cascada; forzamos el color sólido aquí. */
+  -webkit-text-fill-color:#f0c050;color:#f0c050;
+  background-clip:padding-box;
+  box-shadow:0 0 12px rgba(201,146,42,.20);
 }
 .dicco-two-col{
   display:grid;grid-template-columns:1fr 1fr;gap:0;
@@ -811,51 +821,79 @@ body{
 }
 .dicco-col-head{
   display:flex;align-items:center;justify-content:space-between;
-  padding:.7rem 1rem;
+  padding:.85rem 1.1rem;
   border-bottom:1px solid var(--border);
   background:rgba(0,0,0,.18);
 }
+.dicco-col-head--proc{
+  background:linear-gradient(180deg, rgba(201,146,42,.14), rgba(201,146,42,.04));
+}
 .dicco-col-head--proc .dicco-col-title{color:#f0c050}
-.dicco-col-head--form .dicco-col-title{color:#7ee0c4}
+.dicco-col-head--form{
+  background:linear-gradient(180deg, rgba(134,224,136,.14), rgba(134,224,136,.04));
+}
+.dicco-col-head--form .dicco-col-title{color:#86e088}
 .dicco-col-title{
-  font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+  font-size:1rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
 }
 .dicco-col-count{
-  font-size:.7rem;font-weight:800;font-variant-numeric:tabular-nums;
-  padding:.15rem .55rem;border-radius:50px;
-  background:rgba(255,255,255,.08);color:#f6efe1;
+  font-size:.92rem;font-weight:800;font-variant-numeric:tabular-nums;
+  min-width:34px;text-align:center;
+  padding:.2rem .65rem;border-radius:50px;
+  background:rgba(255,255,255,.10);color:#f6efe1;
   border:1px solid var(--border);
+}
+.dicco-col--proc .dicco-col-count{
+  background:rgba(201,146,42,.18);
+  color:#f0c050;border-color:rgba(201,146,42,.45);
+}
+.dicco-col--form .dicco-col-count{
+  background:rgba(134,224,136,.18);
+  color:#86e088;border-color:rgba(134,224,136,.45);
 }
 .dicco-col-list{
   flex:1;padding:.35rem 0;
 }
 .dicco-row{
-  display:grid;grid-template-columns:auto 1fr;gap:.65rem;align-items:start;
-  padding:.55rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);
+  display:grid;grid-template-columns:auto 1fr;gap:.7rem;align-items:start;
+  padding:.7rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.06);
+  transition:background .15s, transform .15s;
+  position:relative;
+}
+.dicco-row::before{
+  content:'';position:absolute;left:0;top:.6rem;bottom:.6rem;width:2px;
+  background:transparent;border-radius:2px;
   transition:background .15s;
 }
 .dicco-row:last-child{border-bottom:none}
 .dicco-row:hover{background:rgba(255,255,255,.04)}
+.dicco-col--proc .dicco-row:hover::before{background:#f0c050}
+.dicco-col--form .dicco-row:hover::before{background:#86e088}
 .dicco-row-num{
   font-family:ui-monospace,Consolas,monospace;
-  font-size:.72rem;font-weight:700;
-  color:#f0c050;
-  padding:.18rem .45rem;border-radius:4px;
-  background:rgba(201,146,42,.12);
-  border:1px solid rgba(201,146,42,.28);
+  font-size:.78rem;font-weight:700;
+  padding:.22rem .55rem;border-radius:5px;
   white-space:nowrap;line-height:1.2;
+}
+.dicco-col--proc .dicco-row-num{
+  color:#f0c050;
+  background:rgba(201,146,42,.14);
+  border:1px solid rgba(201,146,42,.32);
+}
+.dicco-col--form .dicco-row-num{
+  color:#86e088;
+  background:rgba(134,224,136,.14);
+  border:1px solid rgba(134,224,136,.32);
 }
 .dicco-row-num a{color:inherit;text-decoration:none}
 .dicco-row-num a:hover{text-decoration:underline}
 .dicco-row-concept{
-  font-size:.78rem;color:#f6efe1;line-height:1.35;
+  font-size:.85rem;color:#f6efe1;line-height:1.4;
   font-weight:500;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
-  overflow:hidden;
 }
 .dicco-row-status{
-  grid-column:2 / 3;margin-top:.2rem;
-  font-size:.62rem;color:var(--text3);font-weight:600;letter-spacing:.04em;
+  grid-column:2 / 3;margin-top:.25rem;
+  font-size:.66rem;color:var(--text3);font-weight:600;letter-spacing:.05em;
   text-transform:uppercase;
 }
 .dicco-empty{
@@ -3802,14 +3840,14 @@ body.modal-open{ overflow:hidden }
     <!-- DICCO · resumen de licitaciones (Número · Concepto · Estatus) -->
     <div class="cnstl-net-card" id="r2DiccoCard">
       <div class="cnstl-net-head">
-        <h3>DICCO · Licitaciones <span class="dicco-count-pill" id="r2DiccoCount">0</span></h3>
+        <h3 class="dicco-card-title">DICCO · Licitaciones <span class="dicco-count-pill" id="r2DiccoCount">0</span></h3>
         <div class="cnstl-net-legend">
           <span><span class="ld" style="background:#f0c050"></span>En proceso</span>
-          <span><span class="ld" style="background:#7ee0c4"></span>Formalizado</span>
+          <span><span class="ld" style="background:#86e088"></span>Formalizado</span>
         </div>
       </div>
       <div class="dicco-two-col">
-        <div class="dicco-col">
+        <div class="dicco-col dicco-col--proc">
           <div class="dicco-col-head dicco-col-head--proc">
             <span class="dicco-col-title">En proceso</span>
             <span class="dicco-col-count" id="r2DiccoProcCount">0</span>
@@ -3818,7 +3856,7 @@ body.modal-open{ overflow:hidden }
             <div class="dicco-empty">Cargando…</div>
           </div>
         </div>
-        <div class="dicco-col">
+        <div class="dicco-col dicco-col--form">
           <div class="dicco-col-head dicco-col-head--form">
             <span class="dicco-col-title">Formalizado</span>
             <span class="dicco-col-count" id="r2DiccoFormCount">0</span>
@@ -4527,7 +4565,7 @@ function buildNetworkSVG(W, idPrefix = 'r2') {
   const cardW = Math.min(220, Math.max(140, projCenterDist - 18));
   const cardH = 40, cardGap = 7;
   const hubR = 36, projR = 26;
-  const hubY = 60, projectY = 175, contractStartY = 240;
+  const hubY = 60, projectY = 175, contractStartY = 268;
   const cx = W / 2;
   const maxContracts = Math.max(...projects.map(p => p.contracts.length));
   const H = contractStartY + maxContracts * (cardH + cardGap) + 30;
@@ -4574,8 +4612,8 @@ function buildNetworkSVG(W, idPrefix = 'r2') {
     const pcolor = getProjectColor(p.proj);
     html += `<circle cx="${px}" cy="${projectY}" r="${projR}" fill="${pcolor}" stroke="#fff" stroke-width="2.5" filter="url(#${idGlow})"/>`;
     html += `<text x="${px}" y="${projectY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="12" font-weight="800">${esc(p.proj)}</text>`;
-    html += `<text x="${px}" y="${projectY + projR + 14}" text-anchor="middle" fill="#f0c050" font-size="11" font-weight="800">${esc(fmtMoney(p.total))}</text>`;
-    html += `<text x="${px}" y="${projectY + projR + 28}" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="9" font-weight="600">${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'} · 100%</text>`;
+    html += `<text x="${px}" y="${projectY + projR + 26}" text-anchor="middle" fill="#f0c050" font-size="15" font-weight="800">${esc(fmtMoney(p.total))}</text>`;
+    html += `<text x="${px}" y="${projectY + projR + 44}" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="10" font-weight="600">${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'} · 100%</text>`;
   });
 
   projects.forEach((p, pi) => {
@@ -4655,7 +4693,7 @@ function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}
   const cardW = Math.min(240, groupCenterDist - 18);
 
   const hubR = 36, statusR = 26;
-  const hubY = 60, statusY = 175, contractStartY = 240;
+  const hubY = 60, statusY = 175, contractStartY = 268;
   const cx = W / 2;
 
   const critIdx = groups.findIndex(g => g.key === 'bad');
@@ -4708,8 +4746,8 @@ function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}
     }
     html += `<circle cx="${sx}" cy="${statusY}" r="${statusR}" fill="${g.color}" stroke="#fff" stroke-width="2.5" filter="url(#${idGlow})"/>`;
     html += `<text x="${sx}" y="${statusY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="13" font-weight="800">${g.items.length}</text>`;
-    html += `<text x="${sx}" y="${statusY + statusR + 14}" text-anchor="middle" fill="#f6efe1" font-size="11" font-weight="800">${esc(g.label)}</text>`;
-    html += `<text x="${sx}" y="${statusY + statusR + 28}" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="9" font-weight="600">${esc(g.detail)}</text>`;
+    html += `<text x="${sx}" y="${statusY + statusR + 26}" text-anchor="middle" fill="#f0c050" font-size="15" font-weight="800">${esc(g.label)}</text>`;
+    html += `<text x="${sx}" y="${statusY + statusR + 44}" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="10" font-weight="600">${esc(g.detail)}</text>`;
   });
 
   if (critItems.length > 0) {
