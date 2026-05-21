@@ -3794,14 +3794,32 @@ body, .header, .footer, .tab, .summary-card, .cnstl-net-card, .kpi, .card,
    sólido (como un sello oficial sobre el documento). Cards cream
    con strip vino + hairline gold. Tipografía con serif Playfair
    en headings para sentido institucional.
+
+   CLAVE: redefinimos las variables globales aquí para que todo
+   elemento que use var(--text), var(--surface), etc. se adapte
+   automáticamente al papel. Sin esto, todo lo no-override quedaba
+   en blanco (invisible sobre cream).
    ════════════════════════════════════════════════════════════ */
 body[data-theme="mode-2"]{
+  /* Paleta papel — análoga al vino, contraste AA garantizado */
+  --bg:#f6ecdc;
+  --bg2:#ede0c5;
+  --surface:#fefaf0;
+  --surface2:#f3e7d0;
+  --surface3:#e8d8b8;
+  --border:#d8c8b1;
+  --border2:#c4b193;
+  --text:#2a1410;
+  --text2:#5a4439;
+  --text3:#7a5e4a;
+  --text4:#a08770;
+
   background:
     radial-gradient(ellipse 90% 60% at 50% -10%, rgba(176,74,98,.10) 0%, transparent 55%),
     radial-gradient(ellipse 70% 50% at 100% 100%, rgba(105,28,50,.06) 0%, transparent 50%),
     radial-gradient(ellipse 40% 30% at 5% 50%, rgba(212,168,75,.06) 0%, transparent 55%),
     #f6ecdc !important;
-  color:#3a2a20 !important;
+  color:#2a1410 !important;
 }
 body[data-theme="mode-2"] html{background:#e8dac3}
 
