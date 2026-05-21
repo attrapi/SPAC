@@ -4551,23 +4551,23 @@ function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}
     html += `<text x="${cx}" y="${contractStartY + 14}" text-anchor="middle" fill="#1a6b5a" font-size="13" font-weight="700">✓ Sin contratos críticos</text>`;
   }
 
-  const critTotal = critItems.length;
-  if (critTotal > 0 && animated) {
-    html += `<circle cx="${cx}" cy="${hubY}" r="${hubR + 4}" fill="none" stroke="#e11d2e" stroke-width="2" opacity="0.7">
-      <animate attributeName="r" values="${hubR + 2};${hubR + 14};${hubR + 2}" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite"/>
-    </circle>`;
-  }
   html += `<circle cx="${cx}" cy="${hubY}" r="${hubR}" fill="url(#${idHub})" stroke="#fff" stroke-width="3" filter="url(#${idGlow})"/>`;
   html += `<text x="${cx}" y="${hubY - 4}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="13" font-weight="800">⚠</text>`;
   html += `<text x="${cx}" y="${hubY + 11}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9" font-weight="800" letter-spacing=".06em">CRÍTICO</text>`;
 
+  const critTotal = critItems.length;
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
+    if (gi === critIdx && critTotal > 0 && animated) {
+      html += `<circle cx="${sx}" cy="${statusY}" r="${statusR + 4}" fill="none" stroke="#e11d2e" stroke-width="2" opacity="0.7">
+        <animate attributeName="r" values="${statusR + 2};${statusR + 12};${statusR + 2}" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite"/>
+      </circle>`;
+    }
     html += `<circle cx="${sx}" cy="${statusY}" r="${statusR}" fill="${g.color}" stroke="#fff" stroke-width="2.5" filter="url(#${idGlow})"/>`;
     html += `<text x="${sx}" y="${statusY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="13" font-weight="800">${g.items.length}</text>`;
-    html += `<text x="${sx}" y="${statusY + statusR + 14}" text-anchor="middle" fill="#1a1612" font-size="11" font-weight="800">${esc(g.label)}</text>`;
-    html += `<text x="${sx}" y="${statusY + statusR + 28}" text-anchor="middle" fill="#8a7f73" font-size="9" font-weight="600">${esc(g.detail)}</text>`;
+    html += `<text x="${sx}" y="${statusY + statusR + 14}" text-anchor="middle" fill="#f6efe1" font-size="11" font-weight="800">${esc(g.label)}</text>`;
+    html += `<text x="${sx}" y="${statusY + statusR + 28}" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="9" font-weight="600">${esc(g.detail)}</text>`;
   });
 
   if (critItems.length > 0) {
