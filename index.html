@@ -4230,7 +4230,10 @@ let bdSortMode = 'days-desc';
 
 let eData = [];
 
-const PROJECT_PALETTE = ['#691c32','#1a6b5a','#b8860b','#2c3e6b','#a0522d','#c75b39','#4a5568','#8b6914'];
+// Paleta de colores por proyecto — calibrada para fondo vino oscuro.
+// El wine puro #691c32 se sustituye por #b04a62 (gov-light) porque sobre
+// el bg del tablero quedaba invisible (mismo tono que la pared).
+const PROJECT_PALETTE = ['#b04a62','#2a8b74','#d4a84b','#3d558d','#c46f44','#e07a5f','#7e8a9c','#b89030'];
 const PROJECT_COLOR_MAP = {};
 function getProjectColor(proj) {
   if (!PROJECT_COLOR_MAP[proj]) {
@@ -4593,7 +4596,7 @@ function buildNetworkSVG(W, idPrefix = 'r2') {
   projects.forEach((p, pi) => {
     const px = projectXs[pi];
     const pcolor = getProjectColor(p.proj);
-    html += `<path d="M ${cx} ${hubY + hubR} C ${cx} ${(hubY + projectY) / 2}, ${px} ${(hubY + projectY) / 2}, ${px} ${projectY - projR}" stroke="${pcolor}" stroke-width="2" stroke-opacity="0.7" fill="none" stroke-linecap="round"/>`;
+    html += `<path d="M ${cx} ${hubY + hubR} C ${cx} ${(hubY + projectY) / 2}, ${px} ${(hubY + projectY) / 2}, ${px} ${projectY - projR}" stroke="${pcolor}" stroke-width="2.5" stroke-opacity="0.95" fill="none" stroke-linecap="round"/>`;
   });
 
   projects.forEach((p, pi) => {
@@ -4739,9 +4742,15 @@ function buildAlertsNetworkSVG(W, idPrefix = 'r2alert', { animated = true } = {}
   groups.forEach((g, gi) => {
     const sx = groupXs[gi];
     if (gi === critIdx && critTotal > 0 && animated) {
-      html += `<circle cx="${sx}" cy="${statusY}" r="${statusR + 4}" fill="none" stroke="#e11d2e" stroke-width="2" opacity="0.7">
-        <animate attributeName="r" values="${statusR + 2};${statusR + 12};${statusR + 2}" dur="2s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite"/>
+      // Doble anillo desfasado para mayor impacto sobre el fondo glass.
+      // Color #ff5a6a (rojo brillante) destaca mejor que el #e11d2e oscuro.
+      html += `<circle cx="${sx}" cy="${statusY}" r="${statusR + 6}" fill="none" stroke="#ff5a6a" stroke-width="3.5" opacity="1">
+        <animate attributeName="r" values="${statusR + 4};${statusR + 18};${statusR + 4}" dur="1.8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;0;1" dur="1.8s" repeatCount="indefinite"/>
+      </circle>`;
+      html += `<circle cx="${sx}" cy="${statusY}" r="${statusR + 6}" fill="none" stroke="#ff8898" stroke-width="2" opacity="1">
+        <animate attributeName="r" values="${statusR + 2};${statusR + 22};${statusR + 2}" dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".85;0;.85" dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
       </circle>`;
     }
     html += `<circle cx="${sx}" cy="${statusY}" r="${statusR}" fill="${g.color}" stroke="#fff" stroke-width="2.5" filter="url(#${idGlow})"/>`;
