@@ -3623,8 +3623,11 @@ body{
   position: absolute !important;  /* el original era fixed; aquí queda relativo al wrapper */
 }
 
-/* Layout: la "página" interna ya no necesita ocupar viewport completo */
-.dicco-scope .page{ padding: 28px 18px 40px; }
+/* Layout: la "página" interna ya no necesita ocupar viewport completo
+   ni un padding generoso (estaba originalmente para look standalone). */
+.dicco-scope .page{ padding: 12px 18px 12px; }
+.dicco-scope .header{ margin-bottom:10px !important; padding:10px 18px !important; }
+.dicco-scope .grid-sub{ gap:10px !important }
 
 /* El botón "Regresar" pierde sentido dentro del tab — ya hay nav superior */
 .dicco-scope .back-btn{ display: none !important; }
@@ -3706,7 +3709,7 @@ body.modal-open{ overflow:hidden }
 /* La sección DICCO se integra naturalmente con el fondo vino global */
 #sec-dicco{
   max-width:1600px;
-  margin:1.5rem auto 2rem;
+  margin:.8rem auto 1rem;
   padding:0 2.5rem;
 }
 @media (max-width: 720px){
