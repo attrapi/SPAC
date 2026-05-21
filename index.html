@@ -771,6 +771,88 @@ body{
   padding:.2rem .55rem;border-radius:50px;min-width:24px;text-align:center;
 }
 
+/* DICCO · resumen de licitaciones (Resumen tab) */
+#r2DiccoCard{grid-column:1 / -1}
+.dicco-count-pill{
+  margin-left:.5rem;display:inline-flex;align-items:center;justify-content:center;
+  min-width:26px;height:22px;padding:0 .5rem;border-radius:50px;
+  background:rgba(201,146,42,.18);color:#f0c050;
+  border:1px solid rgba(201,146,42,.40);
+  font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;
+}
+.dicco-two-col{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  background:rgba(0,0,0,.10);
+}
+@media (max-width: 880px){
+  .dicco-two-col{grid-template-columns:1fr}
+}
+.dicco-col{
+  display:flex;flex-direction:column;min-height:280px;
+  border-right:1px solid var(--border);
+}
+.dicco-col:last-child{border-right:none}
+@media (max-width: 880px){
+  .dicco-col{border-right:none;border-bottom:1px solid var(--border)}
+  .dicco-col:last-child{border-bottom:none}
+}
+.dicco-col-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.7rem 1rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(0,0,0,.18);
+}
+.dicco-col-head--proc .dicco-col-title{color:#f0c050}
+.dicco-col-head--form .dicco-col-title{color:#7ee0c4}
+.dicco-col-title{
+  font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+}
+.dicco-col-count{
+  font-size:.7rem;font-weight:800;font-variant-numeric:tabular-nums;
+  padding:.15rem .55rem;border-radius:50px;
+  background:rgba(255,255,255,.08);color:#f6efe1;
+  border:1px solid var(--border);
+}
+.dicco-col-list{
+  flex:1;overflow-y:auto;max-height:420px;
+  padding:.35rem 0;
+}
+.dicco-col-list::-webkit-scrollbar{width:8px}
+.dicco-col-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.dicco-row{
+  display:grid;grid-template-columns:auto 1fr;gap:.65rem;align-items:start;
+  padding:.55rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);
+  transition:background .15s;
+}
+.dicco-row:last-child{border-bottom:none}
+.dicco-row:hover{background:rgba(255,255,255,.04)}
+.dicco-row-num{
+  font-family:ui-monospace,Consolas,monospace;
+  font-size:.72rem;font-weight:700;
+  color:#f0c050;
+  padding:.18rem .45rem;border-radius:4px;
+  background:rgba(201,146,42,.12);
+  border:1px solid rgba(201,146,42,.28);
+  white-space:nowrap;line-height:1.2;
+}
+.dicco-row-num a{color:inherit;text-decoration:none}
+.dicco-row-num a:hover{text-decoration:underline}
+.dicco-row-concept{
+  font-size:.78rem;color:#f6efe1;line-height:1.35;
+  font-weight:500;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.dicco-row-status{
+  grid-column:2 / 3;margin-top:.2rem;
+  font-size:.62rem;color:var(--text3);font-weight:600;letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.dicco-empty{
+  padding:1.6rem 1rem;text-align:center;color:var(--text3);
+  font-size:.78rem;font-style:italic;
+}
+
 /* PROJECT BARS — versión compacta (Resumen) */
 .proj-list{display:flex;flex-direction:column;gap:.85rem}
 .proj-row{
@@ -3687,6 +3769,38 @@ body.modal-open{ overflow:hidden }
         <div id="r2AlertsNet" class="cnstl-net-canvas cnstl-alerts-canvas"></div>
         <div class="cnstl-net-foot">Cada nodo muestra su conteo · solo se expanden los contratos críticos (&gt; 120 d) con halo rojo pulsante</div>
       </div>
+    </div>
+
+    <!-- DICCO · resumen de licitaciones (Número · Concepto · Estatus) -->
+    <div class="cnstl-net-card" id="r2DiccoCard">
+      <div class="cnstl-net-head">
+        <h3>DICCO · Licitaciones <span class="dicco-count-pill" id="r2DiccoCount">0</span></h3>
+        <div class="cnstl-net-legend">
+          <span><span class="ld" style="background:#f0c050"></span>En proceso</span>
+          <span><span class="ld" style="background:#7ee0c4"></span>Formalizado</span>
+        </div>
+      </div>
+      <div class="dicco-two-col">
+        <div class="dicco-col">
+          <div class="dicco-col-head dicco-col-head--proc">
+            <span class="dicco-col-title">En proceso</span>
+            <span class="dicco-col-count" id="r2DiccoProcCount">0</span>
+          </div>
+          <div class="dicco-col-list" id="r2DiccoProcList">
+            <div class="dicco-empty">Cargando…</div>
+          </div>
+        </div>
+        <div class="dicco-col">
+          <div class="dicco-col-head dicco-col-head--form">
+            <span class="dicco-col-title">Formalizado</span>
+            <span class="dicco-col-count" id="r2DiccoFormCount">0</span>
+          </div>
+          <div class="dicco-col-list" id="r2DiccoFormList">
+            <div class="dicco-empty">Cargando…</div>
+          </div>
+        </div>
+      </div>
+      <div class="cnstl-net-foot">Datos en vivo de la hoja DICCO · actualización cada 5 min</div>
     </div>
 
   </div>
@@ -7664,6 +7778,55 @@ setInterval(fetchAll, REFRESH_MS);
     }
   }
 
+  // Renderiza el resumen DICCO en la pestaña Resumen (#r2DiccoCard):
+  // dos columnas (En proceso / Formalizado) con Número + Concepto + estatus.
+  function renderResumenDicco(allRows){
+    const procList = document.getElementById('r2DiccoProcList');
+    const formList = document.getElementById('r2DiccoFormList');
+    if (!procList || !formList) return;
+
+    const proc = [];
+    const form = [];
+    allRows.forEach(row => {
+      if (!row[COL.SUBDIR] && !row[COL.OBJETO] && !row[COL.NUM]) return; // fila vacía
+      const num = String(row[COL.NUM] || '').trim();
+      const objeto = toSentenceCase(row[COL.OBJETO]);
+      if (!num && !objeto) return;
+      const estatus = String(row[COL.ESTATUS] || '').trim();
+      const liga = String(row[COL.LIGA] || '').trim();
+      const entry = { num, objeto, estatus, liga };
+      if (bucketFor(row) === 'formalizado') form.push(entry);
+      else proc.push(entry);
+    });
+
+    const buildRow = e => {
+      const numHtml = e.liga
+        ? `<a href="${esc(e.liga)}" target="_blank" rel="noopener noreferrer">${esc(e.num || '—')}</a>`
+        : esc(e.num || '—');
+      const statusHtml = e.estatus
+        ? `<div class="dicco-row-status">${esc(toSentenceCase(e.estatus))}</div>`
+        : '';
+      return `<div class="dicco-row">
+        <span class="dicco-row-num">${numHtml}</span>
+        <div class="dicco-row-concept" title="${esc(e.objeto)}">${esc(e.objeto || '—')}</div>
+        ${statusHtml}
+      </div>`;
+    };
+
+    procList.innerHTML = proc.length
+      ? proc.map(buildRow).join('')
+      : '<div class="dicco-empty">Sin licitaciones en proceso</div>';
+    formList.innerHTML = form.length
+      ? form.map(buildRow).join('')
+      : '<div class="dicco-empty">Sin licitaciones formalizadas</div>';
+
+    const total = proc.length + form.length;
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setText('r2DiccoCount', total);
+    setText('r2DiccoProcCount', proc.length);
+    setText('r2DiccoFormCount', form.length);
+  }
+
   async function loadDicco(){
     const panels = document.querySelectorAll('.acc-panel[data-dicco-source="csv"]');
     if (!panels.length) return;
@@ -7687,12 +7850,19 @@ setInterval(fetchAll, REFRESH_MS);
         console.info(`[dicco-live] ${panel.id}: ${matching.length} filas tras filtro "${filter}"`);
         renderPanel(panel, matching);
       });
+
+      // Resumen DICCO en la pestaña Resumen
+      renderResumenDicco(rows.slice(1));
     } catch (err) {
       console.warn('[dicco-live] fetch falló:', err);
       const msg = err && err.message === 'Failed to fetch'
         ? 'No se pudo cargar (Google Sheets bloqueado). Si abriste el archivo con file://, súbelo a github.io o usa un servidor local.'
         : `No se pudo cargar la hoja: ${err && err.message || err}`;
       document.querySelectorAll('.acc-panel[data-dicco-source="csv"] .proc-empty').forEach(p => {
+        if (/cargando/i.test(p.textContent)) p.textContent = msg;
+      });
+      // Mismo mensaje en el resumen del Resumen, si está vacío
+      document.querySelectorAll('#r2DiccoProcList .dicco-empty, #r2DiccoFormList .dicco-empty').forEach(p => {
         if (/cargando/i.test(p.textContent)) p.textContent = msg;
       });
     }
