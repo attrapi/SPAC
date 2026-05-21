@@ -3764,6 +3764,210 @@ body.modal-open{ overflow:hidden }
   box-shadow:none;
   border-bottom:0;  /* SPAC pone border-bottom 3px solid en .header */
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   THEMES · 3 modos visuales — activados con body[data-theme="mode-N"]
+   ──────────────────────────────────────────────────────────────────
+   El modo 1 (default) es el actual y vive en :root al inicio del
+   archivo. Aquí solo sobreescribimos las variables clave en los
+   modos 2 y 3 — la estructura/layout no cambia, solo la cromática.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ─── MODE 2 · Hacienda colonial ──────────────────────────────────
+   Documento oficial impreso: papel champaña, cards vino sólido,
+   acentos dorados y coral. Estilo "Palacio Nacional / hacienda". */
+body[data-theme="mode-2"]{
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(105,28,50,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 100% 100%, rgba(105,28,50,.04) 0%, transparent 55%),
+    #f4ebde !important;
+  color:#2a1d18 !important;
+}
+body[data-theme="mode-2"] html{background:#ecdfcd}
+body[data-theme="mode-2"] .header{
+  background:linear-gradient(135deg,var(--gov-mid) 0%,var(--gov-dark) 55%,var(--gov-shadow) 100%) !important;
+  backdrop-filter:none !important;
+  border-bottom:0 !important;
+}
+body[data-theme="mode-2"] .header::after{ background:var(--gold-strip) }
+body[data-theme="mode-2"] .header-text h1,
+body[data-theme="mode-2"] .header-text p{color:#f4ebde !important}
+body[data-theme="mode-2"] .header-icon{
+  background:linear-gradient(135deg,#f0d690,var(--gold-light),#a07020) !important;
+  color:var(--gov-deep) !important;
+}
+body[data-theme="mode-2"] .gov-banner{
+  background:linear-gradient(135deg,var(--gov-shadow),var(--gov-deep)) !important;
+}
+body[data-theme="mode-2"] .tabs{
+  background:#ecdfcd;border-bottom:2px solid #d8c8b1;
+}
+body[data-theme="mode-2"] .tab{color:#5a4439}
+body[data-theme="mode-2"] .tab:hover{background:rgba(105,28,50,.08);color:var(--gov-dark)}
+body[data-theme="mode-2"] .tab.active{
+  background:linear-gradient(180deg,transparent 0%,rgba(105,28,50,.10) 100%);
+  color:var(--gov-dark);text-shadow:none;
+}
+body[data-theme="mode-2"] .tab.active::after{
+  background:linear-gradient(90deg,transparent,var(--gov-dark) 30%,var(--gov-mid) 50%,var(--gov-dark) 70%,transparent);
+  box-shadow:0 0 8px rgba(105,28,50,.25);
+}
+body[data-theme="mode-2"] .section-head h2{
+  color:var(--gov-dark) !important;text-shadow:none !important;
+}
+body[data-theme="mode-2"] .section-head p{color:#5a4439 !important}
+body[data-theme="mode-2"] .section-head h2::before{
+  background:linear-gradient(180deg,var(--gov-mid),var(--gov-dark),var(--gov-shadow));
+  box-shadow:none;
+}
+/* Cards en vino sólido + texto cream */
+body[data-theme="mode-2"] .summary-card,
+body[data-theme="mode-2"] .cnstl-net-card,
+body[data-theme="mode-2"] .kpi,
+body[data-theme="mode-2"] .card,
+body[data-theme="mode-2"] .cnstl-hero,
+body[data-theme="mode-2"] .cnstl-kpi{
+  background:linear-gradient(180deg, #7a2440 0%, #5a1528 100%) !important;
+  backdrop-filter:none !important;
+  border:1px solid rgba(212,168,75,.25) !important;
+  box-shadow:0 4px 18px rgba(105,28,50,.30) !important;
+  color:#f4ebde;
+}
+body[data-theme="mode-2"] .summary-head,
+body[data-theme="mode-2"] .card-head,
+body[data-theme="mode-2"] .cnstl-net-head{
+  background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.05)) !important;
+  border-bottom:1px solid rgba(212,168,75,.20) !important;
+}
+body[data-theme="mode-2"] .summary-head h3,
+body[data-theme="mode-2"] .card-head h3{color:#f7e4a8 !important}
+body[data-theme="mode-2"] .summary-foot,
+body[data-theme="mode-2"] .summary-stats,
+body[data-theme="mode-2"] .legend-bar{
+  background:rgba(0,0,0,.18) !important;
+}
+body[data-theme="mode-2"] .cnstl-net-canvas{
+  background:rgba(244,235,222,.06) !important;
+}
+/* DICCO summary card hereda el vino sólido */
+body[data-theme="mode-2"] .dicco-two-col{ background:transparent }
+body[data-theme="mode-2"] .dicco-row-concept{color:#f4ebde !important}
+body[data-theme="mode-2"] .contract-text .c-id,
+body[data-theme="mode-2"] .contract-text .c-monto{color:#f4ebde !important}
+body[data-theme="mode-2"] .footer{
+  background:linear-gradient(180deg, var(--gov-dark), var(--gov-shadow)) !important;
+  backdrop-filter:none !important;
+}
+body[data-theme="mode-2"] .footer p{color:rgba(244,235,222,.70) !important}
+/* DICCO scope: en mode 2 conserva su look vino (ya es coherente) */
+
+/* ─── MODE 3 · Obsidiana moderna ──────────────────────────────────
+   Apple-style minimalista: casi negro, líneas finas doradas,
+   máximo contraste, sin gradientes ruidosos. */
+body[data-theme="mode-3"]{
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(201,146,42,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 90%, rgba(105,28,50,.10) 0%, transparent 55%),
+    #0a0a0c !important;
+  color:#fff !important;
+}
+body[data-theme="mode-3"] html{background:#000}
+body[data-theme="mode-3"] .header{
+  background:rgba(10,10,12,.85) !important;
+  backdrop-filter:blur(14px) saturate(140%) !important;
+  border-bottom:1px solid rgba(201,146,42,.20) !important;
+}
+body[data-theme="mode-3"] .header::after{
+  background:linear-gradient(90deg,transparent,#c9922a 50%,transparent);
+  opacity:.5;height:1px;
+}
+body[data-theme="mode-3"] .header-icon{
+  background:#0a0a0c !important;
+  border:1px solid #c9922a !important;
+  color:#f0c050 !important;
+  box-shadow:0 0 12px rgba(201,146,42,.30), inset 0 0 0 1px rgba(255,255,255,.04) !important;
+}
+body[data-theme="mode-3"] .gov-banner{
+  background:#000 !important;border-bottom:1px solid rgba(201,146,42,.16);
+}
+body[data-theme="mode-3"] .tabs{border-bottom:1px solid rgba(255,255,255,.06)}
+body[data-theme="mode-3"] .tab{color:rgba(255,255,255,.50)}
+body[data-theme="mode-3"] .tab:hover{
+  color:#fff;background:rgba(255,255,255,.03);
+}
+body[data-theme="mode-3"] .tab.active{
+  color:#f0c050;background:transparent;text-shadow:none;
+}
+body[data-theme="mode-3"] .tab.active::after{
+  background:#f0c050;height:1px;box-shadow:0 0 6px #f0c050;
+  left:18%;right:18%;
+}
+body[data-theme="mode-3"] .section-head h2{color:#fff !important}
+body[data-theme="mode-3"] .section-head h2::before{
+  background:#c9922a;box-shadow:0 0 6px rgba(201,146,42,.5);
+}
+/* Cards: transparent, hairline gold border */
+body[data-theme="mode-3"] .summary-card,
+body[data-theme="mode-3"] .cnstl-net-card,
+body[data-theme="mode-3"] .kpi,
+body[data-theme="mode-3"] .card,
+body[data-theme="mode-3"] .cnstl-hero,
+body[data-theme="mode-3"] .cnstl-kpi{
+  background:rgba(255,255,255,.018) !important;
+  backdrop-filter:blur(6px) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+body[data-theme="mode-3"] .summary-card::before,
+body[data-theme="mode-3"] .cnstl-net-card::before,
+body[data-theme="mode-3"] .kpi::before,
+body[data-theme="mode-3"] .card::before,
+body[data-theme="mode-3"] .cnstl-hero::before{
+  background:#c9922a !important;height:1px !important;
+  box-shadow:0 0 4px rgba(201,146,42,.6);
+}
+body[data-theme="mode-3"] .summary-head,
+body[data-theme="mode-3"] .card-head,
+body[data-theme="mode-3"] .cnstl-net-head{
+  background:transparent !important;
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+}
+body[data-theme="mode-3"] .summary-foot,
+body[data-theme="mode-3"] .summary-stats,
+body[data-theme="mode-3"] .legend-bar{
+  background:rgba(255,255,255,.02) !important;
+}
+body[data-theme="mode-3"] .cnstl-net-canvas{
+  background:rgba(255,255,255,.015) !important;
+}
+body[data-theme="mode-3"] .footer{
+  background:#000 !important;
+  border-top:1px solid rgba(201,146,42,.16) !important;
+  backdrop-filter:none !important;
+}
+body[data-theme="mode-3"] .footer::before{
+  background:linear-gradient(90deg,transparent,#c9922a 50%,transparent);opacity:.5;height:1px;
+}
+
+/* Botón theme-toggle: visible en cualquier modo */
+.theme-toggle{ position:relative }
+.theme-label{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-variant-numeric:tabular-nums;
+}
+#themeNum{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;border-radius:50%;
+  background:rgba(201,146,42,.25);color:#f0c050;
+  border:1px solid rgba(201,146,42,.45);
+  font-size:.7rem;font-weight:800;
+}
+body[data-theme="mode-2"] #themeNum{
+  background:rgba(244,235,222,.20);color:#f4ebde;border-color:rgba(244,235,222,.40);
+}
+body[data-theme="mode-3"] #themeNum{
+  background:transparent;color:#f0c050;border-color:#c9922a;
+}
 </style>
 </head>
 <body>
@@ -3779,6 +3983,10 @@ body.modal-open{ overflow:hidden }
       </div>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline theme-toggle" id="themeToggle" type="button" title="Cambiar modo visual">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+        <span class="theme-label">Modo <span id="themeNum">1</span></span>
+      </button>
       <button class="btn btn-outline" id="refreshBtn" onclick="fetchAll()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
         Actualizar
@@ -5608,6 +5816,36 @@ function showToast(msg, type = 'info') {
   clearTimeout(t._tm);
   t._tm = setTimeout(() => t.classList.remove('show'), 4000);
 }
+
+// ══════════════════════════════════════════════════════════════
+// THEME TOGGLE · 3 modos (vino glass → hacienda colonial → obsidiana)
+// ══════════════════════════════════════════════════════════════
+(function setupTheme(){
+  const btn = document.getElementById('themeToggle');
+  if (!btn) return;
+  const numEl = document.getElementById('themeNum');
+  const NAMES = { 1: 'Vino institucional', 2: 'Hacienda colonial', 3: 'Obsidiana moderna' };
+  const apply = (mode) => {
+    document.body.setAttribute('data-theme', 'mode-' + mode);
+    if (numEl) numEl.textContent = mode;
+    btn.title = `Modo ${mode} · ${NAMES[mode]} · click para cambiar`;
+    try { localStorage.setItem('spac-theme', String(mode)); } catch(e){}
+    // Re-render redes para recalcular fills SVG sobre el nuevo fondo
+    if (typeof renderResumen2 === 'function' && (window.bData?.length || window.eData?.length)) {
+      try { renderResumen2(); } catch(e){}
+    }
+  };
+  // Hidrata desde localStorage
+  let current = 1;
+  try { current = parseInt(localStorage.getItem('spac-theme') || '1', 10) || 1; } catch(e){}
+  if (![1,2,3].includes(current)) current = 1;
+  apply(current);
+  btn.addEventListener('click', () => {
+    current = current >= 3 ? 1 : current + 1;
+    apply(current);
+    showToast(`Modo ${current} · ${NAMES[current]}`, 'info');
+  });
+})();
 
 // ══════════════════════════════════════════════════════════════
 // TABS
