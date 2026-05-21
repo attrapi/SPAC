@@ -717,6 +717,11 @@ body{
 .cnstl-net-head h3 .cnstl-alert-icon{
   -webkit-text-fill-color:#f0a081;color:#f0a081;
 }
+/* El ícono ◆ de estimaciones — mismo trato que el ⚠ pero en dorado */
+.cnstl-net-head h3 .cnstl-est-icon{
+  -webkit-text-fill-color:#f0c050;color:#f0c050;
+  font-size:.95rem;margin-right:.15rem;
+}
 .cnstl-net-legend{display:flex;gap:.85rem;flex-wrap:wrap;font-size:.66rem;color:var(--text2);font-weight:600}
 .cnstl-net-legend:empty{display:none}
 .cnstl-net-legend span{display:inline-flex;align-items:center;gap:.4rem}
@@ -3773,7 +3778,7 @@ body.modal-open{ overflow:hidden }
     <div class="cnstl-main">
       <div class="cnstl-net-card">
         <div class="cnstl-net-head">
-          <h3>Estimaciones pendientes · Distribución por proyecto</h3>
+          <h3><span class="cnstl-est-icon">◆</span> Estimaciones pendientes · Distribución por proyecto</h3>
           <div class="cnstl-net-legend" id="r2NetLegend"></div>
         </div>
         <div id="r2Network" class="cnstl-net-canvas"></div>
@@ -4569,8 +4574,8 @@ function buildNetworkSVG(W, idPrefix = 'r2') {
     const pcolor = getProjectColor(p.proj);
     html += `<circle cx="${px}" cy="${projectY}" r="${projR}" fill="${pcolor}" stroke="#fff" stroke-width="2.5" filter="url(#${idGlow})"/>`;
     html += `<text x="${px}" y="${projectY}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="12" font-weight="800">${esc(p.proj)}</text>`;
-    html += `<text x="${px}" y="${projectY + projR + 14}" text-anchor="middle" fill="#1a1612" font-size="11" font-weight="800">${esc(fmtMoney(p.total))}</text>`;
-    html += `<text x="${px}" y="${projectY + projR + 28}" text-anchor="middle" fill="#8a7f73" font-size="9" font-weight="600">${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'} · 100%</text>`;
+    html += `<text x="${px}" y="${projectY + projR + 14}" text-anchor="middle" fill="#f0c050" font-size="11" font-weight="800">${esc(fmtMoney(p.total))}</text>`;
+    html += `<text x="${px}" y="${projectY + projR + 28}" text-anchor="middle" fill="rgba(255,255,255,.55)" font-size="9" font-weight="600">${p.contracts.length} contrato${p.contracts.length === 1 ? '' : 's'} · 100%</text>`;
   });
 
   projects.forEach((p, pi) => {
