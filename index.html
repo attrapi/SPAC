@@ -3943,15 +3943,19 @@ body[data-theme="mode-2"] .cnstl-net-head{
 body[data-theme="mode-2"] .summary-head h3,
 body[data-theme="mode-2"] .card-head h3{color:#3a1520 !important}
 body[data-theme="mode-2"] .cnstl-net-head h3{
-  background:linear-gradient(135deg, #4a0f20, #691c32 50%, #8a2640) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:#691c32 !important;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#4a0f20 !important;
 }
 body[data-theme="mode-2"] .cnstl-hero h2{
   font-family:'Playfair Display', Georgia, serif !important;
-  background:linear-gradient(135deg, #4a0f20, #691c32 50%, #8a2640) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#4a0f20 !important;
 }
 body[data-theme="mode-2"] .summary-num{
   background:linear-gradient(135deg,#8a2640,#691c32) !important;
@@ -3960,11 +3964,22 @@ body[data-theme="mode-2"] .summary-num{
 }
 body[data-theme="mode-2"] .stat-big .num,
 body[data-theme="mode-2"] .kpi-value,
+body[data-theme="mode-2"] .kpi.k-total .kpi-value,
+body[data-theme="mode-2"] .kpi.k-ok .kpi-value,
+body[data-theme="mode-2"] .kpi.k-warn .kpi-value,
+body[data-theme="mode-2"] .kpi.k-bad .kpi-value,
+body[data-theme="mode-2"] .kpi.k-neutral .kpi-value,
 body[data-theme="mode-2"] .cnstl-kpi .num{
-  background:linear-gradient(135deg, #8a2640, #691c32 50%, #4a0f20) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:#691c32 !important;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#691c32 !important;
 }
+body[data-theme="mode-2"] .kpi.k-ok .kpi-value{color:#0e4a3e !important}
+body[data-theme="mode-2"] .kpi.k-warn .kpi-value{color:#7a5610 !important}
+body[data-theme="mode-2"] .kpi.k-bad .kpi-value{color:#8b3520 !important}
+body[data-theme="mode-2"] .kpi.k-neutral .kpi-value{color:#5a4439 !important}
 body[data-theme="mode-2"] .summary-foot,
 body[data-theme="mode-2"] .summary-stats,
 body[data-theme="mode-2"] .legend-bar,
@@ -4117,10 +4132,12 @@ body[data-theme="mode-3"] .header::after{
 }
 body[data-theme="mode-3"] .header-text h1{
   letter-spacing:-.02em;
-  background:linear-gradient(135deg, #fff, #f0c050) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:#fff !important;
-  text-shadow:none !important;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#ffffff !important;
+  text-shadow:0 0 16px rgba(212,168,75,.20) !important;
 }
 body[data-theme="mode-3"] .header-text p{color:rgba(255,255,255,.50) !important}
 body[data-theme="mode-3"] .header-icon{
@@ -4183,10 +4200,11 @@ body[data-theme="mode-3"] .tab.active::after{
 
 /* Section heading */
 body[data-theme="mode-3"] .section-head h2{
-  color:#fff !important;
-  background:linear-gradient(135deg,#fff 0%, rgba(255,255,255,.7) 100%) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#ffffff !important;
   text-shadow:none !important;
 }
 body[data-theme="mode-3"] .section-head p{color:rgba(255,255,255,.45) !important}
@@ -4242,14 +4260,18 @@ body[data-theme="mode-3"] .cnstl-net-head{
 body[data-theme="mode-3"] .summary-head h3,
 body[data-theme="mode-3"] .card-head h3{color:#fff !important}
 body[data-theme="mode-3"] .cnstl-net-head h3{
-  background:linear-gradient(135deg, #f7e4a8, #d4a84b 50%, #c9922a) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:#f0c050 !important;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#f0c050 !important;
 }
 body[data-theme="mode-3"] .cnstl-hero h2{
-  background:linear-gradient(135deg, #fff 0%, #f0c050 70%, #c9922a 100%) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#f0c050 !important;
 }
 body[data-theme="mode-3"] .summary-num{
   background:rgba(212,168,75,.12) !important;
@@ -4259,11 +4281,22 @@ body[data-theme="mode-3"] .summary-num{
 }
 body[data-theme="mode-3"] .stat-big .num,
 body[data-theme="mode-3"] .kpi-value,
+body[data-theme="mode-3"] .kpi.k-total .kpi-value,
+body[data-theme="mode-3"] .kpi.k-ok .kpi-value,
+body[data-theme="mode-3"] .kpi.k-warn .kpi-value,
+body[data-theme="mode-3"] .kpi.k-bad .kpi-value,
+body[data-theme="mode-3"] .kpi.k-neutral .kpi-value,
 body[data-theme="mode-3"] .cnstl-kpi .num{
-  background:linear-gradient(135deg, #fff 0%, #f0c050 60%, #c9922a 100%) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#f0c050 !important;
 }
+body[data-theme="mode-3"] .kpi.k-ok .kpi-value{color:#7ee0c4 !important}
+body[data-theme="mode-3"] .kpi.k-warn .kpi-value{color:#f0c050 !important}
+body[data-theme="mode-3"] .kpi.k-bad .kpi-value{color:#ff8898 !important}
+body[data-theme="mode-3"] .kpi.k-neutral .kpi-value{color:rgba(255,255,255,.65) !important}
 body[data-theme="mode-3"] .summary-foot,
 body[data-theme="mode-3"] .summary-stats,
 body[data-theme="mode-3"] .legend-bar,
@@ -4320,9 +4353,11 @@ body[data-theme="mode-3"] .footer::before{
 }
 body[data-theme="mode-3"] .footer p{color:rgba(255,255,255,.40) !important}
 body[data-theme="mode-3"] .footer strong{
-  background:linear-gradient(135deg, #f7e4a8, #d4a84b) !important;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:#f0c050 !important;
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+  color:#f0c050 !important;
 }
 
 /* ════════════════════════════════════════════════════════════════
