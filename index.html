@@ -4060,61 +4060,111 @@ body[data-theme="mode-2"] .contract-item:hover{background:rgba(105,28,50,.04) !i
 body[data-theme="mode-2"] .contract-text .c-id,
 body[data-theme="mode-2"] .contract-text .c-monto{color:#3a1520 !important}
 body[data-theme="mode-2"] .contract-text{color:#5a4439 !important}
-/* DICCO summary card */
-body[data-theme="mode-2"] .dicco-two-col{background:rgba(105,28,50,.03) !important}
-body[data-theme="mode-2"] .dicco-row-concept{color:#3a2a20 !important}
+/* ═══ DICCO modo 2 · CUADERNO VIRTUAL ═══════════════════════════════
+   Papel beige cálido como fondo (más oscuro que las cards), cuadrícula
+   wine visible, cards de papel-blanco "flotando" con sombra cálida.
+   Headers con bandas sólidas de color (gold para proc, teal para form)
+   tipo etiqueta de cuaderno. */
+body[data-theme="mode-2"] .dicco-two-col{
+  background:#e8dac0 !important;
+  border-top:1px solid rgba(74,15,32,.18) !important;
+}
+
+/* Headers de columna — bandas tipo etiqueta de archivo */
 body[data-theme="mode-2"] .dicco-col-head--proc{
-  background:linear-gradient(180deg, rgba(184,134,11,.14), rgba(184,134,11,.04)) !important;
+  background:linear-gradient(180deg, #b8860b 0%, #9a6f10 100%) !important;
+  border-bottom:1px solid #7a5610 !important;
 }
-body[data-theme="mode-2"] .dicco-col-head--proc .dicco-col-title{color:#7a5610 !important}
+body[data-theme="mode-2"] .dicco-col-head--proc .dicco-col-title{
+  color:#fff8e0 !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.18);
+}
 body[data-theme="mode-2"] .dicco-col-head--form{
-  background:linear-gradient(180deg, rgba(26,107,90,.12), rgba(26,107,90,.03)) !important;
+  background:linear-gradient(180deg, #1a6b5a 0%, #0e4a3e 100%) !important;
+  border-bottom:1px solid #083026 !important;
 }
-body[data-theme="mode-2"] .dicco-col-head--form .dicco-col-title{color:#0e4a3e !important}
-body[data-theme="mode-2"] .dicco-col--proc .dicco-row-num{
-  background:rgba(184,134,11,.12) !important;color:#7a5610 !important;
-  border-color:rgba(184,134,11,.28) !important;
-}
-body[data-theme="mode-2"] .dicco-col--form .dicco-row-num{
-  background:rgba(26,107,90,.12) !important;color:#0e4a3e !important;
-  border-color:rgba(26,107,90,.28) !important;
+body[data-theme="mode-2"] .dicco-col-head--form .dicco-col-title{
+  color:#e8f7ee !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.18);
 }
 body[data-theme="mode-2"] .dicco-col--proc .dicco-col-count{
-  background:rgba(184,134,11,.18) !important;color:#7a5610 !important;
-  border-color:rgba(184,134,11,.40) !important;
+  background:rgba(255,255,255,.22) !important;color:#fff8e0 !important;
+  border-color:rgba(255,255,255,.40) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.20);
 }
 body[data-theme="mode-2"] .dicco-col--form .dicco-col-count{
-  background:rgba(26,107,90,.16) !important;color:#0e4a3e !important;
-  border-color:rgba(26,107,90,.38) !important;
+  background:rgba(255,255,255,.22) !important;color:#e8f7ee !important;
+  border-color:rgba(255,255,255,.40) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.20);
 }
-/* DICCO cards modo 2 — papel cream sobre cuadrícula vino tenue */
+
+/* La "hoja del cuaderno" — fondo beige cuadriculado donde flotan las cards */
 body[data-theme="mode-2"] .dicco-col-list{
+  background-color:#ede1c8 !important;
   background-image:
-    linear-gradient(rgba(105,28,50,.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(105,28,50,.07) 1px, transparent 1px) !important;
-  background-size:24px 24px !important;
+    linear-gradient(rgba(105,28,50,.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(105,28,50,.13) 1px, transparent 1px) !important;
+  background-size:22px 22px !important;
+  background-position:0 0 !important;
 }
+
+/* Cards · papel blanco-crema flotando sobre el cuaderno */
 body[data-theme="mode-2"] .dicco-row{
-  background:linear-gradient(180deg, #fefaf0 0%, #faf3e0 100%) !important;
+  background:#fdf7e6 !important;
   backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
-  border:1px solid #d8c8b1 !important;
+  border:1px solid #c4b193 !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.7),
-    0 1px 3px rgba(105,28,50,.08),
-    0 2px 6px rgba(105,28,50,.04) !important;
+    inset 0 1px 0 rgba(255,255,255,.85),
+    0 2px 4px rgba(74,15,32,.10),
+    0 5px 14px rgba(74,15,32,.07) !important;
+}
+body[data-theme="mode-2"] .dicco-col--proc .dicco-row{
+  border-left:3px solid #b8860b !important;
+}
+body[data-theme="mode-2"] .dicco-col--form .dicco-row{
+  border-left:3px solid #1a6b5a !important;
 }
 body[data-theme="mode-2"] .dicco-row:hover{
-  background:linear-gradient(180deg, #fefaf0 0%, #f6ecd2 100%) !important;
-  border-color:rgba(105,28,50,.30) !important;
+  background:#fffbf0 !important;
+  border-color:rgba(74,15,32,.30) !important;
+  transform:translateY(-2px);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.8),
-    0 6px 18px rgba(105,28,50,.14),
-    0 2px 6px rgba(105,28,50,.08) !important;
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 10px 24px rgba(74,15,32,.18),
+    0 4px 10px rgba(74,15,32,.10) !important;
 }
+body[data-theme="mode-2"] .dicco-col--proc .dicco-row:hover{
+  border-left-color:#9a6f10 !important;
+}
+body[data-theme="mode-2"] .dicco-col--form .dicco-row:hover{
+  border-left-color:#0e4a3e !important;
+}
+/* El ::before del accent ya no se usa en modo 2 — el border-left lo reemplaza */
+body[data-theme="mode-2"] .dicco-col--proc .dicco-row:hover::before,
+body[data-theme="mode-2"] .dicco-col--form .dicco-row:hover::before{
+  background:transparent !important;
+}
+
+/* Texto del concepto · negro tinta-vino */
+body[data-theme="mode-2"] .dicco-row-concept{color:#2a1410 !important}
+
+/* Pills del ID · ahora cuadradas tipo etiqueta */
+body[data-theme="mode-2"] .dicco-col--proc .dicco-row-num{
+  background:#fef3d4 !important;color:#7a5610 !important;
+  border:1px solid #c9a444 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+body[data-theme="mode-2"] .dicco-col--form .dicco-row-num{
+  background:#e0f1ea !important;color:#0e4a3e !important;
+  border:1px solid #4a9080 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+
+/* Estatus pill · sutil sobre la card */
 body[data-theme="mode-2"] .dicco-row-status{
-  background:rgba(105,28,50,.06) !important;
-  border-color:rgba(105,28,50,.18) !important;
-  color:#7a5e4a !important;
+  background:rgba(74,15,32,.06) !important;
+  border:1px solid rgba(74,15,32,.20) !important;
+  color:#5a4439 !important;
 }
 body[data-theme="mode-2"] .dicco-count-pill{
   background:rgba(184,134,11,.18) !important;
