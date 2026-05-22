@@ -851,29 +851,51 @@ body{
   background:rgba(134,224,136,.18);
   color:#86e088;border-color:rgba(134,224,136,.45);
 }
+/* DICCO list — cuaderno virtual: cuadrícula al fondo + cards en relieve.
+   Lista de licitaciones como tarjetas apiladas: ID arriba (pill), concepto
+   debajo, estatus al final. El ID puede partirse para no invadir el
+   concepto cuando es largo (p.ej. "LO-09-...-N-2-8-2026 IR-3"). */
 .dicco-col-list{
-  flex:1;padding:.35rem 0;
+  flex:1;padding:.7rem .75rem;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:24px 24px;
+  background-position:-1px -1px;
 }
 .dicco-row{
-  display:grid;grid-template-columns:auto 1fr;gap:.7rem;align-items:start;
-  padding:.7rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.06);
-  transition:background .15s, transform .15s;
-  position:relative;
+  display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;
+  padding:.75rem .9rem;
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  border:1px solid var(--border);border-radius:9px;
+  margin-bottom:.55rem;
+  transition:background .15s, transform .15s, border-color .15s, box-shadow .15s;
+  position:relative;overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04);
 }
+.dicco-row:last-child{margin-bottom:0}
 .dicco-row::before{
-  content:'';position:absolute;left:0;top:.6rem;bottom:.6rem;width:2px;
-  background:transparent;border-radius:2px;
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:transparent;
   transition:background .15s;
 }
-.dicco-row:last-child{border-bottom:none}
-.dicco-row:hover{background:rgba(255,255,255,.04)}
-.dicco-col--proc .dicco-row:hover::before{background:#f0c050}
-.dicco-col--form .dicco-row:hover::before{background:#86e088}
+.dicco-row:hover{
+  background:rgba(255,255,255,.07);
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.18);
+  box-shadow:0 6px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.dicco-col--proc .dicco-row:hover::before{background:linear-gradient(180deg,#f7d98b,#c9922a)}
+.dicco-col--form .dicco-row:hover::before{background:linear-gradient(180deg,#86e088,#2a8b74)}
 .dicco-row-num{
   font-family:ui-monospace,Consolas,monospace;
-  font-size:.78rem;font-weight:700;
+  font-size:.72rem;font-weight:700;
   padding:.22rem .55rem;border-radius:5px;
-  white-space:nowrap;line-height:1.2;
+  line-height:1.25;
+  max-width:100%;
+  word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .dicco-col--proc .dicco-row-num{
   color:#f0c050;
@@ -888,13 +910,16 @@ body{
 .dicco-row-num a{color:inherit;text-decoration:none}
 .dicco-row-num a:hover{text-decoration:underline}
 .dicco-row-concept{
-  font-size:.85rem;color:#f6efe1;line-height:1.4;
-  font-weight:500;
+  font-size:.85rem;color:#f6efe1;line-height:1.45;
+  font-weight:500;width:100%;
 }
 .dicco-row-status{
-  grid-column:2 / 3;margin-top:.25rem;
-  font-size:.66rem;color:var(--text3);font-weight:600;letter-spacing:.05em;
+  font-size:.62rem;color:var(--text3);font-weight:700;letter-spacing:.06em;
   text-transform:uppercase;
+  padding:.16rem .55rem;border-radius:50px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  align-self:flex-start;
 }
 .dicco-empty{
   padding:1.6rem 1rem;text-align:center;color:var(--text3);
@@ -4062,8 +4087,35 @@ body[data-theme="mode-2"] .dicco-col--form .dicco-col-count{
   background:rgba(26,107,90,.16) !important;color:#0e4a3e !important;
   border-color:rgba(26,107,90,.38) !important;
 }
-body[data-theme="mode-2"] .dicco-row{border-bottom-color:rgba(0,0,0,.06) !important}
-body[data-theme="mode-2"] .dicco-row:hover{background:rgba(105,28,50,.04) !important}
+/* DICCO cards modo 2 — papel cream sobre cuadrícula vino tenue */
+body[data-theme="mode-2"] .dicco-col-list{
+  background-image:
+    linear-gradient(rgba(105,28,50,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(105,28,50,.07) 1px, transparent 1px) !important;
+  background-size:24px 24px !important;
+}
+body[data-theme="mode-2"] .dicco-row{
+  background:linear-gradient(180deg, #fefaf0 0%, #faf3e0 100%) !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  border:1px solid #d8c8b1 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.7),
+    0 1px 3px rgba(105,28,50,.08),
+    0 2px 6px rgba(105,28,50,.04) !important;
+}
+body[data-theme="mode-2"] .dicco-row:hover{
+  background:linear-gradient(180deg, #fefaf0 0%, #f6ecd2 100%) !important;
+  border-color:rgba(105,28,50,.30) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    0 6px 18px rgba(105,28,50,.14),
+    0 2px 6px rgba(105,28,50,.08) !important;
+}
+body[data-theme="mode-2"] .dicco-row-status{
+  background:rgba(105,28,50,.06) !important;
+  border-color:rgba(105,28,50,.18) !important;
+  color:#7a5e4a !important;
+}
 body[data-theme="mode-2"] .dicco-count-pill{
   background:rgba(184,134,11,.18) !important;
   border-color:rgba(184,134,11,.45) !important;
@@ -4088,6 +4140,46 @@ body[data-theme="mode-2"] .vert-bar-wrap,
 body[data-theme="mode-2"] .pending-col{background:#fefaf0 !important}
 body[data-theme="mode-2"] .vert-foot,
 body[data-theme="mode-2"] .pending-row.pending-total{background:rgba(105,28,50,.05) !important}
+/* SVG network cards (.ccc) — papel cream con texto wine en lugar de glass blanco */
+body[data-theme="mode-2"] .cnstl-net-canvas .ccc,
+body[data-theme="mode-2"] .cnstl-alerts-canvas .ccc{
+  background:linear-gradient(180deg, #fefaf0 0%, #f6ecd2 100%) !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  border:1px solid #d8c8b1 !important;
+  border-left:3px solid var(--proj-color, #8a2640) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.7),
+    0 1px 4px rgba(105,28,50,.10),
+    0 2px 8px rgba(105,28,50,.06) !important;
+}
+body[data-theme="mode-2"] .cnstl-net-canvas .ccc:hover,
+body[data-theme="mode-2"] .cnstl-alerts-canvas .ccc:hover{
+  background:linear-gradient(180deg, #fff7e6 0%, #f3e7c5 100%) !important;
+  border-color:rgba(105,28,50,.30) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    0 8px 22px rgba(105,28,50,.20),
+    0 2px 6px rgba(105,28,50,.10) !important;
+}
+body[data-theme="mode-2"] .cnstl-net-canvas .ccc.critical,
+body[data-theme="mode-2"] .cnstl-alerts-canvas .ccc.critical{
+  border-color:rgba(139,53,32,.55) !important;
+  border-left-color:#8b3520 !important;
+}
+body[data-theme="mode-2"] .ccc-id{color:#3a1520 !important}
+body[data-theme="mode-2"] .ccc-monto{color:#691c32 !important}
+body[data-theme="mode-2"] .ccc-pct{color:#7a5e4a !important}
+/* Licitación destacada — dorado oscuro readable sobre cream */
+body[data-theme="mode-2"] .contract-item.is-licitacion .c-id{
+  color:#7a5610 !important;-webkit-text-fill-color:#7a5610 !important;
+}
+/* Iconos de los headers de cards (◆ / ⚠) — saturados sobre cream-tinted gradient */
+body[data-theme="mode-2"] .cnstl-net-head h3 .cnstl-est-icon{
+  color:#b8860b !important;-webkit-text-fill-color:#b8860b !important;
+}
+body[data-theme="mode-2"] .cnstl-net-head h3 .cnstl-alert-icon{
+  color:#8b3520 !important;-webkit-text-fill-color:#8b3520 !important;
+}
 /* Footer en wine sólido */
 body[data-theme="mode-2"] .footer{
   background:linear-gradient(135deg, #4a0f20, #2c0814) !important;
