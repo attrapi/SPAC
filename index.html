@@ -8842,6 +8842,19 @@ setInterval(fetchAll, REFRESH_MS);
       const rows = parseCsv(text);
       if (rows.length < 2) throw new Error('CSV vacío');
 
+      // Regla de negocio: las licitaciones marcadas como DESIERTA/DESIERTO
+      // deben reportarse como FORMALIZADO. Normalizamos la columna Estatus
+      // en las filas de datos (saltamos el encabezado) para que TODOS los
+      // consumidores —tarjetas, bucketFor (columna Formalizado), resumen y
+      // reporte ejecutivo— lo reflejen de forma consistente. Al fijarlo en
+      // "FORMALIZADO", bucketFor lo manda a la columna correcta y la tarjeta
+      // lo muestra como "Formalizado" vía toSentenceCase.
+      for (let i = 1; i < rows.length; i++) {
+        if (/desiert[ao]/i.test(String(rows[i][COL.ESTATUS] || ''))) {
+          rows[i][COL.ESTATUS] = 'FORMALIZADO';
+        }
+      }
+
       // Normaliza acentos para que "RAUL" matchee "RAÚL" en el CSV.
       const stripAccents = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
       panels.forEach(panel => {
