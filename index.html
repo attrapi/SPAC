@@ -78,6 +78,27 @@
 }
 
 html{scroll-behavior:smooth;background:var(--gov-deep)}
+
+/* Detalles globales: selección, scrollbars y focus accesible */
+::selection{background:rgba(212,168,75,.40);color:#fff}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg, rgba(201,146,42,.40), rgba(138,38,64,.55));
+  border-radius:6px;border:2px solid transparent;background-clip:padding-box;
+}
+::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(180deg, rgba(240,192,80,.60), rgba(176,74,98,.70));
+  background-clip:padding-box;border:2px solid transparent;
+}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{
+  outline:2px solid rgba(240,192,80,.75);outline-offset:2px;border-radius:4px;
+}
+body[data-theme="mode-2"] ::selection{background:rgba(105,28,50,.22);color:#2c0814}
+body[data-theme="mode-2"] button:focus-visible,
+body[data-theme="mode-2"] input:focus-visible,
+body[data-theme="mode-2"] select:focus-visible,
+body[data-theme="mode-2"] a:focus-visible{outline-color:rgba(105,28,50,.65)}
 body{
   font-family:'Plus Jakarta Sans',system-ui,sans-serif;
   background:
@@ -198,11 +219,18 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* TABS — blancas sobre vino con underline glow dorado */
+/* TABS — blancas sobre vino con underline glow dorado.
+   Sticky: la navegación queda visible al hacer scroll; el padding
+   calc() reproduce el centrado max-width:1600px del resto del layout. */
 .tabs{
-  max-width:1600px;margin:1.4rem auto 0;padding:0 2.5rem;
+  position:sticky;top:0;z-index:60;
+  margin:1.4rem 0 0;
+  padding:0 max(2.5rem, calc((100% - 1600px)/2 + 2.5rem));
   display:flex;gap:.4rem;flex-wrap:wrap;
   border-bottom:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(180deg, rgba(74,15,32,.90) 0%, rgba(44,8,20,.86) 100%);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
 }
 .tab{
   background:transparent;border:none;cursor:pointer;
@@ -216,6 +244,7 @@ body{
   color:#fff;
   background:rgba(255,255,255,.06);
 }
+.tab-link{text-decoration:none}
 .tab.active{
   color:#fff;
   background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,rgba(212,168,75,.10) 100%);
@@ -230,8 +259,29 @@ body{
 
 /* SECTION */
 .section{display:none}
-.section.active{display:block;animation:fadeIn .25s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.section.active{display:block;animation:fadeIn .32s cubic-bezier(.16,1,.3,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* Entrada escalonada de tarjetas al activar una sección */
+.section.active .kpi,
+.section.active .summary-card,
+.section.active .cnstl-net-card{
+  animation:riseIn .5s cubic-bezier(.16,1,.3,1) backwards;
+}
+.section.active .kpi:nth-child(2){animation-delay:.05s}
+.section.active .kpi:nth-child(3){animation-delay:.10s}
+.section.active .kpi:nth-child(4){animation-delay:.15s}
+.section.active .kpi:nth-child(5){animation-delay:.20s}
+.section.active .summary-card:nth-child(2),
+.section.active .cnstl-net-card:nth-child(2){animation-delay:.07s}
+.section.active .summary-card:nth-child(3),
+.section.active .cnstl-net-card:nth-child(3){animation-delay:.14s}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  .section.active,
+  .section.active .kpi,
+  .section.active .summary-card,
+  .section.active .cnstl-net-card{animation:none}
+}
 .section-head{
   max-width:1600px;margin:1.5rem auto .4rem;padding:0 2.5rem;
   display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:.8rem;
@@ -398,8 +448,17 @@ body{
   box-shadow:0 16px 42px rgba(0,0,0,.32), 0 0 0 1px rgba(201,146,42,.20);
 }
 .kpi-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:700}
+.kpi::after{
+  content:'';position:absolute;right:-30px;top:-30px;width:90px;height:90px;
+  border-radius:50%;pointer-events:none;opacity:.55;
+  background:radial-gradient(circle, rgba(201,146,42,.22) 0%, transparent 70%);
+}
+.kpi.k-ok::after{background:radial-gradient(circle, rgba(42,139,116,.30) 0%, transparent 70%)}
+.kpi.k-bad::after{background:radial-gradient(circle, rgba(199,91,57,.30) 0%, transparent 70%)}
+.kpi.k-neutral::after{background:radial-gradient(circle, rgba(138,127,115,.25) 0%, transparent 70%)}
 .kpi-value{
-  font-size:1.7rem;font-weight:800;letter-spacing:-.02em;margin-top:.3rem;line-height:1;
+  font-size:1.85rem;font-weight:800;letter-spacing:-.02em;margin-top:.3rem;line-height:1;
+  font-variant-numeric:tabular-nums;
   background:var(--gold-grad-text);
   -webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;
@@ -806,18 +865,19 @@ body{
 .dicco-two-col{
   display:grid;grid-template-columns:1fr 1fr;gap:0;
   background:rgba(0,0,0,.10);
+  /* start: una columna corta (p.ej. 1 en proceso) no se estira hasta
+     la altura de la larga dejando un panel de cuadrícula vacío */
+  align-items:start;
 }
 @media (max-width: 880px){
   .dicco-two-col{grid-template-columns:1fr}
 }
 .dicco-col{
-  display:flex;flex-direction:column;min-height:280px;
-  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;min-height:150px;
 }
-.dicco-col:last-child{border-right:none}
+.dicco-col + .dicco-col{border-left:1px solid var(--border)}
 @media (max-width: 880px){
-  .dicco-col{border-right:none;border-bottom:1px solid var(--border)}
-  .dicco-col:last-child{border-bottom:none}
+  .dicco-col + .dicco-col{border-left:none;border-top:1px solid var(--border)}
 }
 .dicco-col-head{
   display:flex;align-items:center;justify-content:space-between;
@@ -922,8 +982,10 @@ body{
   align-self:flex-start;
 }
 .dicco-empty{
-  padding:1.6rem 1rem;text-align:center;color:var(--text3);
+  margin:.2rem;padding:1.6rem 1rem;text-align:center;color:var(--text3);
   font-size:.78rem;font-style:italic;
+  border:1px dashed rgba(255,255,255,.16);border-radius:9px;
+  background:rgba(255,255,255,.02);
 }
 
 /* PROJECT BARS — versión compacta (Resumen) */
@@ -987,24 +1049,37 @@ body{
 .contract-item{
   padding:.85rem 1.4rem;border-bottom:1px solid var(--border);
   font-size:.82rem;transition:background .15s;
-  display:flex;align-items:flex-start;gap:.7rem;flex-wrap:wrap;flex-direction:column;
+  display:flex;align-items:flex-start;gap:.45rem;flex-wrap:wrap;flex-direction:column;
+  position:relative;
+}
+.contract-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:transparent;transition:background .15s;
 }
 .contract-item:hover{background:rgba(255,255,255,.04)}
+.contract-item:hover::before{background:linear-gradient(180deg,#f7d98b,#c9922a)}
 .contract-item:last-child{border-bottom:none}
-.contract-item.is-licitacion .c-id{color:#f0c050;font-style:italic}
+.contract-item.is-licitacion .c-id{color:#f0c050;font-style:italic;background:rgba(201,146,42,.12);border-color:rgba(201,146,42,.32)}
 .contract-text{
   font-family:ui-monospace,Consolas,monospace;
   color:var(--text2);line-height:1.4;
-  display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;flex:1;min-width:0;width:100%;
+  display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;flex:1;min-width:0;width:100%;
 }
-.contract-text .c-id{color:#f6efe1;font-weight:700;font-size:.85rem}
+.contract-text .c-id{
+  color:#f6efe1;font-weight:700;font-size:.78rem;
+  padding:.2rem .55rem;border-radius:5px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+}
 .contract-text .c-pipe{color:var(--text4);font-weight:400;font-family:inherit}
-.contract-text .c-proj{font-weight:700}
-.contract-text .c-monto{color:#f6efe1;font-weight:700;font-size:.85rem}
-.contract-text .c-monto.empty{color:var(--text4);font-weight:500;font-style:italic}
+.contract-text .c-proj{font-weight:700;font-size:.74rem;letter-spacing:.03em}
+.contract-text .c-monto{
+  color:#f0c050;font-weight:800;font-size:.88rem;
+  margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.contract-text .c-monto.empty{color:var(--text4);font-weight:500;font-style:italic;font-size:.74rem}
 .contract-objeto{
-  font-size:.78rem;color:var(--text3);line-height:1.45;
-  padding-left:.1rem;font-weight:500;width:100%;
+  font-size:.72rem;color:var(--text3);line-height:1.5;
+  padding-left:.1rem;font-weight:500;width:100%;letter-spacing:.01em;
 }
 
 /* ERROR */
@@ -3889,7 +3964,9 @@ body[data-theme="mode-2"] .gov-banner{
 
 /* Tabs sobre el papel — minimalistas, accent en wine */
 body[data-theme="mode-2"] .tabs{
-  background:transparent;
+  background:rgba(246,236,220,.90);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
   border-bottom:1px solid #cdba94;
   padding-top:0;
 }
@@ -4059,6 +4136,17 @@ body[data-theme="mode-2"] .sort-select:focus{
 body[data-theme="mode-2"] .contract-item:hover{background:rgba(105,28,50,.04) !important}
 body[data-theme="mode-2"] .contract-text .c-id,
 body[data-theme="mode-2"] .contract-text .c-monto{color:#3a1520 !important}
+body[data-theme="mode-2"] .contract-text .c-id{
+  background:rgba(105,28,50,.07) !important;
+  border-color:rgba(105,28,50,.22) !important;
+}
+body[data-theme="mode-2"] .contract-item:hover::before{
+  background:linear-gradient(180deg,#8a2640,#691c32) !important;
+}
+body[data-theme="mode-2"] .dicco-empty{
+  border-color:rgba(105,28,50,.25) !important;
+  background:rgba(105,28,50,.03) !important;
+}
 body[data-theme="mode-2"] .contract-text{color:#5a4439 !important}
 /* ═══ DICCO modo 2 · CUADERNO VIRTUAL ═══════════════════════════════
    Papel beige cálido como fondo (más oscuro que las cards), cuadrícula
@@ -4322,6 +4410,9 @@ body[data-theme="mode-3"] .gov-banner::after{
 /* Tabs minimalistas con underline glow */
 body[data-theme="mode-3"] .tabs{
   border-bottom:1px solid rgba(255,255,255,.06);
+  background:rgba(8,8,10,.90);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
 }
 body[data-theme="mode-3"] .tab{
   color:rgba(255,255,255,.45);background:transparent;
@@ -4569,6 +4660,8 @@ body[data-theme="mode-3"] #themeNum{
   <button class="tab active" data-tab="resumen2" role="tab">Resumen</button>
   <button class="tab" data-tab="bitacoras" role="tab">Bitácoras de obra</button>
   <button class="tab" data-tab="estimaciones" role="tab">Estimaciones</button>
+  <button class="tab" data-tab="informe-riel" role="tab">Informe de Riel</button>
+  <a class="tab tab-link" href="https://attrapi.github.io/repositorio_documental/" target="_blank" rel="noopener">Repositorio Normativo <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
   <button class="tab" data-tab="dicco" role="tab">DICCO</button>
 </nav>
 
@@ -4749,6 +4842,30 @@ body[data-theme="mode-3"] #themeNum{
         </div>
       </div>
       <div id="eContractList" class="contract-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ INFORME DE RIEL ════════ -->
+<section class="section" id="sec-informe-riel" aria-label="Informe de Riel">
+  <div class="section-head">
+    <div>
+      <h2>Informe de Riel</h2>
+      <p>Seguimiento y reporte de riel</p>
+    </div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Contenido en preparación</h3>
+          <p>Este apartado está listo para recibir información</p>
+        </div>
+      </div>
+      <div style="padding:2.5rem 1.4rem;text-align:center;color:var(--text3);font-style:italic">
+        Próximamente · aquí se mostrará el informe de riel
+      </div>
     </div>
   </div>
 </section>
@@ -5303,9 +5420,7 @@ function renderContractList() {
       <div class="contract-item${isEnLic ? ' is-licitacion' : ''}">
         <div class="contract-text">
           <span class="c-id">${esc(c.contrato)}</span>
-          <span class="c-pipe">|</span>
           <span class="c-proj" style="color:${baseColor}">${esc(proyTramo)}</span>
-          <span class="c-pipe">|</span>
           <span class="c-monto ${hasMonto ? '' : 'empty'}">${esc(monto)}</span>
         </div>
         ${objeto ? `<div class="contract-objeto" title="${esc(objeto)}">${esc(objeto)}</div>` : ''}
@@ -5670,7 +5785,7 @@ function renderBitacoras() {
       datasets: [{
         data,
         backgroundColor: colors,
-        borderRadius: 3,
+        borderRadius: 6,
         borderSkipped: false,
         barThickness: 16,
       }]
@@ -5684,7 +5799,10 @@ function renderBitacoras() {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#1a1612',
+          backgroundColor: 'rgba(26,22,18,.96)',
+          borderColor: 'rgba(201,146,42,.45)',
+          borderWidth: 1,
+          cornerRadius: 8,
           titleFont: { family: "'Plus Jakarta Sans'", weight: '700', size: 11 },
           bodyFont: { family: "'Plus Jakarta Sans'", size: 10 },
           padding: 8,
@@ -5804,7 +5922,7 @@ function renderBDetail() {
       datasets: [{
         data,
         backgroundColor: colors,
-        borderRadius: 4,
+        borderRadius: 6,
         borderSkipped: false,
         borderWidth: rows.map(r => r.status === 'na' ? 1 : 0),
         borderColor: '#b0a697',
@@ -5819,7 +5937,10 @@ function renderBDetail() {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#1a1612',
+          backgroundColor: 'rgba(26,22,18,.96)',
+          borderColor: 'rgba(201,146,42,.45)',
+          borderWidth: 1,
+          cornerRadius: 8,
           titleFont: { family: "'Plus Jakarta Sans'", weight: '700', size: 12 },
           bodyFont: { family: "'Plus Jakarta Sans'", size: 11 },
           padding: 10,
@@ -6440,7 +6561,7 @@ function showToast(msg, type = 'info') {
 // ══════════════════════════════════════════════════════════════
 // TABS
 // ══════════════════════════════════════════════════════════════
-document.querySelectorAll('.tab').forEach(btn => {
+document.querySelectorAll('.tab[data-tab]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
