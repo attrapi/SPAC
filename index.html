@@ -104,16 +104,6 @@ body[data-theme="mode-2"]::-webkit-scrollbar-thumb{
   background:linear-gradient(180deg, rgba(138,38,64,.45), rgba(122,94,74,.55));
   border-radius:6px;border:2px solid transparent;background-clip:padding-box;
 }
-body[data-theme="mode-3"] ::selection{background:rgba(72,230,180,.30);color:#fff}
-body[data-theme="mode-3"] button:focus-visible,
-body[data-theme="mode-3"] input:focus-visible,
-body[data-theme="mode-3"] select:focus-visible,
-body[data-theme="mode-3"] a:focus-visible{outline-color:rgba(92,230,184,.70)}
-body[data-theme="mode-3"] ::-webkit-scrollbar-thumb,
-body[data-theme="mode-3"]::-webkit-scrollbar-thumb{
-  background:linear-gradient(180deg, rgba(43,185,138,.45), rgba(30,30,36,.85));
-  border-radius:6px;border:2px solid transparent;background-clip:padding-box;
-}
 body{
   font-family:'Plus Jakarta Sans',system-ui,sans-serif;
   background:
@@ -4431,116 +4421,44 @@ body[data-theme="mode-2"] .footer strong{
 }
 
 /* ════════════════════════════════════════════════════════════════
-   MODE 3 · Obsidiana Aurum
+   MODE 3 · Vino Moderno
    ──────────────────────────────────────────────────────────────
-   Jet black con auroras puntuales (oro + vino sutiles).
-   Cards casi invisibles, borde de 1px en gold-gradient. Type
-   crisp blanco, números en gold-grad. Estilo Apple/Linear.
+   Misma piel que el modo 1 (vino + oro, glass institucional) pero
+   con estructura de app moderna: dock flotante inferior, header
+   compacto de una línea y KPIs fundidos en franja continua.
+   Todo lo demás (cards, chips, colores, redes) hereda del modo 1.
    ════════════════════════════════════════════════════════════ */
-body[data-theme="mode-3"]{
-  background:
-    radial-gradient(ellipse 60% 40% at 80% 5%, rgba(72,230,180,.08) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 5% 90%, rgba(56,120,220,.09) 0%, transparent 55%),
-    radial-gradient(ellipse 35% 30% at 50% 50%, rgba(72,230,180,.03) 0%, transparent 60%),
-    #0a0a0c !important;
-  color:#fff !important;
-}
-body[data-theme="mode-3"] html{background:#000}
 
-/* Header glass extra refinado */
-body[data-theme="mode-3"] .header{
-  background:rgba(10,10,12,.72) !important;
-  backdrop-filter:blur(20px) saturate(160%) !important;
-  -webkit-backdrop-filter:blur(20px) saturate(160%) !important;
-  border-bottom:1px solid rgba(72,230,180,.16) !important;
-  box-shadow:0 1px 0 rgba(255,255,255,.04) inset !important;
-}
-body[data-theme="mode-3"] .header::after{
-  background:linear-gradient(90deg,transparent,#17836b 30%,#5ce6b8 50%,#17836b 70%,transparent);
-  height:1px;opacity:.7;
-}
-body[data-theme="mode-3"] .header-text h1{
-  letter-spacing:-.02em;
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#ffffff !important;
-  text-shadow:0 0 16px rgba(72,230,180,.18) !important;
-}
-body[data-theme="mode-3"] .header-text p{color:rgba(255,255,255,.50) !important}
-body[data-theme="mode-3"] .header-icon{
-  background:rgba(10,10,12,.85) !important;
-  border:1px solid #2bb98a !important;
-  color:#5ce6b8 !important;
-  box-shadow:
-    0 0 18px rgba(72,230,180,.28),
-    inset 0 1px 0 rgba(255,255,255,.08),
-    0 0 0 1px rgba(0,0,0,.40) !important;
-}
-body[data-theme="mode-3"] .header-icon::after{
-  background:linear-gradient(135deg,rgba(92,230,184,.18),transparent 55%);
-}
-body[data-theme="mode-3"] .btn-primary{
-  background:linear-gradient(135deg, #b8f5dd 0%, #3ecfa0 50%, #147a5e 100%) !important;
-  color:#001a12 !important;
-  border-color:rgba(72,230,180,.50) !important;
-  box-shadow:
-    0 4px 14px rgba(72,230,180,.22),
-    inset 0 1px 0 rgba(255,255,255,.40) !important;
-}
-body[data-theme="mode-3"] .btn-outline{
-  background:rgba(255,255,255,.04) !important;
-  border:1px solid rgba(255,255,255,.14) !important;
-  color:rgba(255,255,255,.85) !important;
-}
-body[data-theme="mode-3"] .btn-outline:hover{
-  background:rgba(255,255,255,.08) !important;
-  border-color:rgba(72,230,180,.45) !important;
-  color:#5ce6b8 !important;
-}
-body[data-theme="mode-3"] .gov-banner{
-  background:#000 !important;border-bottom:1px solid rgba(72,230,180,.12) !important;
-}
-body[data-theme="mode-3"] .gov-banner::after{
-  background:linear-gradient(90deg,transparent,rgba(72,230,180,.16) 50%,transparent);
-}
-
-/* ── NAVEGACIÓN MODO 3 · dock flotante inferior ──────────────────────
-   El menú deja la barra superior y se vuelve una píldora de vidrio
-   flotando al pie de la pantalla, estilo dock de app moderna. ──────── */
+/* ── NAVEGACIÓN MODO 3 · dock flotante inferior ── */
 body[data-theme="mode-3"]{padding-bottom:96px}
 body[data-theme="mode-3"] .tabs{
   position:fixed;top:auto;bottom:16px;left:50%;transform:translateX(-50%);
   width:max-content;max-width:calc(100vw - 20px);
   margin:0;padding:.45rem;z-index:70;
   flex-wrap:nowrap;gap:.25rem;overflow-x:auto;
-  border-bottom:none;border:1px solid rgba(72,230,180,.22);
+  border-bottom:none;border:1px solid rgba(212,168,75,.32);
   border-radius:999px;
-  background:rgba(12,12,15,.88);
+  background:linear-gradient(180deg, rgba(74,15,32,.94) 0%, rgba(44,8,20,.92) 100%);
   backdrop-filter:blur(18px) saturate(150%);
   -webkit-backdrop-filter:blur(18px) saturate(150%);
   box-shadow:
-    0 18px 48px rgba(0,0,0,.60),
-    0 0 24px rgba(72,230,180,.08),
-    inset 0 1px 0 rgba(255,255,255,.05);
+    0 18px 48px rgba(0,0,0,.55),
+    0 0 24px rgba(212,168,75,.12),
+    inset 0 1px 0 rgba(255,255,255,.06);
 }
 body[data-theme="mode-3"] .tabs::-webkit-scrollbar{display:none}
 body[data-theme="mode-3"] .tab{
-  color:rgba(255,255,255,.45);background:transparent;
   border-radius:999px;padding:.6rem 1.15rem;margin:0;
   border-bottom:none;white-space:nowrap;flex:0 0 auto;
 }
-body[data-theme="mode-3"] .tab:hover{
-  color:#fff;background:rgba(255,255,255,.05);
-}
 body[data-theme="mode-3"] .tab.active{
-  color:#5ce6b8;
-  background:rgba(72,230,180,.13);
-  text-shadow:none;
-  box-shadow:inset 0 0 0 1px rgba(72,230,180,.30);
+  color:#f0c050;
+  background:rgba(212,168,75,.14);
+  text-shadow:0 0 12px rgba(212,168,75,.35);
+  box-shadow:inset 0 0 0 1px rgba(212,168,75,.40);
 }
 body[data-theme="mode-3"] .tab.active::after{display:none}
+
 /* Header mínimo: barra compacta de una sola línea, estilo app */
 body[data-theme="mode-3"] .header{padding:.75rem 2.5rem}
 body[data-theme="mode-3"] .header-text h1{font-size:1.05rem}
@@ -4548,6 +4466,7 @@ body[data-theme="mode-3"] .header-text p{display:none}
 body[data-theme="mode-3"] .header-icon{
   width:38px;height:38px;border-radius:9px;font-size:.8rem;
 }
+
 /* KPIs como franja continua (stat strip) — hairlines en vez de tarjetas */
 body[data-theme="mode-3"] .kpi-row{gap:0}
 body[data-theme="mode-3"] .kpi{border-radius:0 !important}
@@ -4558,186 +4477,11 @@ body[data-theme="mode-3"] .kpi:hover{transform:none !important}
 @media (max-width: 880px){
   body[data-theme="mode-3"] .kpi-row{gap:1rem}
   body[data-theme="mode-3"] .kpi{border-radius:14px !important}
-  body[data-theme="mode-3"] .kpi + .kpi{border-left:1px solid rgba(255,255,255,.06) !important}
+  body[data-theme="mode-3"] .kpi + .kpi{border-left:1px solid var(--border) !important}
 }
+
 /* En impresión el dock no aplica */
 body.is-printing[data-theme="mode-3"]{padding-bottom:0 !important}
-
-/* Section heading — tipografía técnica: mayúsculas espaciadas */
-body[data-theme="mode-3"] .section-head h2{
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#ffffff !important;
-  text-shadow:none !important;
-  text-transform:uppercase;
-  letter-spacing:.10em;
-  font-size:1.05rem;font-weight:800;
-}
-body[data-theme="mode-3"] .section-head p{color:rgba(255,255,255,.45) !important}
-body[data-theme="mode-3"] .section-head h2::before{
-  background:linear-gradient(180deg,#b8f5dd,#17836b);
-  box-shadow:0 0 10px rgba(72,230,180,.55);
-}
-
-/* Cards: smoked glass con hairline gold border-image */
-body[data-theme="mode-3"] .summary-card,
-body[data-theme="mode-3"] .cnstl-net-card,
-body[data-theme="mode-3"] .kpi,
-body[data-theme="mode-3"] .card,
-body[data-theme="mode-3"] .cnstl-hero,
-body[data-theme="mode-3"] .cnstl-kpi{
-  background:linear-gradient(180deg, rgba(255,255,255,.025) 0%, rgba(255,255,255,.005) 100%) !important;
-  backdrop-filter:blur(10px) saturate(140%) !important;
-  -webkit-backdrop-filter:blur(10px) saturate(140%) !important;
-  border:1px solid rgba(255,255,255,.06) !important;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.04) inset,
-    0 12px 36px rgba(0,0,0,.55),
-    0 2px 8px rgba(0,0,0,.30) !important;
-}
-body[data-theme="mode-3"] .summary-card:hover,
-body[data-theme="mode-3"] .cnstl-net-card:hover,
-body[data-theme="mode-3"] .kpi:hover,
-body[data-theme="mode-3"] .cnstl-kpi:hover{
-  transform:translateY(-3px);
-  border-color:rgba(72,230,180,.28) !important;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.06) inset,
-    0 20px 50px rgba(0,0,0,.65),
-    0 0 0 1px rgba(72,230,180,.10),
-    0 0 24px rgba(72,230,180,.10) !important;
-}
-body[data-theme="mode-3"] .summary-card::before,
-body[data-theme="mode-3"] .cnstl-net-card::before,
-body[data-theme="mode-3"] .kpi::before,
-body[data-theme="mode-3"] .card::before,
-body[data-theme="mode-3"] .cnstl-hero::before,
-body[data-theme="mode-3"] .cnstl-kpi::before{
-  background:linear-gradient(90deg, transparent, #17836b 25%, #b8f5dd 50%, #17836b 75%, transparent) !important;
-  height:1px !important;
-  box-shadow:0 0 6px rgba(72,230,180,.50);
-}
-body[data-theme="mode-3"] .summary-head,
-body[data-theme="mode-3"] .card-head,
-body[data-theme="mode-3"] .cnstl-net-head{
-  background:rgba(255,255,255,.02) !important;
-  border-bottom:1px solid rgba(255,255,255,.05) !important;
-}
-body[data-theme="mode-3"] .summary-head h3,
-body[data-theme="mode-3"] .card-head h3{color:#fff !important}
-body[data-theme="mode-3"] .cnstl-net-head h3{
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#5ce6b8 !important;
-  text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;
-}
-body[data-theme="mode-3"] .cnstl-hero h2{
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#ffffff !important;
-  text-transform:uppercase;letter-spacing:.10em;font-size:1.05rem;font-weight:800;
-}
-body[data-theme="mode-3"] .summary-num{
-  background:rgba(72,230,180,.10) !important;
-  border:1px solid rgba(72,230,180,.42) !important;
-  color:#5ce6b8 !important;
-  box-shadow:0 0 8px rgba(72,230,180,.16) !important;
-}
-body[data-theme="mode-3"] .stat-big .num,
-body[data-theme="mode-3"] .kpi-value,
-body[data-theme="mode-3"] .kpi.k-total .kpi-value,
-body[data-theme="mode-3"] .kpi.k-ok .kpi-value,
-body[data-theme="mode-3"] .kpi.k-warn .kpi-value,
-body[data-theme="mode-3"] .kpi.k-bad .kpi-value,
-body[data-theme="mode-3"] .kpi.k-neutral .kpi-value,
-body[data-theme="mode-3"] .cnstl-kpi .num{
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#5ce6b8 !important;
-}
-body[data-theme="mode-3"] .kpi.k-ok .kpi-value{color:#7ee0c4 !important}
-body[data-theme="mode-3"] .kpi.k-warn .kpi-value{color:#f0c050 !important}
-body[data-theme="mode-3"] .kpi.k-bad .kpi-value{color:#ff8898 !important}
-body[data-theme="mode-3"] .kpi.k-neutral .kpi-value{color:rgba(255,255,255,.65) !important}
-body[data-theme="mode-3"] .summary-foot,
-body[data-theme="mode-3"] .summary-stats,
-body[data-theme="mode-3"] .legend-bar,
-body[data-theme="mode-3"] .cnstl-net-foot{
-  background:rgba(0,0,0,.20) !important;
-  border-color:rgba(255,255,255,.05) !important;
-  color:rgba(255,255,255,.55) !important;
-}
-body[data-theme="mode-3"] .cnstl-net-canvas{
-  background:
-    radial-gradient(ellipse at 50% 30%, rgba(72,230,180,.05), transparent 65%),
-    rgba(0,0,0,.30) !important;
-}
-body[data-theme="mode-3"] .cnstl-alerts-canvas{
-  background:
-    radial-gradient(ellipse at 50% 30%, rgba(255,90,106,.08), transparent 65%),
-    rgba(0,0,0,.30) !important;
-}
-/* Chips mode 3 */
-body[data-theme="mode-3"] .chip.ok{background:rgba(42,139,116,.16) !important;color:#7ee0c4 !important;border-color:rgba(126,224,196,.28) !important}
-body[data-theme="mode-3"] .chip.warn{background:rgba(212,168,75,.16) !important;color:#f0c050 !important;border-color:rgba(240,192,80,.28) !important}
-body[data-theme="mode-3"] .chip.bad{background:rgba(255,90,106,.14) !important;color:#ff8898 !important;border-color:rgba(255,136,152,.30) !important}
-body[data-theme="mode-3"] .chip.neutral{background:rgba(255,255,255,.04) !important;color:rgba(255,255,255,.65) !important;border-color:rgba(255,255,255,.10) !important}
-/* Inputs mode 3 */
-body[data-theme="mode-3"] .tbl-search,
-body[data-theme="mode-3"] .sort-select{
-  background:rgba(255,255,255,.03) !important;
-  border-color:rgba(255,255,255,.10) !important;
-  color:#fff !important;
-}
-body[data-theme="mode-3"] .tbl-search:focus,
-body[data-theme="mode-3"] .sort-select:focus{
-  border-color:#2bb98a !important;
-  box-shadow:0 0 0 3px rgba(72,230,180,.15) !important;
-}
-/* Glow de KPIs y lista de contratos — acento jade */
-body[data-theme="mode-3"] .kpi::after{
-  background:radial-gradient(circle, rgba(72,230,180,.16) 0%, transparent 70%);
-}
-body[data-theme="mode-3"] .contract-text .c-monto{color:#5ce6b8 !important}
-body[data-theme="mode-3"] .contract-item:hover::before{
-  background:linear-gradient(180deg,#b8f5dd,#17836b) !important;
-}
-
-/* DICCO mode 3 — verde más cool sobre obsidiana */
-body[data-theme="mode-3"] .dicco-two-col{background:rgba(0,0,0,.20) !important}
-body[data-theme="mode-3"] .dicco-col-head--proc{
-  background:linear-gradient(180deg, rgba(212,168,75,.10), rgba(212,168,75,.02)) !important;
-}
-body[data-theme="mode-3"] .dicco-col-head--form{
-  background:linear-gradient(180deg, rgba(134,224,136,.10), rgba(134,224,136,.02)) !important;
-}
-/* Footer minimalista */
-body[data-theme="mode-3"] .footer{
-  background:rgba(0,0,0,.65) !important;
-  backdrop-filter:blur(10px) !important;
-  -webkit-backdrop-filter:blur(10px) !important;
-  border-top:1px solid rgba(255,255,255,.05) !important;
-}
-body[data-theme="mode-3"] .footer::before{
-  background:linear-gradient(90deg,transparent,#2bb98a 50%,transparent);
-  opacity:.6;height:1px;
-}
-body[data-theme="mode-3"] .footer p{color:rgba(255,255,255,.40) !important}
-body[data-theme="mode-3"] .footer strong{
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#5ce6b8 !important;
-}
 
 /* ════════════════════════════════════════════════════════════════
    Theme toggle button — diseñado para verse premium en los 3 modos
@@ -4767,12 +4511,6 @@ body[data-theme="mode-2"] #themeNum{
   color:#f7e4a8 !important;
   border-color:rgba(247,228,168,.55) !important;
   box-shadow:0 0 0 2px rgba(247,228,168,.10) !important;
-}
-body[data-theme="mode-3"] #themeNum{
-  background:transparent !important;
-  color:#5ce6b8 !important;
-  border-color:#2bb98a !important;
-  box-shadow:0 0 8px rgba(72,230,180,.40) !important;
 }
 </style>
 </head>
@@ -5593,10 +5331,6 @@ function themeNetColors(){
   if (t === 'mode-2') return {
     amount:'#691c32', sub:'#7a5e4a', gridStroke:'rgba(105,28,50,0.08)',
     label:'#3a1520', detail:'#7a5e4a'
-  };
-  if (t === 'mode-3') return {
-    amount:'#5ce6b8', sub:'rgba(255,255,255,.60)', gridStroke:'rgba(72,230,180,0.06)',
-    label:'#5ce6b8', detail:'rgba(255,255,255,.55)'
   };
   return { // mode-1 default
     amount:'#f0c050', sub:'rgba(255,255,255,.55)', gridStroke:'rgba(105,28,50,0.06)',
@@ -6677,13 +6411,13 @@ function showToast(msg, type = 'info') {
 }
 
 // ══════════════════════════════════════════════════════════════
-// THEME TOGGLE · 3 modos (vino glass → hacienda colonial → obsidiana)
+// THEME TOGGLE · 3 modos (vino glass → hacienda colonial → vino moderno)
 // ══════════════════════════════════════════════════════════════
 (function setupTheme(){
   const btn = document.getElementById('themeToggle');
   if (!btn) return;
   const numEl = document.getElementById('themeNum');
-  const NAMES = { 1: 'Vino institucional', 2: 'Hacienda colonial', 3: 'Obsidiana jade' };
+  const NAMES = { 1: 'Vino institucional', 2: 'Hacienda colonial', 3: 'Vino moderno' };
   const apply = (mode) => {
     document.body.setAttribute('data-theme', 'mode-' + mode);
     if (numEl) numEl.textContent = mode;
