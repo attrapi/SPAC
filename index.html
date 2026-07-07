@@ -873,7 +873,7 @@ body{
   .dicco-two-col{grid-template-columns:1fr}
 }
 .dicco-col{
-  display:flex;flex-direction:column;min-height:150px;
+  display:flex;flex-direction:column;min-height:0;
 }
 .dicco-col + .dicco-col{border-left:1px solid var(--border)}
 @media (max-width: 880px){
@@ -922,7 +922,12 @@ body{
     linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
   background-size:24px 24px;
   background-position:-1px -1px;
+  /* Vista compacta: chips (solo número) que fluyen en varias líneas */
+  display:flex;flex-wrap:wrap;gap:.4rem;align-content:flex-start;
 }
+.dicco-chip{transition:transform .15s, box-shadow .15s}
+.dicco-chip:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.28)}
+.dicco-col-list .dicco-empty{flex:1 1 100%}
 .dicco-row{
   display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;
   padding:.75rem .9rem;
@@ -8903,7 +8908,8 @@ setInterval(fetchAll, REFRESH_MS);
   }
 
   // Renderiza el resumen DICCO en la pestaña Resumen (#r2DiccoCard):
-  // dos columnas (En proceso / Formalizado) con Número + Concepto + estatus.
+  // dos columnas (En proceso / Formalizado) compactas — solo el número de
+  // licitación como chip; el conteo va en el encabezado de cada columna.
   function renderResumenDicco(allRows){
     const procList = document.getElementById('r2DiccoProcList');
     const formList = document.getElementById('r2DiccoFormList');
@@ -8923,25 +8929,20 @@ setInterval(fetchAll, REFRESH_MS);
       else proc.push(entry);
     });
 
-    const buildRow = e => {
+    // Vista compacta: solo el número de licitación como chip (el concepto
+    // queda en el title/tooltip); los conteos van en el encabezado de columna.
+    const buildChip = e => {
       const numHtml = e.liga
         ? `<a href="${esc(e.liga)}" target="_blank" rel="noopener noreferrer">${esc(e.num || '—')}</a>`
         : esc(e.num || '—');
-      const statusHtml = e.estatus
-        ? `<div class="dicco-row-status">${esc(toSentenceCase(e.estatus))}</div>`
-        : '';
-      return `<div class="dicco-row">
-        <span class="dicco-row-num">${numHtml}</span>
-        <div class="dicco-row-concept" title="${esc(e.objeto)}">${esc(e.objeto || '—')}</div>
-        ${statusHtml}
-      </div>`;
+      return `<span class="dicco-row-num dicco-chip" title="${esc(e.objeto)}">${numHtml}</span>`;
     };
 
     procList.innerHTML = proc.length
-      ? proc.map(buildRow).join('')
+      ? proc.map(buildChip).join('')
       : '<div class="dicco-empty">Sin licitaciones en proceso</div>';
     formList.innerHTML = form.length
-      ? form.map(buildRow).join('')
+      ? form.map(buildChip).join('')
       : '<div class="dicco-empty">Sin licitaciones formalizadas</div>';
 
     const total = proc.length + form.length;
