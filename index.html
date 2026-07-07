@@ -94,16 +94,6 @@ html{scroll-behavior:smooth;background:var(--gov-deep)}
 button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{
   outline:2px solid rgba(240,192,80,.75);outline-offset:2px;border-radius:4px;
 }
-body[data-theme="mode-2"] ::selection{background:rgba(105,28,50,.22);color:#2c0814}
-body[data-theme="mode-2"] button:focus-visible,
-body[data-theme="mode-2"] input:focus-visible,
-body[data-theme="mode-2"] select:focus-visible,
-body[data-theme="mode-2"] a:focus-visible{outline-color:rgba(105,28,50,.65)}
-body[data-theme="mode-2"] ::-webkit-scrollbar-thumb,
-body[data-theme="mode-2"]::-webkit-scrollbar-thumb{
-  background:linear-gradient(180deg, rgba(138,38,64,.45), rgba(122,94,74,.55));
-  border-radius:6px;border:2px solid transparent;background-clip:padding-box;
-}
 body{
   font-family:'Plus Jakarta Sans',system-ui,sans-serif;
   background:
@@ -3890,16 +3880,14 @@ body.modal-open{ overflow:hidden }
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   THEMES · 3 modos visuales premium — activados con body[data-theme]
+   THEMES · 3 modos — activados con body[data-theme]
    ──────────────────────────────────────────────────────────────────
-   Cada modo es una identidad visual completa con paletas calibradas
-   matemáticamente (relación luminance/saturation entre tonos),
-   bordes con gradient-image, sombras multicapa, hovers refinados
-   y tipografía/spacing afinados por modo.
+   Los 3 comparten la misma piel institucional (vino + oro, glass);
+   lo que cambia entre modos es la ESTRUCTURA del layout.
 
-   Mode 1 · Vino Glass         (current default — refinado)
-   Mode 2 · Hacienda Marfil    (cream paper + wine details, serif)
-   Mode 3 · Obsidiana Aurum    (jet black + hairline gold borders)
+   Mode 1 · Vino institucional (default — pestañas horizontales arriba)
+   Mode 2 · Vino índice        (menú lateral fijo + masthead centrado)
+   Mode 3 · Vino moderno       (dock flotante inferior + header compacto)
    ════════════════════════════════════════════════════════════════ */
 
 /* Transición global suave al cambiar de modo */
@@ -3912,123 +3900,51 @@ body, .header, .footer, .tab, .summary-card, .cnstl-net-card, .kpi, .card,
 .cnstl-hero, .cnstl-kpi{ transition:none !important }
 
 /* ════════════════════════════════════════════════════════════════
-   MODE 2 · Hacienda Marfil
+   MODE 2 · Vino Índice
    ──────────────────────────────────────────────────────────────
-   Fondo papel marfil cálido con vetas sutiles. Header en wine
-   sólido (como un sello oficial sobre el documento). Cards cream
-   con strip vino + hairline gold. Tipografía con serif Playfair
-   en headings para sentido institucional.
-
-   CLAVE: redefinimos las variables globales aquí para que todo
-   elemento que use var(--text), var(--surface), etc. se adapte
-   automáticamente al papel. Sin esto, todo lo no-override quedaba
-   en blanco (invisible sobre cream).
+   Misma piel que el modo 1 (vino + oro, glass institucional) pero
+   con estructura de expediente: menú como índice lateral fijo a la
+   izquierda, masthead centrado y contenido en columna de documento.
+   Todo lo demás (cards, chips, colores, redes) hereda del modo 1.
    ════════════════════════════════════════════════════════════ */
-body[data-theme="mode-2"]{
-  /* Paleta papel — análoga al vino, contraste AA garantizado */
-  --bg:#f6ecdc;
-  --bg2:#ede0c5;
-  --surface:#fefaf0;
-  --surface2:#f3e7d0;
-  --surface3:#e8d8b8;
-  --border:#d8c8b1;
-  --border2:#c4b193;
-  --text:#2a1410;
-  --text2:#5a4439;
-  --text3:#7a5e4a;
-  --text4:#a08770;
 
-  background:
-    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(176,74,98,.10) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 100% 100%, rgba(105,28,50,.06) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 30% at 5% 50%, rgba(212,168,75,.06) 0%, transparent 55%),
-    #f6ecdc !important;
-  color:#2a1410 !important;
-}
-body[data-theme="mode-2"] html{background:#e8dac3}
-
-/* Header — sello oficial sobre el documento */
-body[data-theme="mode-2"] .header{
-  background:linear-gradient(135deg, #8a2640 0%, #691c32 50%, #4a0f20 100%) !important;
-  backdrop-filter:none !important;
-  border-bottom:0 !important;
-  box-shadow:0 4px 20px rgba(105,28,50,.25);
-}
-body[data-theme="mode-2"] .header::after{
-  background:var(--gold-strip);height:3px;opacity:1;
-}
-body[data-theme="mode-2"] .header-text h1{
-  font-family:'Playfair Display', Georgia, serif !important;
-  color:#f6ecdc !important;letter-spacing:-.01em;
-}
-body[data-theme="mode-2"] .header-text p{color:rgba(246,236,220,.75) !important}
-body[data-theme="mode-2"] .header-icon{
-  background:linear-gradient(135deg, #f7e4a8 0%, #d4a84b 50%, #a07020 100%) !important;
-  color:#3a0f1a !important;
-  border:1px solid rgba(247,228,168,.5) !important;
-  box-shadow:0 4px 12px rgba(160,112,32,.45), inset 0 1px 0 rgba(255,255,255,.55) !important;
-}
-body[data-theme="mode-2"] .btn-primary{
-  background:linear-gradient(135deg,#f7e4a8 0%, #d4a84b 50%, #a07020 100%) !important;
-  color:#3a0f1a !important;border-color:rgba(0,0,0,.18) !important;
-}
-body[data-theme="mode-2"] .btn-outline{
-  background:rgba(246,236,220,.12) !important;
-  border:1.5px solid rgba(246,236,220,.40) !important;
-  color:#f6ecdc !important;
-}
-body[data-theme="mode-2"] .btn-outline:hover{
-  background:rgba(246,236,220,.22) !important;
-  border-color:rgba(246,236,220,.65) !important;
-}
-body[data-theme="mode-2"] .gov-banner{
-  background:linear-gradient(135deg, #4a0f20, #2c0814) !important;
-  border-bottom:1px solid rgba(212,168,75,.30) !important;
-}
-
-/* ── NAVEGACIÓN MODO 2 · índice lateral tipo expediente ──────────────
-   El menú deja la barra superior y se vuelve una columna fija a la
-   izquierda, como el índice de un expediente de archivo. El contenido
-   se desplaza con padding-left en el body. ─────────────────────────── */
+/* ── NAVEGACIÓN MODO 2 · índice lateral fijo ── */
 body[data-theme="mode-2"]{padding-left:232px}
 body[data-theme="mode-2"] .tabs{
   position:fixed;top:0;left:0;bottom:0;width:232px;z-index:70;
   margin:0;padding:1.1rem .9rem 1.2rem;
   flex-direction:column;align-items:stretch;gap:.2rem;flex-wrap:nowrap;
   overflow-y:auto;
-  background:linear-gradient(180deg,#f6ecdc 0%,#efe2c8 100%);
-  backdrop-filter:none;-webkit-backdrop-filter:none;
-  border-bottom:none;border-right:1px solid #cdba94;
-  box-shadow:inset -10px 0 26px -14px rgba(74,15,32,.22);
+  background:linear-gradient(180deg, rgba(74,15,32,.96) 0%, rgba(44,8,20,.94) 100%);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:none;border-right:1px solid rgba(212,168,75,.28);
+  box-shadow:8px 0 26px -14px rgba(0,0,0,.55);
 }
 body[data-theme="mode-2"] .tabs::before{
   content:'SPAC · Índice';
   display:block;
-  font-family:'Playfair Display', Georgia, serif;
-  font-size:.98rem;font-weight:800;color:#4a0f20;
-  letter-spacing:.02em;
+  font-size:.95rem;font-weight:800;color:#f0c050;
+  letter-spacing:.04em;
   padding:.4rem .9rem 1rem;margin-bottom:.5rem;
-  border-bottom:2px solid #691c32;
+  border-bottom:2px solid rgba(212,168,75,.45);
+  text-shadow:0 0 12px rgba(212,168,75,.30);
 }
 body[data-theme="mode-2"] .tab{
-  color:#7a5e4a;background:transparent;
   width:100%;justify-content:flex-start;text-align:left;
   padding:.72rem .9rem;margin:0;
   border-radius:8px;border-bottom:none;
   border-left:3px solid transparent;
 }
-body[data-theme="mode-2"] .tab:hover{
-  background:rgba(105,28,50,.07);
-  color:var(--gov-dark);
-}
 body[data-theme="mode-2"] .tab.active{
-  background:rgba(105,28,50,.09);
-  color:var(--gov-dark);
-  text-shadow:none;
-  border-left-color:#691c32;
+  background:rgba(212,168,75,.12);
+  color:#f0c050;
+  text-shadow:0 0 12px rgba(212,168,75,.35);
+  border-left-color:#d4a84b;
 }
 body[data-theme="mode-2"] .tab.active::after{display:none}
-/* Masthead editorial: marca centrada y apilada, acciones debajo */
+
+/* Masthead centrado: marca apilada, acciones debajo */
 body[data-theme="mode-2"] .header{padding:1.8rem 2.5rem 1.4rem}
 body[data-theme="mode-2"] .header-inner{
   flex-direction:column;justify-content:center;text-align:center;gap:1rem;
@@ -4036,26 +3952,26 @@ body[data-theme="mode-2"] .header-inner{
 body[data-theme="mode-2"] .header-brand{
   flex-direction:column;gap:.7rem;text-align:center;
 }
-body[data-theme="mode-2"] .header-text h1{
-  font-family:'Playfair Display', Georgia, serif !important;
-  font-size:1.6rem;
-}
+body[data-theme="mode-2"] .header-text h1{font-size:1.6rem}
 body[data-theme="mode-2"] .header-actions{justify-content:center}
-/* Columna editorial: contenido más angosto, como página de documento */
+
+/* Columna de documento: contenido más angosto */
 body[data-theme="mode-2"] .section-head,
 body[data-theme="mode-2"] .kpi-row,
 body[data-theme="mode-2"] .grid-1,
 body[data-theme="mode-2"] .summary-grid,
 body[data-theme="mode-2"] .cnstl-frame,
 body[data-theme="mode-2"] .error-box{max-width:1280px}
+
 /* En pantallas angostas el índice regresa arriba en horizontal */
 @media (max-width: 880px){
   body[data-theme="mode-2"]{padding-left:0}
   body[data-theme="mode-2"] .tabs{
     position:sticky;top:0;left:auto;bottom:auto;width:auto;
     flex-direction:row;align-items:center;flex-wrap:wrap;
+    overflow-y:visible;
     padding:0 1rem;
-    border-right:none;border-bottom:1px solid #cdba94;
+    border-right:none;border-bottom:1px solid rgba(255,255,255,.10);
     box-shadow:none;
   }
   body[data-theme="mode-2"] .tabs::before{display:none}
@@ -4064,361 +3980,9 @@ body[data-theme="mode-2"] .error-box{max-width:1280px}
     border-left:none;
   }
 }
+
 /* En impresión el corrimiento lateral no aplica */
 body.is-printing[data-theme="mode-2"]{padding-left:0 !important}
-
-/* Section headings con serif elegante */
-body[data-theme="mode-2"] .section-head h2{
-  font-family:'Playfair Display', Georgia, serif !important;
-  color:#3a1520 !important;text-shadow:none !important;
-  letter-spacing:-.02em;
-}
-body[data-theme="mode-2"] .section-head p{color:#7a5e4a !important}
-body[data-theme="mode-2"] .section-head h2::before{
-  background:linear-gradient(180deg,#8a2640,#691c32,#4a0f20);
-  box-shadow:0 2px 8px rgba(105,28,50,.20);
-}
-
-/* Cards cream con strip vino — sombras cálidas con tinte wine */
-body[data-theme="mode-2"] .summary-card,
-body[data-theme="mode-2"] .cnstl-net-card,
-body[data-theme="mode-2"] .kpi,
-body[data-theme="mode-2"] .card,
-body[data-theme="mode-2"] .cnstl-hero,
-body[data-theme="mode-2"] .cnstl-kpi{
-  background:linear-gradient(180deg, #fefaf0 0%, #f3e7d0 100%) !important;
-  backdrop-filter:none !important;
-  border:1px solid #d8c8b1 !important;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.8) inset,
-    0 6px 18px rgba(105,28,50,.10),
-    0 2px 6px rgba(105,28,50,.05) !important;
-  color:#3a2a20;
-}
-body[data-theme="mode-2"] .summary-card:hover,
-body[data-theme="mode-2"] .cnstl-net-card:hover,
-body[data-theme="mode-2"] .kpi:hover,
-body[data-theme="mode-2"] .cnstl-kpi:hover{
-  transform:translateY(-3px);
-  border-color:rgba(105,28,50,.30) !important;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.9) inset,
-    0 14px 32px rgba(105,28,50,.18),
-    0 4px 10px rgba(105,28,50,.10) !important;
-}
-body[data-theme="mode-2"] .summary-card::before,
-body[data-theme="mode-2"] .cnstl-net-card::before,
-body[data-theme="mode-2"] .kpi::before,
-body[data-theme="mode-2"] .card::before,
-body[data-theme="mode-2"] .cnstl-hero::before,
-body[data-theme="mode-2"] .cnstl-kpi::before{
-  background:linear-gradient(90deg,#4a0f20,#691c32 40%,#8a2640 50%,#691c32 60%,#4a0f20) !important;
-  height:3px !important;
-}
-body[data-theme="mode-2"] .summary-head,
-body[data-theme="mode-2"] .card-head,
-body[data-theme="mode-2"] .cnstl-net-head{
-  background:linear-gradient(180deg, rgba(105,28,50,.06) 0%, rgba(105,28,50,.01) 100%) !important;
-  border-bottom:1px solid #e0d0b6 !important;
-}
-body[data-theme="mode-2"] .summary-head h3,
-body[data-theme="mode-2"] .card-head h3{color:#3a1520 !important}
-body[data-theme="mode-2"] .cnstl-net-head h3{
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#4a0f20 !important;
-}
-body[data-theme="mode-2"] .cnstl-hero h2{
-  font-family:'Playfair Display', Georgia, serif !important;
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#4a0f20 !important;
-}
-body[data-theme="mode-2"] .summary-num{
-  background:linear-gradient(135deg,#8a2640,#691c32) !important;
-  color:#f6ecdc !important;
-  box-shadow:0 1px 3px rgba(105,28,50,.30), inset 0 1px 0 rgba(255,255,255,.15) !important;
-}
-body[data-theme="mode-2"] .stat-big .num,
-body[data-theme="mode-2"] .kpi-value,
-body[data-theme="mode-2"] .kpi.k-total .kpi-value,
-body[data-theme="mode-2"] .kpi.k-ok .kpi-value,
-body[data-theme="mode-2"] .kpi.k-warn .kpi-value,
-body[data-theme="mode-2"] .kpi.k-bad .kpi-value,
-body[data-theme="mode-2"] .kpi.k-neutral .kpi-value,
-body[data-theme="mode-2"] .cnstl-kpi .num{
-  background:none !important;
-  -webkit-background-clip:border-box !important;
-  background-clip:border-box !important;
-  -webkit-text-fill-color:currentColor !important;
-  color:#691c32 !important;
-}
-body[data-theme="mode-2"] .kpi.k-ok .kpi-value{color:#0e4a3e !important}
-body[data-theme="mode-2"] .kpi.k-warn .kpi-value{color:#7a5610 !important}
-body[data-theme="mode-2"] .kpi.k-bad .kpi-value{color:#8b3520 !important}
-body[data-theme="mode-2"] .kpi.k-neutral .kpi-value{color:#5a4439 !important}
-body[data-theme="mode-2"] .summary-foot,
-body[data-theme="mode-2"] .summary-stats,
-body[data-theme="mode-2"] .legend-bar,
-body[data-theme="mode-2"] .cnstl-net-foot{
-  background:rgba(105,28,50,.04) !important;
-  border-color:#e0d0b6 !important;
-  color:#5a4439 !important;
-}
-body[data-theme="mode-2"] .cnstl-net-canvas{
-  background:
-    radial-gradient(ellipse at 50% 30%, rgba(105,28,50,.05), transparent 60%),
-    linear-gradient(180deg, #fefaf0, #f3e7d0) !important;
-}
-body[data-theme="mode-2"] .cnstl-alerts-canvas{
-  background:
-    radial-gradient(ellipse at 50% 30%, rgba(199,91,57,.06), transparent 60%),
-    linear-gradient(180deg, #fefaf0, #f3e7d0) !important;
-}
-/* Chips con paleta papel */
-body[data-theme="mode-2"] .chip.ok{
-  background:rgba(26,107,90,.10) !important;color:#0e4a3e !important;
-  border-color:rgba(26,107,90,.25) !important;
-}
-body[data-theme="mode-2"] .chip.ok .d{background:#1a6b5a !important;box-shadow:none !important}
-body[data-theme="mode-2"] .chip.warn{
-  background:rgba(184,134,11,.14) !important;color:#7a5610 !important;
-  border-color:rgba(184,134,11,.30) !important;
-}
-body[data-theme="mode-2"] .chip.warn .d{background:#b8860b !important;box-shadow:none !important}
-body[data-theme="mode-2"] .chip.bad{
-  background:rgba(199,91,57,.12) !important;color:#8b3520 !important;
-  border-color:rgba(199,91,57,.30) !important;
-}
-body[data-theme="mode-2"] .chip.bad .d{background:#c75b39 !important;box-shadow:none !important}
-body[data-theme="mode-2"] .chip.neutral{
-  background:rgba(0,0,0,.04) !important;color:#5a4439 !important;
-  border-color:#d8c8b1 !important;
-}
-/* Inputs */
-body[data-theme="mode-2"] .tbl-search,
-body[data-theme="mode-2"] .sort-select{
-  background:#fefaf0 !important;border-color:#d8c8b1 !important;
-  color:#3a2a20 !important;
-}
-body[data-theme="mode-2"] .tbl-search::placeholder{color:#a89280 !important}
-body[data-theme="mode-2"] .tbl-search:focus,
-body[data-theme="mode-2"] .sort-select:focus{
-  border-color:#691c32 !important;
-  box-shadow:0 0 0 3px rgba(105,28,50,.10) !important;
-}
-/* Contracts list */
-body[data-theme="mode-2"] .contract-item:hover{background:rgba(105,28,50,.04) !important}
-body[data-theme="mode-2"] .contract-text .c-id,
-body[data-theme="mode-2"] .contract-text .c-monto{color:#3a1520 !important}
-body[data-theme="mode-2"] .contract-text .c-id{
-  background:rgba(105,28,50,.07) !important;
-  border-color:rgba(105,28,50,.22) !important;
-}
-body[data-theme="mode-2"] .contract-item:hover::before{
-  background:linear-gradient(180deg,#8a2640,#691c32) !important;
-}
-body[data-theme="mode-2"] .dicco-empty{
-  border-color:rgba(105,28,50,.25) !important;
-  background:rgba(105,28,50,.03) !important;
-}
-/* Glow de KPIs con tinte vino (el dorado se veía como mancha en el papel) */
-body[data-theme="mode-2"] .kpi::after{
-  background:radial-gradient(circle, rgba(105,28,50,.10) 0%, transparent 70%);
-}
-body[data-theme="mode-2"] .kpi.k-ok::after{background:radial-gradient(circle, rgba(26,107,90,.12) 0%, transparent 70%)}
-body[data-theme="mode-2"] .kpi.k-bad::after{background:radial-gradient(circle, rgba(199,91,57,.12) 0%, transparent 70%)}
-body[data-theme="mode-2"] .kpi.k-neutral::after{background:radial-gradient(circle, rgba(90,68,57,.10) 0%, transparent 70%)}
-/* Chevron de las píldoras DICCO sobre las bandas sólidas */
-body[data-theme="mode-2"] .dicco-col-head--proc .dicco-col-chev{color:#fff8e0}
-body[data-theme="mode-2"] .dicco-col-head--form .dicco-col-chev{color:#e8f7ee}
-body[data-theme="mode-2"] .contract-text{color:#5a4439 !important}
-/* ═══ DICCO modo 2 · CUADERNO VIRTUAL ═══════════════════════════════
-   Papel beige cálido como fondo (más oscuro que las cards), cuadrícula
-   wine visible, cards de papel-blanco "flotando" con sombra cálida.
-   Headers con bandas sólidas de color (gold para proc, teal para form)
-   tipo etiqueta de cuaderno. */
-body[data-theme="mode-2"] .dicco-two-col{
-  background:#e8dac0 !important;
-  border-top:1px solid rgba(74,15,32,.18) !important;
-}
-
-/* Headers de columna — bandas tipo etiqueta de archivo */
-body[data-theme="mode-2"] .dicco-col-head--proc{
-  background:linear-gradient(180deg, #b8860b 0%, #9a6f10 100%) !important;
-  border-bottom:1px solid #7a5610 !important;
-}
-body[data-theme="mode-2"] .dicco-col-head--proc .dicco-col-title{
-  color:#fff8e0 !important;
-  text-shadow:0 1px 0 rgba(0,0,0,.18);
-}
-body[data-theme="mode-2"] .dicco-col-head--form{
-  background:linear-gradient(180deg, #1a6b5a 0%, #0e4a3e 100%) !important;
-  border-bottom:1px solid #083026 !important;
-}
-body[data-theme="mode-2"] .dicco-col-head--form .dicco-col-title{
-  color:#e8f7ee !important;
-  text-shadow:0 1px 0 rgba(0,0,0,.18);
-}
-body[data-theme="mode-2"] .dicco-col--proc .dicco-col-count{
-  background:rgba(255,255,255,.22) !important;color:#fff8e0 !important;
-  border-color:rgba(255,255,255,.40) !important;
-  text-shadow:0 1px 0 rgba(0,0,0,.20);
-}
-body[data-theme="mode-2"] .dicco-col--form .dicco-col-count{
-  background:rgba(255,255,255,.22) !important;color:#e8f7ee !important;
-  border-color:rgba(255,255,255,.40) !important;
-  text-shadow:0 1px 0 rgba(0,0,0,.20);
-}
-
-/* La "hoja del cuaderno" — fondo beige cuadriculado donde flotan las cards */
-body[data-theme="mode-2"] .dicco-col-list{
-  background-color:#ede1c8 !important;
-  background-image:
-    linear-gradient(rgba(105,28,50,.13) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(105,28,50,.13) 1px, transparent 1px) !important;
-  background-size:22px 22px !important;
-  background-position:0 0 !important;
-}
-
-/* Cards · papel blanco-crema flotando sobre el cuaderno */
-body[data-theme="mode-2"] .dicco-row{
-  background:#fdf7e6 !important;
-  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
-  border:1px solid #c4b193 !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.85),
-    0 2px 4px rgba(74,15,32,.10),
-    0 5px 14px rgba(74,15,32,.07) !important;
-}
-body[data-theme="mode-2"] .dicco-col--proc .dicco-row{
-  border-left:3px solid #b8860b !important;
-}
-body[data-theme="mode-2"] .dicco-col--form .dicco-row{
-  border-left:3px solid #1a6b5a !important;
-}
-body[data-theme="mode-2"] .dicco-row:hover{
-  background:#fffbf0 !important;
-  border-color:rgba(74,15,32,.30) !important;
-  transform:translateY(-2px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.95),
-    0 10px 24px rgba(74,15,32,.18),
-    0 4px 10px rgba(74,15,32,.10) !important;
-}
-body[data-theme="mode-2"] .dicco-col--proc .dicco-row:hover{
-  border-left-color:#9a6f10 !important;
-}
-body[data-theme="mode-2"] .dicco-col--form .dicco-row:hover{
-  border-left-color:#0e4a3e !important;
-}
-/* El ::before del accent ya no se usa en modo 2 — el border-left lo reemplaza */
-body[data-theme="mode-2"] .dicco-col--proc .dicco-row:hover::before,
-body[data-theme="mode-2"] .dicco-col--form .dicco-row:hover::before{
-  background:transparent !important;
-}
-
-/* Texto del concepto · negro tinta-vino */
-body[data-theme="mode-2"] .dicco-row-concept{color:#2a1410 !important}
-
-/* Pills del ID · ahora cuadradas tipo etiqueta */
-body[data-theme="mode-2"] .dicco-col--proc .dicco-row-num{
-  background:#fef3d4 !important;color:#7a5610 !important;
-  border:1px solid #c9a444 !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
-}
-body[data-theme="mode-2"] .dicco-col--form .dicco-row-num{
-  background:#e0f1ea !important;color:#0e4a3e !important;
-  border:1px solid #4a9080 !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
-}
-
-/* Estatus pill · sutil sobre la card */
-body[data-theme="mode-2"] .dicco-row-status{
-  background:rgba(74,15,32,.06) !important;
-  border:1px solid rgba(74,15,32,.20) !important;
-  color:#5a4439 !important;
-}
-body[data-theme="mode-2"] .dicco-count-pill{
-  background:rgba(184,134,11,.18) !important;
-  border-color:rgba(184,134,11,.45) !important;
-  color:#7a5610 !important;
-  -webkit-text-fill-color:#7a5610 !important;
-}
-/* Project tags / amounts */
-body[data-theme="mode-2"] .v-total-amt,
-body[data-theme="mode-2"] .v-total-pct,
-body[data-theme="mode-2"] .pending-row.pending-total .p-amt,
-body[data-theme="mode-2"] .pending-row.pending-total .p-pct{
-  color:#691c32 !important;
-}
-body[data-theme="mode-2"] .vli-id,
-body[data-theme="mode-2"] .vli-amt,
-body[data-theme="mode-2"] .pending-row .p-id,
-body[data-theme="mode-2"] .pending-row .p-amt{color:#3a1520 !important}
-body[data-theme="mode-2"] .vli-pct,
-body[data-theme="mode-2"] .pending-row .p-pct{color:#5a4439 !important}
-body[data-theme="mode-2"] .vert-bar{background:rgba(0,0,0,.08) !important}
-body[data-theme="mode-2"] .vert-bar-wrap,
-body[data-theme="mode-2"] .pending-col{background:#fefaf0 !important}
-body[data-theme="mode-2"] .vert-foot,
-body[data-theme="mode-2"] .pending-row.pending-total{background:rgba(105,28,50,.05) !important}
-/* SVG network cards (.ccc) — papel cream con texto wine en lugar de glass blanco */
-body[data-theme="mode-2"] .cnstl-net-canvas .ccc,
-body[data-theme="mode-2"] .cnstl-alerts-canvas .ccc{
-  background:linear-gradient(180deg, #fefaf0 0%, #f6ecd2 100%) !important;
-  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
-  border:1px solid #d8c8b1 !important;
-  border-left:3px solid var(--proj-color, #8a2640) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.7),
-    0 1px 4px rgba(105,28,50,.10),
-    0 2px 8px rgba(105,28,50,.06) !important;
-}
-body[data-theme="mode-2"] .cnstl-net-canvas .ccc:hover,
-body[data-theme="mode-2"] .cnstl-alerts-canvas .ccc:hover{
-  background:linear-gradient(180deg, #fff7e6 0%, #f3e7c5 100%) !important;
-  border-color:rgba(105,28,50,.30) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.85),
-    0 8px 22px rgba(105,28,50,.20),
-    0 2px 6px rgba(105,28,50,.10) !important;
-}
-body[data-theme="mode-2"] .cnstl-net-canvas .ccc.critical,
-body[data-theme="mode-2"] .cnstl-alerts-canvas .ccc.critical{
-  border-color:rgba(139,53,32,.55) !important;
-  border-left-color:#8b3520 !important;
-}
-body[data-theme="mode-2"] .ccc-id{color:#3a1520 !important}
-body[data-theme="mode-2"] .ccc-monto{color:#691c32 !important}
-body[data-theme="mode-2"] .ccc-pct{color:#7a5e4a !important}
-/* Licitación destacada — dorado oscuro readable sobre cream */
-body[data-theme="mode-2"] .contract-item.is-licitacion .c-id{
-  color:#7a5610 !important;-webkit-text-fill-color:#7a5610 !important;
-}
-/* Iconos de los headers de cards (◆ / ⚠) — saturados sobre cream-tinted gradient */
-body[data-theme="mode-2"] .cnstl-net-head h3 .cnstl-est-icon{
-  color:#b8860b !important;-webkit-text-fill-color:#b8860b !important;
-}
-body[data-theme="mode-2"] .cnstl-net-head h3 .cnstl-alert-icon{
-  color:#8b3520 !important;-webkit-text-fill-color:#8b3520 !important;
-}
-/* Footer en wine sólido */
-body[data-theme="mode-2"] .footer{
-  background:linear-gradient(135deg, #4a0f20, #2c0814) !important;
-  backdrop-filter:none !important;
-  border-top:0 !important;
-}
-body[data-theme="mode-2"] .footer::before{background:var(--gold-strip);height:3px}
-body[data-theme="mode-2"] .footer p{color:rgba(246,236,220,.78) !important}
-body[data-theme="mode-2"] .footer strong{
-  color:#f0c050 !important;-webkit-text-fill-color:#f0c050 !important;
-  background:none !important;
-}
 
 /* ════════════════════════════════════════════════════════════════
    MODE 3 · Vino Moderno
@@ -4505,12 +4069,6 @@ body.is-printing[data-theme="mode-3"]{padding-bottom:0 !important}
   border:1px solid rgba(201,146,42,.50);
   font-size:.72rem;font-weight:800;
   box-shadow:0 0 0 2px rgba(212,168,75,.10);
-}
-body[data-theme="mode-2"] #themeNum{
-  background:rgba(247,228,168,.22) !important;
-  color:#f7e4a8 !important;
-  border-color:rgba(247,228,168,.55) !important;
-  box-shadow:0 0 0 2px rgba(247,228,168,.10) !important;
 }
 </style>
 </head>
@@ -5325,14 +4883,10 @@ function renderResumen2() {
 
 // Devuelve los colores de texto/grid del SVG según el theme activo.
 // Permite que las redes se vean bien sobre fondo glass (modo 1),
-// papel cream (modo 2) y obsidiana (modo 3) sin re-escribir SVG.
+// Los 3 modos comparten la piel vino institucional, así que los
+// colores de las redes SVG son los mismos en todos.
 function themeNetColors(){
-  const t = document.body.getAttribute('data-theme') || 'mode-1';
-  if (t === 'mode-2') return {
-    amount:'#691c32', sub:'#7a5e4a', gridStroke:'rgba(105,28,50,0.08)',
-    label:'#3a1520', detail:'#7a5e4a'
-  };
-  return { // mode-1 default
+  return {
     amount:'#f0c050', sub:'rgba(255,255,255,.55)', gridStroke:'rgba(105,28,50,0.06)',
     label:'#f0c050', detail:'rgba(255,255,255,.55)'
   };
@@ -6411,13 +5965,13 @@ function showToast(msg, type = 'info') {
 }
 
 // ══════════════════════════════════════════════════════════════
-// THEME TOGGLE · 3 modos (vino glass → hacienda colonial → vino moderno)
+// THEME TOGGLE · 3 modos institucionales (clásico → índice lateral → dock)
 // ══════════════════════════════════════════════════════════════
 (function setupTheme(){
   const btn = document.getElementById('themeToggle');
   if (!btn) return;
   const numEl = document.getElementById('themeNum');
-  const NAMES = { 1: 'Vino institucional', 2: 'Hacienda colonial', 3: 'Vino moderno' };
+  const NAMES = { 1: 'Vino institucional', 2: 'Vino índice', 3: 'Vino moderno' };
   const apply = (mode) => {
     document.body.setAttribute('data-theme', 'mode-' + mode);
     if (numEl) numEl.textContent = mode;
