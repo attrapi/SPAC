@@ -880,11 +880,25 @@ body{
   .dicco-col + .dicco-col{border-left:none;border-top:1px solid var(--border)}
 }
 .dicco-col-head{
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:space-between;gap:.6rem;
   padding:.85rem 1.1rem;
   border-bottom:1px solid var(--border);
   background:rgba(0,0,0,.18);
+  /* Píldora clickeable: colapsa/expande la lista de licitaciones */
+  width:100%;border-top:none;border-left:none;border-right:none;
+  font-family:inherit;text-align:left;cursor:pointer;
+  transition:filter .18s ease;
 }
+.dicco-col-head:hover{filter:brightness(1.25)}
+.dicco-col-count{margin-left:auto}
+.dicco-col-chev{
+  font-size:.8rem;color:var(--text3);
+  transition:transform .25s ease;
+  flex:0 0 auto;
+}
+.dicco-col.is-open .dicco-col-chev{transform:rotate(180deg)}
+.dicco-col:not(.is-open) .dicco-col-head{border-bottom:none}
+.dicco-col:not(.is-open) .dicco-col-list{display:none}
 .dicco-col-head--proc{
   background:linear-gradient(180deg, rgba(201,146,42,.14), rgba(201,146,42,.04));
 }
@@ -4723,19 +4737,21 @@ body[data-theme="mode-3"] #themeNum{
       </div>
       <div class="dicco-two-col">
         <div class="dicco-col dicco-col--proc">
-          <div class="dicco-col-head dicco-col-head--proc">
+          <button type="button" class="dicco-col-head dicco-col-head--proc" aria-expanded="false" aria-controls="r2DiccoProcList" title="Clic para ver las licitaciones">
             <span class="dicco-col-title">En proceso</span>
             <span class="dicco-col-count" id="r2DiccoProcCount">0</span>
-          </div>
+            <span class="dicco-col-chev" aria-hidden="true">▾</span>
+          </button>
           <div class="dicco-col-list" id="r2DiccoProcList">
             <div class="dicco-empty">Cargando…</div>
           </div>
         </div>
         <div class="dicco-col dicco-col--form">
-          <div class="dicco-col-head dicco-col-head--form">
+          <button type="button" class="dicco-col-head dicco-col-head--form" aria-expanded="false" aria-controls="r2DiccoFormList" title="Clic para ver las licitaciones">
             <span class="dicco-col-title">Formalizado</span>
             <span class="dicco-col-count" id="r2DiccoFormCount">0</span>
-          </div>
+            <span class="dicco-col-chev" aria-hidden="true">▾</span>
+          </button>
           <div class="dicco-col-list" id="r2DiccoFormList">
             <div class="dicco-empty">Cargando…</div>
           </div>
@@ -6588,6 +6604,16 @@ document.querySelectorAll('.tab[data-tab]').forEach(btn => {
         });
       });
     }
+  });
+});
+
+// DICCO resumen: píldoras En proceso / Formalizado colapsables.
+// Cerradas por defecto — solo se ven los conteos; clic despliega los números.
+document.querySelectorAll('#r2DiccoCard .dicco-col-head').forEach(head => {
+  head.addEventListener('click', () => {
+    const col = head.closest('.dicco-col');
+    const open = col.classList.toggle('is-open');
+    head.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 });
 
